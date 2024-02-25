@@ -2,6 +2,7 @@ from Classes import *
 import datetime, requests
 import speech_recognition
 
+
 from gtts import gTTS
 import os
 
@@ -23,6 +24,24 @@ def listen_command():
         return query
     except speech_recognition.UnknownValueError:
         return 'Команда не распознана'
+    except AssertionError:
+        return 0
+
+
+#Слушаем и убираем шум
+with m as source:
+    r.adjust_for_ambient_noise(source)
+
+
+#Отключение бота
+def off():
+    global is_work
+    is_work = False
+    return ""
+
+
+def here():
+    return "Я тут, работаю, тебе помогаю"
 
 
 def create_task():#Создание заметки в todo листе
@@ -40,12 +59,15 @@ def date_now():
 
 #Функция tts
 def speak(sth, tempo=1.3):
-    lang = 'ru'
-    tts = gTTS(text=sth, lang=lang, slow=False, tld="us")
-    tts.save('buffer.mp3')
-    os.system(f"play buffer.mp3 tempo {tempo}")
+    try:
+        lang = 'ru'
+        tts = gTTS(text=sth, lang=lang, slow=False, tld="us")
+        tts.save('buffer.mp3')
+        os.system(f"play buffer.mp3 tempo {tempo}")
 
-    print(f"[log] said: {sth}")
+        print(f"[log] said: {sth}")
+    except AssertionError:
+        return 0
 
 
 
