@@ -1,3 +1,4 @@
+from Classes import *
 import datetime, requests
 import speech_recognition
 

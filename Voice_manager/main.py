@@ -5,7 +5,6 @@ sr.pause_threshold = 0.5
 r = speech_recognition.Recognizer()
 m = speech_recognition.Microphone(device_index=1)
 is_work = True
-is_play = False
 
 
 #Слушаем и убираем шум
@@ -33,7 +32,7 @@ commands_dict = {
 def off():
     global is_work
     is_work = False
-    return "Я был рад помогать тебе, жду возможности помочь ещё"
+    return ""
 
 
 def here():
@@ -41,7 +40,7 @@ def here():
 
 
 #Основнй цикл работы ассистента
-speak("Приветствую, я голосовой помощник Боня, я готов помогать тебе")
+speak("Приветствую, я твой универсальный помощник Среда. Ты можешь узнать о моих возможностях на сайте или просто спросив меня.")
 while(is_work):
     query = listen_command()
     print(f"[Log] Распознано: {query}")
