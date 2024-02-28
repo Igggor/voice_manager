@@ -20,19 +20,6 @@ pass
 #         file.write(f'{query}\n')
 #     return f'Задача {query} создана и добавлена в список задач'
 #
-# def curs():
-#     data = requests.get('https://www.cbr-xml-daily.ru/daily_json.js').json()
-#     usd = round(data['Valute']['USD']['Value'], 2)
-#     euro = round(data['Valute']['EUR']['Value'], 2)
-#     usd_rub = int(usd)
-#     usd_kop = int(round(usd - int(usd), 2) * 100)
-#     euro_rub = int(euro)
-#     euro_kop = int(round(euro - int(euro), 2) * 100)
-#     return  (f"Курс валют сейчас:\n"
-#           f"Доллар можно купить за {usd_rub} {sclon(usd_rub, 'rub')} {usd_kop} {sclon(usd_kop, 'kop')}.\n"
-#           f"Евро можно купить за {euro_rub} {sclon(euro_rub, 'rub')} {euro_kop} {sclon(euro_kop, 'kop')}.\n"
-#           )
-#
 #
 # def weather():
 #     speak("В каком городе ты хочешь узнать погоду?")

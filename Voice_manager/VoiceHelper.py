@@ -32,7 +32,8 @@ class VoiceHelper:
             "off": self.setOFF,  # выключить (но оставить чувствительной к команде включения,
                                  # т.е приложение остается действующим)
             "full-off": self.exit,  # Деактивация, закрытие приложения
-            "date": getDate  # текущая дата
+            "date": getDate,  # текущая дата
+            "course": getCurrencyCourse  # курс валют
         }
 
     # Метод.

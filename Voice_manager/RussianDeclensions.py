@@ -12,6 +12,18 @@ usages = {
         "R": "минут",
         "I": "минута",
         "K": "минуты"
+    },
+
+    "рубль": {
+        "R": "рублей",
+        "I": "рубль",
+        "K": "рубля"
+    },
+
+    "копейка": {
+        "R": "копеек",
+        "I": "копейка",
+        "K": "копейки"
     }
 }
 
@@ -35,7 +47,4 @@ def baseDeclension(number: int):
 def declension(number: int, string: str):
     key = baseDeclension(number)
 
-    try:
-        return usages[string][key]
-    except:
-        raise RuntimeError("Произошла ошибка при попытке склонения слова.")
+    return usages[string][key]
