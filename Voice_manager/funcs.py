@@ -49,23 +49,3 @@ pass
 #         print(ex)
 #         return "Проверьте название города"
 #
-#
-# def sclon(a, txt):
-#     if(txt == "rub"):
-#         if (a // 10 != 1) and (a % 10 == 1):
-#             return ("Рубль")
-#         elif (a // 10 != 1) and (a % 10 == 2 or a % 10 == 3 or a % 10 == 4):
-#             return ("Рубля")
-#         elif (a // 10 != 1) and (a % 10 == 5 or a % 10 == 6 or a % 10 == 7 or a % 10 == 8 or a % 10 == 9 or a % 10 == 0):
-#             return (("Рублей"))
-#         else:
-#             return (("Рублей"))
-#     if (txt == "kop"):
-#         if (a // 10 != 1) and (a % 10 == 1):
-#             return ("Копейку")
-#         elif (a // 10 != 1) and (a % 10 == 2 or a % 10 == 3 or a % 10 == 4):
-#             return ("Копейки")
-#         elif (a // 10 != 1) and (a % 10 == 5 or a % 10 == 6 or a % 10 == 7 or a % 10 == 8 or a % 10 == 9 or a % 10 == 0):
-#             return (("Копеек"))
-#         else:
-#             return (("Копеек"))
