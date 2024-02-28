@@ -31,7 +31,7 @@ class SpeechTranslator:
     # Метод.
     # Прослушивает речь и возвращает соответствующее строковое значение,
     # или, в случае произвольной ошибки, строку "Команда не распознана".
-    # Внимание! Запись логов по задумке должна производиться в классе TextProcessor!
+    # Важно! Запись логов по задумке должна производиться в классе TextProcessor!
     def listenCommand(self):
         try:
             self.RECOGNIZER.adjust_for_ambient_noise(source=self.MICROPHONE, duration=self.MICROPHONE_DURATION)
@@ -48,7 +48,7 @@ class SpeechTranslator:
     # Метод.
     # Принимает строку outputText и вещественный параметр tempo
     # и произносит текст, соответсвующий этим параметрам.
-    # Внимание! Запись логов по задумке должна производиться в классе TextProcessor!
+    # Важно! Запись логов по задумке должна производиться в классе TextProcessor!
     def speak(self, outputText: str, tempo: float = 1.3):
         try:
             tts = gTTS(text=outputText, lang=self.LANGUAGE, slow=False, tld="us")

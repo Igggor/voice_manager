@@ -3,6 +3,8 @@ from TextProcessor import *
 from SpeechTranslator import *
 from Functions import *
 
+import sys
+
 
 # Главный класс, отвечающий за связь всех элементов приложения.
 # Singleton - pattern
@@ -17,14 +19,20 @@ class VoiceHelper:
     # Конструктор.
     # Инициализируются все составные части приложения (классы), а также словарь functions, где в качестве значений
     # хранятся функции из файла Functions.py.
-    # В РАЗРАБОТКЕ, пока что только time.
+
+    # В РЕЗРАБОТКЕ, все функции помощника должны быть здесь.
     def __init__(self):
         self.globalContext = GlobalContext()
-        self.textProcessor = TextProcessor()
+        self.textProcessor = TextProcessor(self.globalContext.NAME)
         self.speechTranslator = SpeechTranslator()
 
         self.functions = {
-            "time": getTimeNow
+            "time": getTimeNow,  # текущее время
+            "on": self.setON,  # включить
+            "off": self.setOFF,  # выключить (но оставить чувствительной к команде включения,
+                                 # т.е приложение остается действующим)
+            "full-off": self.exit,  # Деактивация, закрытие приложения
+            "date": getDate  # текущая дата
         }
 
     # Метод.
@@ -37,13 +45,22 @@ class VoiceHelper:
         self.globalContext.ON = True
 
     # Метод.
-    # Выполняет выключение голосового помощника.
+    # Выполняет частичное выключение голосового помощника (спящий режим).
     def setOFF(self):
         if not self.globalContext.ON:
             return
 
         self.speechTranslator.speak(self.textProcessor.BYE_PHRASE)
         self.globalContext.ON = False
+
+    # Метод.
+    # Выполняет полное выключение голосового помощника.
+    # Важно! В перспективе здесь не только выход, но, возможно, какое-то сохранение в БД или что-то подобное.
+    def exit(self):
+        self.globalContext.ON = False
+        sys.exit()
+
+        pass
 
     # Метод.
     # Объединяет в себе несколько функций и методов. Выполняет всю работу от приёма и расшифровки голоса до
@@ -58,7 +75,7 @@ class VoiceHelper:
             self.speechTranslator.speak(recognizedQuery)
             return
 
-        selectedActions = self.textProcessor.matchCommand(recognizedQuery)
+        selectedActions = self.textProcessor.matchCommand(recognizedQuery, self.globalContext.ON)
 
         if selectedActions is None:
             return

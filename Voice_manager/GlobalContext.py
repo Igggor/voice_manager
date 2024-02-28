@@ -10,3 +10,4 @@ class GlobalContext:
 
     def __init__(self):
         self.ON = False
+        self.NAME = "Среда"

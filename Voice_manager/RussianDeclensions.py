@@ -38,4 +38,4 @@ def declension(number: int, string: str):
     try:
         return usages[string][key]
     except:
-        raise RuntimeError("Произошла ошибка в склонении слова.")
+        raise RuntimeError("Произошла ошибка при попытке склонения слова.")
