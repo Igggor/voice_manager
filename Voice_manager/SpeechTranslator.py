@@ -3,9 +3,11 @@ import speech_recognition
 from gtts import gTTS
 
 
-# Класс, отвечающий за перевод СТРОКА <-> ГОЛОС (распознавание и произнесение).
-# Singleton - pattern
 class SpeechTranslator:
+    """
+    Класс, отвечающий за перевод СТРОКА <-> ГОЛОС (распознавание и произнесение).
+    Singleton - pattern
+    """
     __instance = None
 
     def __new__(cls):
@@ -13,12 +15,16 @@ class SpeechTranslator:
             cls.__instance = super(SpeechTranslator, cls).__new__(cls)
         return cls.__instance
 
-    # Конструктор.
-    # Опционально принимает на вход вещественные параметры __recognizer_threshold,
-    # __microphone_duration, а также строковые параметры __language и __recognizer_error_phrase.
-    # Инициализирует с необходимыми параметрами микрофон, распознаватель речи, язык работы.
     def __init__(self, __recognizer_threshold: float = 0.5, __microphone_duration: float = 0.5,
                  __language: str = "ru-RU", __recognizer_error_phrase: str = "Команда не распознана"):
+        """
+        Конструктор класса.
+        Инициализирует с необходимыми параметрами микрофон, распознаватель речи, язык работы.
+        :param __recognizer_threshold: float
+        :param __microphone_duration: максимальное время прослушивания микрофона
+        :param __language: язык ввода
+        :param __recognizer_error_phrase: фраза, воспроизводимая при невозможности распознать команду
+        """
         self.MICROPHONE = speech_recognition.Microphone(device_index=1)
         self.MICROPHONE_DURATION = __microphone_duration
 
@@ -28,11 +34,13 @@ class SpeechTranslator:
 
         self.LANGUAGE = __language
 
-    # Метод.
-    # Прослушивает речь и возвращает соответствующее строковое значение,
-    # или, в случае произвольной ошибки, строку "Команда не распознана".
     # Важно! Запись логов по задумке должна производиться в классе TextProcessor!
-    def listenCommand(self):
+    def listen_сommand(self):
+        """
+        метод распознавания команды.
+        :return: возвращает соответствующее строковое значение,
+        или, в случае произвольной ошибки, строку "Команда не распознана".
+        """
         try:
             self.RECOGNIZER.adjust_for_ambient_noise(source=self.MICROPHONE, duration=self.MICROPHONE_DURATION)
 
@@ -45,13 +53,16 @@ class SpeechTranslator:
         except:
             return self.RECOGNITION_ERROR_PHRASE
 
-    # Метод.
-    # Принимает строку outputText и вещественный параметр tempo
-    # и произносит текст, соответсвующий этим параметрам.
     # Важно! Запись логов по задумке должна производиться в классе TextProcessor!
-    def speak(self, outputText: str, tempo: float = 1.3):
+    def speak(self, output_text: str, tempo: float = 1.3):
+        """
+        Синтезация текста в речь
+        :param output_text: текст для синтезации в речь
+        :param tempo: скорость воспроизведения
+        :return:
+        """
         try:
-            tts = gTTS(text=outputText, lang=self.LANGUAGE, slow=False, tld="us")
+            tts = gTTS(text=output_text, lang=self.LANGUAGE, slow=False, tld="us")
             tts.save('buffer.mp3')
 
             os.system(f"play buffer.mp3 tempo { tempo }")

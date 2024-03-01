@@ -28,10 +28,12 @@ usages = {
 }
 
 
-# Функция.
-# Является базовой для всех остальных. Принимает целочисленный параметр number, возвращает "R",
-# если слово при числе number должно стоять в родительном падеже, "I" - в именительном, "K" - в остальных случаях.
-def baseDeclension(number: int):
+def base_declension(number: int):
+    """
+
+    :param number: целочисленный параметр, для какого числительного нужно просклонять
+    :return: возвращает необходимый падеж. "R", если слово при числе number должно стоять в родительном падеже, "I" - в именительном, "K" - в остальных случаях.
+    """
     if (10 < number < 20) or (number % 10 >= 5 or number % 10 == 0):
         return "R"
     elif number % 10 == 1:
@@ -40,11 +42,13 @@ def baseDeclension(number: int):
         return "K"
 
 
-# Функция.
-# Принимает на вход целочисленный number, а также
-# строку string, которая может принимать значения, принадлежащие множеству ключей словаря usages.
-# Возвращает склоненное слово string.
 def declension(number: int, string: str):
-    key = baseDeclension(number)
+    """
+    Представление строки в нужном склонении
+    :param number: целочисленный параметр
+    :param string: склоняемая строка, содержащаяся в словаре usages
+    :return: слово в нужном склонении
+    """
+    key = base_declension(number)
 
     return usages[string][key]

@@ -4,4 +4,4 @@ from VoiceHelper import *
 voiceHelper = VoiceHelper()
 
 while True:
-    voiceHelper.listenCommand()
+    voiceHelper.listen_command()

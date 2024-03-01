@@ -1,6 +1,8 @@
-# Класс глобальных настроек.
-# Singleton - pattern
 class GlobalContext:
+    """
+    Класс глобальных настроек.
+    Singleton - pattern
+    """
     __instance = None
 
     def __new__(cls):
