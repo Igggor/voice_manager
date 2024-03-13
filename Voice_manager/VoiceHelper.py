@@ -25,7 +25,8 @@ class VoiceHelper:
     # В РЕЗРАБОТКЕ, все функции помощника должны быть здесь.
     def __init__(self):
         """
-        Конструктор класса
+        Конструктор класса.
+
         Инициализируются все составные части приложения (классы), а также словарь functions, где в качестве значений хранятся функции из файла Functions.py
         """
         self.global_context = GlobalContext()
@@ -33,6 +34,7 @@ class VoiceHelper:
         self.speech_translator = SpeechTranslator()
 
         self.functions = {
+            "N-F": self.command_not_found,
             "time": get_time_now,  # текущее время
             "on": self.set_ON,  # включить
             "off": self.set_OFF,  # выключить (но оставить чувствительной к команде включения,
@@ -44,7 +46,8 @@ class VoiceHelper:
 
     def set_ON(self):
         """
-        Включение голосового помощника
+        Включение голосового помощника.
+
         :return:
         """
         if self.global_context.ON:
@@ -56,6 +59,7 @@ class VoiceHelper:
     def set_OFF(self):
         """
         Частичное выключение голосового помощника (спящий режим).
+
         :return:
         """
         if not self.global_context.ON:
@@ -67,7 +71,8 @@ class VoiceHelper:
     # Важно! В перспективе здесь не только выход, но, возможно, какое-то сохранение в БД или что-то подобное.
     def exit(self):
         """
-        Полное выключение голосового помощника
+        Полное выключение голосового помощника.
+
         :return:
         """
         self.global_context.ON = False
@@ -77,22 +82,22 @@ class VoiceHelper:
 
     def listen_command(self):
         """
-        Объединение несколько функций и методов. Выполнение работы от приёма и расшифровки голоса до непосредственного выполнения требуемой функции
+        Объединение несколько функций и методов. Выполнение работы от приёма и расшифровки голоса до непосредственного выполнения требуемой функции.
+
         :return:
         """
-        recognized_query = self.speech_translator.listen_сommand()
+        recognized_query = self.speech_translator.listen_command()
 
         if recognized_query is None:
             return
 
-        if recognized_query == self.speech_translator.RECOGNITION_ERROR_PHRASE:
-            self.speech_translator.speak(recognized_query)
+        print(recognized_query)
+
+        selected_action = self.text_processor.match_command(recognized_query, not self.global_context.ON)
+        if selected_action is None:
             return
 
-        selected_actions = self.text_processor.match_command(recognized_query, self.global_context.ON)
+        self.speech_translator.speak(self.functions[selected_action]())
 
-        if selected_actions is None:
-            return
-
-        for action in selected_actions:
-            self.speech_translator.speak(self.functions[action]())
+    def command_not_found(self):
+        self.speech_translator.speak(self.text_processor.RECOGNITION_ERROR_PHRASE)

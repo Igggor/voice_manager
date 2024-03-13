@@ -13,11 +13,13 @@ class TextProcessor:
     def __init__(self, name: str):
         """
         Конструктор класса.
-        Инициалиация словаря доступных команд AVAILABLE_COMMANDS, фразы приветствия (при включении) и прощания (при выключении).
+        Инициалиация словаря доступных команд AVAILABLE_COMMANDS, фразы приветствия (при включении) и прощания
+        (при выключении).
+
         :param name:
         """
         self.AVAILABLE_COMMANDS = {
-            "alias": ("помощник", "бот", "помощь", "ты", "голосовой", name),
+            "alias": name,
             "tbr": ("помоги", "скажи", "расскажи", "покажи", "сколько", "произнеси", "какой"),
             "commands": {
                 "here": ["тут", "спишь", "на месте"],
@@ -32,14 +34,17 @@ class TextProcessor:
         }
 
         self.GREETING_PHRASE = (f"Приветствую, я твой универсальный помощник { name }. Ты можешь узнать о "
-                                f"моих возможностях на сайте или просто спросив меня '{ name }, что ты умеешь?'.")
+                                f"моих возможностях на сайте или просто спросив меня: { name }, что ты умеешь?")
 
         self.BYE_PHRASE = "Всего доброго, была рада помочь."
+        self.RECOGNITION_ERROR_PHRASE = "Команда не распознана."
 
     def clean(self, command: str):
         """
-        Очистка команды от лишних слов
-        :param command: строка с распознанным текстом
+        Очистка текста, выделяющая из него только необходимые для распознавания команды части.
+
+        :param command: строка с распознанным текстом.
+
         :return: строка с командой
         """
         for item in self.AVAILABLE_COMMANDS['alias']:
@@ -60,25 +65,27 @@ class TextProcessor:
     def match_command(self, command: str, ignore_all: bool):
         """
         Поиск команды в словаре AVAILABLE_COMMANDS
-        :param command: строка с командой
-        :param ignore_all: Булевая метка. Если True, то учитывается только команда ON
-        :return: трока, соответствующая ключу в словаре AVAILABLE_COMMANDS, если команда была успешно найдена, или None в противном случае.
+
+        :param command: строка с командой;
+        :param ignore_all: Булевая метка. Если ignore_all = True, то учитывается только команда ON.
+
+        :return: Если в тексте не найдено обращения к голосовому помощнику, будет возвращено None.
+                 Если обращение к голосовому помощнику найдено, однако в AVAILABLE_COMMANDS не существует запрашиваемой
+                 команды, будет возвращён служебный ключ "N-F". В случае успешного распознавания команды будет возвращен
+                 ключ этой команды.
         """
         if not command.startswith(self.AVAILABLE_COMMANDS["alias"]):
             return None
 
-        current_commands = self.clean(command).split()
-
+        command = self.clean(command)
         if ignore_all:
-            for c in current_commands:
-                if self.AVAILABLE_COMMANDS["on"].count(c):
-                    return "on"
+            if command in self.AVAILABLE_COMMANDS["commands"]["on"]:
+                return "on"
 
             return None
 
-        for key, values in self.AVAILABLE_COMMANDS["commands"].items():
-            for c in current_commands:
-                if values.count(c):
-                    return key
+        for key, values in self.AVAILABLE_COMMANDS["commands"]:
+            if command in values:
+                return key
 
-        return None
+        return "N-F"

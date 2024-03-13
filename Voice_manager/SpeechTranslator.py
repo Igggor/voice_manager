@@ -16,55 +16,61 @@ class SpeechTranslator:
         return cls.__instance
 
     def __init__(self, __recognizer_threshold: float = 0.5, __microphone_duration: float = 0.5,
-                 __language: str = "ru-RU", __recognizer_error_phrase: str = "Команда не распознана"):
+                 __language_listen: str = "ru-RU", __language_speak: str = "ru",
+                 __recognizer_error_phrase: str = "Команда не распознана"):
         """
         Конструктор класса.
         Инициализирует с необходимыми параметрами микрофон, распознаватель речи, язык работы.
-        :param __recognizer_threshold: float
-        :param __microphone_duration: максимальное время прослушивания микрофона
-        :param __language: язык ввода
-        :param __recognizer_error_phrase: фраза, воспроизводимая при невозможности распознать команду
+
+        :param __recognizer_threshold: float;
+        :param __microphone_duration: максимальное время прослушивания микрофона;
+        :param __language_listen: язык ввода;
+        :param __language_speak: язык вывода;
+        :param __recognizer_error_phrase: фраза, воспроизводимая при невозможности распознать речь.
         """
         self.MICROPHONE = speech_recognition.Microphone(device_index=1)
         self.MICROPHONE_DURATION = __microphone_duration
 
         self.RECOGNIZER = speech_recognition.Recognizer()
         self.RECOGNIZER.pause_threshold = __recognizer_threshold
-        self.RECOGNITION_ERROR_PHRASE = __recognizer_error_phrase
 
-        self.LANGUAGE = __language
+        self.LANGUAGE_LISTEN = __language_listen
+        self.LANGUAGE_SPEAK = __language_speak
 
     # Важно! Запись логов по задумке должна производиться в классе TextProcessor!
-    def listen_сommand(self):
+    def listen_command(self):
         """
-        метод распознавания команды.
-        :return: возвращает соответствующее строковое значение,
-        или, в случае произвольной ошибки, строку "Команда не распознана".
+        Метод распознавания текста из речи.
+
+        :return: Возвращает соответствующее строковое значение,
+            или, в случае произвольной ошибки, None.
         """
         try:
-            self.RECOGNIZER.adjust_for_ambient_noise(source=self.MICROPHONE, duration=self.MICROPHONE_DURATION)
+            with self.MICROPHONE as source:
+                self.RECOGNIZER.adjust_for_ambient_noise(source=source, duration=self.MICROPHONE_DURATION)
 
-            audio = self.RECOGNIZER.listen(source=self.MICROPHONE)
-            query = self.RECOGNIZER.recognize_google(audio_data=audio, language=self.LANGUAGE).lower()
+                audio = self.RECOGNIZER.listen(source=source, timeout=3)
+
+            query = self.RECOGNIZER.recognize_google(audio_data=audio, language=self.LANGUAGE_LISTEN).lower()
 
             return query
-        except speech_recognition.UnknownValueError:
-            return None
         except:
-            return self.RECOGNITION_ERROR_PHRASE
+            return None
 
-    # Важно! Запись логов по задумке должна производиться в классе TextProcessor!
     def speak(self, output_text: str, tempo: float = 1.3):
         """
-        Синтезация текста в речь
-        :param output_text: текст для синтезации в речь
-        :param tempo: скорость воспроизведения
+        Метод для синтезации текста в речь.
+
+        :param output_text: текст для синтезации в речь;
+        :param tempo: скорость воспроизведения речи.
+
         :return:
         """
+        print(output_text)
         try:
-            tts = gTTS(text=output_text, lang=self.LANGUAGE, slow=False, tld="us")
+            tts = gTTS(text=output_text, lang=self.LANGUAGE_SPEAK, slow=False, tld="us")
             tts.save('buffer.mp3')
 
             os.system(f"play buffer.mp3 tempo { tempo }")
-        except:
-            return None
+        except Exception as ex:
+            print(ex)
