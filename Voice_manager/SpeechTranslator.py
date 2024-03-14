@@ -1,6 +1,7 @@
 import os
 import speech_recognition
 from gtts import gTTS
+from GlobalContext import *
 
 
 class SpeechTranslator:
@@ -10,32 +11,38 @@ class SpeechTranslator:
     """
     __instance = None
 
-    def __new__(cls):
+    def __new__(cls, __global_context: GlobalContext):
         if cls.__instance is None:
             cls.__instance = super(SpeechTranslator, cls).__new__(cls)
         return cls.__instance
 
-    def __init__(self, __recognizer_threshold: float = 0.5, __microphone_duration: float = 0.5,
-                 __language_listen: str = "ru-RU", __language_speak: str = "ru",
-                 __recognizer_error_phrase: str = "Команда не распознана"):
+    def __init__(self, __global_context: GlobalContext):
         """
         Конструктор класса.
         Инициализирует с необходимыми параметрами микрофон, распознаватель речи, язык работы.
 
-        :param __recognizer_threshold: float;
-        :param __microphone_duration: максимальное время прослушивания микрофона;
-        :param __language_listen: язык ввода;
-        :param __language_speak: язык вывода;
-        :param __recognizer_error_phrase: фраза, воспроизводимая при невозможности распознать речь.
+        :param __global_context: экземпляр класса глобальных настроек GlobalContext
         """
         self.MICROPHONE = speech_recognition.Microphone(device_index=1)
-        self.MICROPHONE_DURATION = __microphone_duration
-
         self.RECOGNIZER = speech_recognition.Recognizer()
-        self.RECOGNIZER.pause_threshold = __recognizer_threshold
 
-        self.LANGUAGE_LISTEN = __language_listen
-        self.LANGUAGE_SPEAK = __language_speak
+        self.MICROPHONE_DURATION = None
+        self.LANGUAGE_LISTEN = None
+        self.LANGUAGE_SPEAK = None
+
+        self.update_settings(__global_context)
+
+    def update_settings(self, __global_context: GlobalContext):
+        """
+        Метод обновления настроек микрофона и распознавателя речи.
+
+        :param __global_context: экземпляр класса глобальных настроек GlobalContext
+        """
+        self.MICROPHONE_DURATION = __global_context.microphone_duration
+        self.RECOGNIZER.pause_threshold = __global_context.recognizer_threshold
+
+        self.LANGUAGE_LISTEN = __global_context.language_listen
+        self.LANGUAGE_SPEAK = __global_context.language_speak
 
     # Важно! Запись логов по задумке должна производиться в классе TextProcessor!
     def listen_command(self):

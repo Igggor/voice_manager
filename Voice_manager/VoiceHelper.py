@@ -1,8 +1,6 @@
-from GlobalContext import *
 from TextProcessor import *
 from SpeechTranslator import *
 from Functions import *
-
 import sys
 
 
@@ -22,24 +20,26 @@ class VoiceHelper:
     # Инициализируются все составные части приложения (классы), а также словарь functions, где в качестве значений
     # хранятся функции из файла Functions.py.
 
-    # В РЕЗРАБОТКЕ, все функции помощника должны быть здесь.
+    # В РАЗРАБОТКЕ, все функции помощника должны быть здесь.
     def __init__(self):
         """
         Конструктор класса.
 
-        Инициализируются все составные части приложения (классы), а также словарь functions, где в качестве значений хранятся функции из файла Functions.py
+        Инициализируются все составные части приложения (классы), а также словарь functions, где в качестве значений
+        хранятся функции из файла Functions.py
         """
         self.global_context = GlobalContext()
-        self.text_processor = TextProcessor(self.global_context.NAME)
-        self.speech_translator = SpeechTranslator()
+        self.text_processor = TextProcessor(self.global_context)
+        self.speech_translator = SpeechTranslator(self.global_context)
 
         self.functions = {
-            "N-F": self.command_not_found,
-            "time": get_time_now,  # текущее время
+            "С-N-F": self.command_not_found, # воспроизведение, соответствующее состоянию 404
             "on": self.set_ON,  # включить
             "off": self.set_OFF,  # выключить (но оставить чувствительной к команде включения,
                                  # т.е приложение остается действующим)
             "full-off": self.exit,  # Деактивация, закрытие приложения
+
+            "time": get_time_now,  # текущее время
             "date": get_date,  # текущая дата
             "course": get_currency_course  # курс валют
         }
@@ -53,7 +53,7 @@ class VoiceHelper:
         if self.global_context.ON:
             return
 
-        self.speech_translator.speak(self.text_processor.GREETING_PHRASE)
+        self.speak(self.global_context.GREETING_PHRASE)
         self.global_context.ON = True
 
     def set_OFF(self):
@@ -65,7 +65,7 @@ class VoiceHelper:
         if not self.global_context.ON:
             return
 
-        self.speech_translator.speak(self.text_processor.BYE_PHRASE)
+        self.speak(self.global_context.BYE_PHRASE)
         self.global_context.ON = False
 
     # Важно! В перспективе здесь не только выход, но, возможно, какое-то сохранение в БД или что-то подобное.
@@ -82,7 +82,8 @@ class VoiceHelper:
 
     def listen_command(self):
         """
-        Объединение несколько функций и методов. Выполнение работы от приёма и расшифровки голоса до непосредственного выполнения требуемой функции.
+        Объединение несколько функций и методов. Выполнение работы от приёма и расшифровки голоса до непосредственного
+        выполнения требуемой функции.
 
         :return:
         """
@@ -97,7 +98,17 @@ class VoiceHelper:
         if selected_action is None:
             return
 
-        self.speech_translator.speak(self.functions[selected_action]())
+        self.speak(self.functions[selected_action]())
+
+    # В перспективе здесь должно быть собрано несколько функций, в том числе запись логов.
+    def speak(self, output_text):
+        """
+        Объединение несколько функций и методов. Выполнение работы от записи логов (not implemented) до
+        непосредственного воспроизведения текста.
+
+        :return:
+        """
+        self.speech_translator.speak(output_text)
 
     def command_not_found(self):
-        self.speech_translator.speak(self.text_processor.RECOGNITION_ERROR_PHRASE)
+        self.speak(self.global_context.RECOGNITION_ERROR_PHRASE)

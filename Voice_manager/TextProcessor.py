@@ -1,3 +1,6 @@
+from GlobalContext import *
+
+
 class TextProcessor:
     """
     Класс, отвечающий за сопоставление текста с необходимой командой.
@@ -5,12 +8,12 @@ class TextProcessor:
     """
     __instance = None
 
-    def __new__(cls, name: str):
+    def __new__(cls, __global_context: GlobalContext):
         if cls.__instance is None:
             cls.__instance = super(TextProcessor, cls).__new__(cls)
         return cls.__instance
 
-    def __init__(self, name: str):
+    def __init__(self, __global_context: GlobalContext):
         """
         Конструктор класса.
         Инициалиация словаря доступных команд AVAILABLE_COMMANDS, фразы приветствия (при включении) и прощания
@@ -18,8 +21,10 @@ class TextProcessor:
 
         :param name:
         """
+
+        # AVAILABLE_COMMANDS должен быть переработан (наверное)
         self.AVAILABLE_COMMANDS = {
-            "alias": name,
+            "alias": "Name",
             "tbr": ("помоги", "скажи", "расскажи", "покажи", "сколько", "произнеси", "какой"),
             "commands": {
                 "here": ["тут", "спишь", "на месте"],
@@ -33,12 +38,18 @@ class TextProcessor:
             }
         }
 
-        self.GREETING_PHRASE = (f"Приветствую, я твой универсальный помощник { name }. Ты можешь узнать о "
-                                f"моих возможностях на сайте или просто спросив меня: { name }, что ты умеешь?")
+        self.update_settings(__global_context)
 
-        self.BYE_PHRASE = "Всего доброго, была рада помочь."
-        self.RECOGNITION_ERROR_PHRASE = "Команда не распознана."
+    def update_settings(self, __global_context: GlobalContext):
+        """
+        Метод обновления настроек текстового процессора.
 
+        :param __global_context: экземпляр класса глобальных настроек GlobalContext
+        """
+
+        self.AVAILABLE_COMMANDS["alias"] = __global_context.NAME
+
+    # В РАЗРАБОТКЕ.
     def clean(self, command: str):
         """
         Очистка текста, выделяющая из него только необходимые для распознавания команды части.
@@ -58,20 +69,19 @@ class TextProcessor:
     # ОДНА произвольная команда из этой фразы (та, которая будет найдена первой).
     # *Комментарий автора: будет невероятно удобно, если так и останется)
 
-    # В РАЗРАБОТКЕ.
-
     # Важно! В этом методе планируется реализовать запись логов
     # (примерный вид: запрос -> что подошло -> доп. информация).
+    # В РАЗРАБОТКЕ.
     def match_command(self, command: str, ignore_all: bool):
         """
         Поиск команды в словаре AVAILABLE_COMMANDS
 
         :param command: строка с командой;
-        :param ignore_all: Булевая метка. Если ignore_all = True, то учитывается только команда ON.
+        :param ignore_all: bool-метка. Если ignore_all = True, то учитывается только команда ON.
 
         :return: Если в тексте не найдено обращения к голосовому помощнику, будет возвращено None.
                  Если обращение к голосовому помощнику найдено, однако в AVAILABLE_COMMANDS не существует запрашиваемой
-                 команды, будет возвращён служебный ключ "N-F". В случае успешного распознавания команды будет возвращен
+                 команды, будет возвращён служебный ключ "С-N-F". В случае успешного распознавания команды будет возвращен
                  ключ этой команды.
         """
         if not command.startswith(self.AVAILABLE_COMMANDS["alias"]):
@@ -88,4 +98,4 @@ class TextProcessor:
             if command in values:
                 return key
 
-        return "N-F"
+        return "С-N-F"
