@@ -62,10 +62,12 @@ def get_currency_course(**kwargs):
         return error_phrase
 
 
-def get_weather(**kwargs):
+def get_weather_now(**kwargs):
     open_weather_token = "e37d54207830a94eee9d3babc8b0d27f"
 
     city = kwargs["info"]
+    is_celsium = kwargs["celsium"]
+    is_mmHg = kwargs["mmHg"]
     error_phrase = kwargs["__error_phrase"]
 
     try:
@@ -81,12 +83,29 @@ def get_weather(**kwargs):
         pressure = int(data["main"]["pressure"])
         wind = int(data["wind"]["speed"])
 
-        return (f"Погода в городе { city } \n"
-                f"Температура: { cur_weather }° \n"
-                f"Ощущается как { feel }° \n"
-                f"Влажность: { humidity }% \n"
-                f"Давление: { pressure } { declension(pressure, 'Паскаль') } \n"
-                f"Ветер: { wind } { declension(wind, 'метр') } в секунду \n")
+        def prepare_result():
+            result = f"Погода в { city } \n"
+
+            temp1 = cur_weather if is_celsium else int(cur_weather * 9 / 5) + 32
+            result += (f"Температура: {'+' if temp1 > 0 else ''}{ temp1 } "
+                       f"{'°' if is_celsium else declension(temp1, 'фаренгейт')} \n")
+
+            temp2 = feel if is_celsium else int(feel * 9 / 5) + 32
+            result += (f"Ощущается как {'+' if temp2 > 0 else ''}{ temp2 } "
+                       f"{'°' if is_celsium else declension(temp2, 'фаренгейт')} \n")
+
+            result += f"Влажность: { humidity }% \n"
+
+            prs = int(pressure * 3 / 4) if is_mmHg else pressure
+            prs_phrase = f"милли{ declension(prs, 'метр') } ртутного столба" if is_mmHg \
+                else f"гекто{ declension(prs, 'паскаль')}"
+
+            result += f"Давление: { prs } { prs_phrase } \n"
+            result += f"Ветер: { wind } { declension(wind, 'метр') } в секунду \n"
+
+            return result
+
+        return prepare_result()
 
     except Exception as ex:
         print(ex)

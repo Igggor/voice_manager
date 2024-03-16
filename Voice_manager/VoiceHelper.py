@@ -18,10 +18,6 @@ class VoiceHelper:
             cls.__instance = super(VoiceHelper, cls).__new__(cls)
         return cls.__instance
 
-    # Конструктор.
-    # Инициализируются все составные части приложения (классы), а также словарь functions, где в качестве значений
-    # хранятся функции из файла Functions.py.
-
     # В РАЗРАБОТКЕ, все функции помощника должны быть здесь.
     def __init__(self):
         """
@@ -34,18 +30,67 @@ class VoiceHelper:
         self.text_processor = TextProcessor(self.global_context)
         self.speech_translator = SpeechTranslator(self.global_context)
 
+        # self.functions хранит ключи, по которым можно обратиться к самой функции ("function") и её аргументам,
+        # зависящим от глобальных настроек ("static-args").
         self.functions = {
-            "С-N-F": lambda: self.global_context.RECOGNITION_ERROR_PHRASE,  # воспроизведение фразы, соответствующей
-                                                                            # состоянию 404
-            "on": self.set_ON,  # включить
-            "off": self.set_OFF,  # выключить (но оставить чувствительной к команде включения,
-                                  # т.е приложение остается действующим)
-            "full-off": self.exit,  # Деактивация, закрытие приложения
+            "С-N-F":  # воспроизведение фразы, соответствующей состоянию 404
+            {
+                "function": lambda: self.global_context.RECOGNITION_ERROR_PHRASE,
+                "static-args": dict()
+            },
+            "on":  # включить
+            {
+                "function": self.set_ON,
+                "static-args": dict()
+            },
+            "off":  # выключить (но оставить чувствительной к команде включения, т.е приложение остается действующим)
+            {
+                "function": self.set_OFF,
+                "static-args": dict()
+            },
+            "full-off":  # Деактивация, закрытие приложения
+            {
+                "function": self.exit,
+                "static-args": dict()
+            },
+            "time":  # текущее время
+            {
+                "function": get_time_now,
+                "static-args": dict()
+            },
+            "date":  # текущая дата
+            {
+                "function": get_date,
+                "static-args": dict()
+            },
+            "course":  # курс валют
+            {
+                "function": get_currency_course,
+                "static-args": dict()
+            },
+            "weather-now": {  # текущая погода
+                "function": get_weather_now,
+                "static-args": dict()
+            }
+        }
 
-            "time": get_time_now,  # текущее время
-            "date": get_date,  # текущая дата
-            "course": get_currency_course,  # курс валют
-            "weather": get_weather  # текущая погода
+        self.update_args()
+
+    # В перспективе будет вызываться при каждом изменении настроек помощника. Это будет гарантировать актуальность
+    # аргументов функции, а значит корректность их работы.
+    def update_args(self):
+        """
+        Обновление аргументов функций голосового помощника, задаваемые настройками.
+
+        :return:
+        """
+        self.functions["course"]["static-args"] = {
+            "__error_phrase": self.global_context.REQUEST_ERROR_PHRASE
+        }
+        self.functions["weather-now"]["static-args"] = {
+            "celsium": self.global_context.weather_temp_celsium,
+            "mmHg": self.global_context.weather_pressure_mmHg,
+            "__error_phrase": self.global_context.REQUEST_ERROR_PHRASE
         }
 
     def set_ON(self, **kwargs):
@@ -98,12 +143,14 @@ class VoiceHelper:
 
         print(recognized_query)
 
-        selected_action, info = self.text_processor.match_command(recognized_query, not self.global_context.ON)
+        selected_action, additive = self.text_processor.match_command(recognized_query, not self.global_context.ON)
         if selected_action is None:
             return
 
-        self.speak(self.functions[selected_action](info=info,
-                                                   __error_phrase=self.global_context.REQUEST_ERROR_PHRASE))
+        self.speak(self.functions[selected_action]["function"](
+            **self.functions[selected_action]["static-args"],
+            info=additive
+        ))
 
     # В перспективе здесь должно быть собрано несколько функций, в том числе запись логов.
     def speak(self, output_text: str):

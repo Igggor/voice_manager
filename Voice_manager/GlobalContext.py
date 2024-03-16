@@ -20,6 +20,9 @@ class GlobalContext:
         self.language_listen = "ru-RU"
         self.language_speak = "ru"
 
+        self.weather_temp_celsium = True
+        self.weather_pressure_mmHg = True
+
         self.GREETING_PHRASE = (f"Приветствую, я твой универсальный помощник { self.NAME }. "
                                 f"Ты можешь узнать о моих возможностях на сайте или просто спросив меня: "
                                 f"{ self.NAME }, что ты умеешь?")

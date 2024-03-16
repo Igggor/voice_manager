@@ -4,6 +4,7 @@ import os
 import speech_recognition
 from gtts import gTTS
 
+
 class SpeechTranslator:
     """
     Класс, отвечающий за перевод СТРОКА <-> ГОЛОС (распознавание и произнесение).
@@ -79,7 +80,7 @@ class SpeechTranslator:
         """
         print(output_text)
         try:
-            tts = gTTS(text=output_text, lang=self.language_speak, slow=False, tld="us")
+            tts = gTTS(text=output_text, lang=self.language_speak, tld="com", timeout=10)
             tts.save('buffer.mp3')
 
             os.system(f"play buffer.mp3 tempo { tempo }")
