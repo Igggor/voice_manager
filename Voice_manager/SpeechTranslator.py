@@ -78,11 +78,10 @@ class SpeechTranslator:
         :return:
         """
         print(output_text)
-        # try:
-        tts = gTTS(text=output_text)
-        tts.timeout = 7
-        tts.save('buffer.mp3')
+        try:
+            tts = gTTS(text=output_text, lang=self.language_speak, slow=False, tld="us")
+            tts.save('buffer.mp3')
 
-        os.system(f"play buffer.mp3 tempo { tempo }")
-        # except Exception as ex:
-        #    print(ex)
+            os.system(f"play buffer.mp3 tempo { tempo }")
+        except Exception as ex:
+            print(ex)
