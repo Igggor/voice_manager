@@ -16,6 +16,7 @@ class GlobalContext:
 
         self.recognizer_threshold = 0.5
         self.microphone_duration = 0.5
+        self.microphone_timeout = 1
         self.language_listen = "ru-RU"
         self.language_speak = "ru"
 
@@ -24,3 +25,4 @@ class GlobalContext:
                                 f"{ self.NAME }, что ты умеешь?")
         self.BYE_PHRASE = "Всего доброго, была рада помочь."
         self.RECOGNITION_ERROR_PHRASE = "Команда не распознана"
+        self.REQUEST_ERROR_PHRASE = "Извините, во время получения данных произошла непредвиденная ошибка. Повторите запрос позднее."

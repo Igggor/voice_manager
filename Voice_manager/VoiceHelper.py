@@ -1,6 +1,8 @@
 from TextProcessor import *
 from SpeechTranslator import *
 from Functions import *
+from GlobalContext import *
+
 import sys
 
 
@@ -33,18 +35,20 @@ class VoiceHelper:
         self.speech_translator = SpeechTranslator(self.global_context)
 
         self.functions = {
-            "С-N-F": self.command_not_found, # воспроизведение, соответствующее состоянию 404
+            "С-N-F": lambda: self.global_context.RECOGNITION_ERROR_PHRASE,  # воспроизведение фразы, соответствующей
+                                                                            # состоянию 404
             "on": self.set_ON,  # включить
             "off": self.set_OFF,  # выключить (но оставить чувствительной к команде включения,
-                                 # т.е приложение остается действующим)
+                                  # т.е приложение остается действующим)
             "full-off": self.exit,  # Деактивация, закрытие приложения
 
             "time": get_time_now,  # текущее время
             "date": get_date,  # текущая дата
-            "course": get_currency_course  # курс валют
+            "course": get_currency_course,  # курс валют
+            "weather": get_weather  # текущая погода
         }
 
-    def set_ON(self):
+    def set_ON(self, **kwargs):
         """
         Включение голосового помощника.
 
@@ -56,7 +60,7 @@ class VoiceHelper:
         self.speak(self.global_context.GREETING_PHRASE)
         self.global_context.ON = True
 
-    def set_OFF(self):
+    def set_OFF(self, **kwargs):
         """
         Частичное выключение голосового помощника (спящий режим).
 
@@ -69,7 +73,7 @@ class VoiceHelper:
         self.global_context.ON = False
 
     # Важно! В перспективе здесь не только выход, но, возможно, какое-то сохранение в БД или что-то подобное.
-    def exit(self):
+    def exit(self, **kwargs):
         """
         Полное выключение голосового помощника.
 
@@ -94,14 +98,15 @@ class VoiceHelper:
 
         print(recognized_query)
 
-        selected_action = self.text_processor.match_command(recognized_query, not self.global_context.ON)
+        selected_action, info = self.text_processor.match_command(recognized_query, not self.global_context.ON)
         if selected_action is None:
             return
 
-        self.speak(self.functions[selected_action]())
+        self.speak(self.functions[selected_action](info=info,
+                                                   __error_phrase=self.global_context.REQUEST_ERROR_PHRASE))
 
     # В перспективе здесь должно быть собрано несколько функций, в том числе запись логов.
-    def speak(self, output_text):
+    def speak(self, output_text: str):
         """
         Объединение несколько функций и методов. Выполнение работы от записи логов (not implemented) до
         непосредственного воспроизведения текста.
@@ -109,6 +114,3 @@ class VoiceHelper:
         :return:
         """
         self.speech_translator.speak(output_text)
-
-    def command_not_found(self):
-        self.speak(self.global_context.RECOGNITION_ERROR_PHRASE)

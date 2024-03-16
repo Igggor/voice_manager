@@ -1,8 +1,8 @@
+from GlobalContext import GlobalContext
+
 import os
 import speech_recognition
 from gtts import gTTS
-from GlobalContext import *
-
 
 class SpeechTranslator:
     """
@@ -26,9 +26,10 @@ class SpeechTranslator:
         self.MICROPHONE = speech_recognition.Microphone(device_index=1)
         self.RECOGNIZER = speech_recognition.Recognizer()
 
-        self.MICROPHONE_DURATION = None
-        self.LANGUAGE_LISTEN = None
-        self.LANGUAGE_SPEAK = None
+        self.microphone_duration = None
+        self.language_listen = None
+        self.language_speak = None
+        self.listening_timeout = None
 
         self.update_settings(__global_context)
 
@@ -38,11 +39,12 @@ class SpeechTranslator:
 
         :param __global_context: экземпляр класса глобальных настроек GlobalContext
         """
-        self.MICROPHONE_DURATION = __global_context.microphone_duration
+        self.microphone_duration = __global_context.microphone_duration
         self.RECOGNIZER.pause_threshold = __global_context.recognizer_threshold
 
-        self.LANGUAGE_LISTEN = __global_context.language_listen
-        self.LANGUAGE_SPEAK = __global_context.language_speak
+        self.language_listen = __global_context.language_listen
+        self.language_speak = __global_context.language_speak
+        self.listening_timeout = __global_context.microphone_timeout
 
     # Важно! Запись логов по задумке должна производиться в классе TextProcessor!
     def listen_command(self):
@@ -54,14 +56,16 @@ class SpeechTranslator:
         """
         try:
             with self.MICROPHONE as source:
-                self.RECOGNIZER.adjust_for_ambient_noise(source=source, duration=self.MICROPHONE_DURATION)
+                # self.RECOGNIZER.adjust_for_ambient_noise(source=source, duration=self.microphone_duration)
 
-                audio = self.RECOGNIZER.listen(source=source, timeout=3)
+                audio = self.RECOGNIZER.listen(source=source, timeout=self.listening_timeout)
 
-            query = self.RECOGNIZER.recognize_google(audio_data=audio, language=self.LANGUAGE_LISTEN).lower()
+            query = self.RECOGNIZER.recognize_google(audio_data=audio, language=self.language_listen).lower()
 
+            print(query)
             return query
-        except:
+        except Exception as ex:
+            print("! ", ex)
             return None
 
     def speak(self, output_text: str, tempo: float = 1.3):
@@ -74,10 +78,11 @@ class SpeechTranslator:
         :return:
         """
         print(output_text)
-        try:
-            tts = gTTS(text=output_text, lang=self.LANGUAGE_SPEAK, slow=False, tld="us")
-            tts.save('buffer.mp3')
+        # try:
+        tts = gTTS(text=output_text)
+        tts.timeout = 7
+        tts.save('buffer.mp3')
 
-            os.system(f"play buffer.mp3 tempo { tempo }")
-        except Exception as ex:
-            print(ex)
+        os.system(f"play buffer.mp3 tempo { tempo }")
+        # except Exception as ex:
+        #    print(ex)

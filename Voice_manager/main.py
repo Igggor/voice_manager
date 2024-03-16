@@ -1,6 +1,5 @@
 from VoiceHelper import *
 
-
 voiceHelper = VoiceHelper()
 voiceHelper.set_ON()
 
