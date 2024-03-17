@@ -88,12 +88,14 @@ def get_weather_now(**kwargs):
             result = f"Погода в городе { city } \n"
 
             temp1 = cur_weather if is_celsium else int(cur_weather * 9 / 5) + 32
+            temp1_pf = " " + declension(temp1, 'фаренгейт')
             result += (f"Температура: {'+' if temp1 > 0 else ''}{ temp1 }"
-                       f"{'°' if is_celsium else declension(temp1, 'фаренгейт')} \n")
+                       f"{'°' if is_celsium else temp1_pf} \n")
 
             temp2 = feel if is_celsium else int(feel * 9 / 5) + 32
+            temp2_pf = " " + declension(temp2, 'фаренгейт')
             result += (f"Ощущается как {'+' if temp2 > 0 else ''}{ temp2 }"
-                       f"{'°' if is_celsium else declension(temp2, 'фаренгейт')} \n")
+                       f"{'°' if is_celsium else temp2_pf} \n")
 
             result += f"Влажность: { humidity }% \n"
 
