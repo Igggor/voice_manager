@@ -24,9 +24,10 @@ class TextProcessor:
 
         # AVAILABLE_COMMANDS должен быть переработан (наверное)
         self.AVAILABLE_COMMANDS = {
-            "alias": "Name",
+            "alias": ["Name"],
             "commands": {
                 "thanks": ["спасибо", "благодарю"],
+                "full-off": ["отключись полностью", 'отключить полностью'],
                 "off": ["отключись"],
                 "on": ["привет", "включись"],
                 "time": ["текущее время", "сколько времени"],
@@ -46,7 +47,7 @@ class TextProcessor:
         :param __global_context: экземпляр класса глобальных настроек GlobalContext
         """
 
-        self.AVAILABLE_COMMANDS["alias"] = __global_context.NAME
+        self.AVAILABLE_COMMANDS["alias"] = [__global_context.NAME.lower()]
 
     # В РАЗРАБОТКЕ.
     def clean(self, command: str, pick_additive: bool = False):
@@ -62,8 +63,9 @@ class TextProcessor:
             command = command.replace(item, "").strip()
 
         if pick_additive:
-            for item in self.AVAILABLE_COMMANDS['commands']:
-                command = command.replace(item, "").strip()
+            for item in self.AVAILABLE_COMMANDS['commands'].values():
+                for ell in item:
+                    command = command.replace(ell, "").strip()
 
         return None if command == "" else command
 
@@ -87,7 +89,7 @@ class TextProcessor:
                  команды, будет возвращён служебный ключ { "С-N-F", None }. В случае успешного распознавания команды
                  будет возвращен ключ этой команды и, возможно, доп. параметры или None в зависимости от типа команды.
         """
-        if not command.startswith(self.AVAILABLE_COMMANDS["alias"]):
+        if not command.startswith(self.AVAILABLE_COMMANDS["alias"][0]):
             return None, None
 
         command = self.clean(command)
@@ -97,10 +99,9 @@ class TextProcessor:
 
             return None, None
 
-        for key, values in self.AVAILABLE_COMMANDS["commands"]:
+        for key, values in self.AVAILABLE_COMMANDS["commands"].items():
             if command in values:
                 return key, self.clean(command, True)
-
         return "С-N-F", None
 
 # ВЫЗОВ КОМАНД:
