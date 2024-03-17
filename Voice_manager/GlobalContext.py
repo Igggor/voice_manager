@@ -13,6 +13,7 @@ class GlobalContext:
     def __init__(self):
         self.ON = False
         self.NAME = "Среда"
+        self.CITY = "Пушкино"
 
         self.recognizer_threshold = 0.5
         self.microphone_duration = 0.5
@@ -28,4 +29,5 @@ class GlobalContext:
                                 f"{ self.NAME }, что ты умеешь?")
         self.BYE_PHRASE = "Всего доброго, была рада помочь."
         self.RECOGNITION_ERROR_PHRASE = "Команда не распознана"
-        self.REQUEST_ERROR_PHRASE = "Извините, во время получения данных произошла непредвиденная ошибка. Повторите запрос позднее."
+        self.REQUEST_ERROR_PHRASE = ("Извините, во время получения данных произошла непредвиденная ошибка. "
+                                     "Повторите запрос позднее.")

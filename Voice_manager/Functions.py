@@ -65,7 +65,8 @@ def get_currency_course(**kwargs):
 def get_weather_now(**kwargs):
     open_weather_token = "e37d54207830a94eee9d3babc8b0d27f"
 
-    city = kwargs["info"]
+    city = kwargs["city"] if kwargs["info"] is None else kwargs["info"]
+
     is_celsium = kwargs["celsium"]
     is_mmHg = kwargs["mmHg"]
     error_phrase = kwargs["__error_phrase"]
@@ -84,14 +85,14 @@ def get_weather_now(**kwargs):
         wind = int(data["wind"]["speed"])
 
         def prepare_result():
-            result = f"Погода в { city } \n"
+            result = f"Погода в городе { city } \n"
 
             temp1 = cur_weather if is_celsium else int(cur_weather * 9 / 5) + 32
-            result += (f"Температура: {'+' if temp1 > 0 else ''}{ temp1 } "
+            result += (f"Температура: {'+' if temp1 > 0 else ''}{ temp1 }"
                        f"{'°' if is_celsium else declension(temp1, 'фаренгейт')} \n")
 
             temp2 = feel if is_celsium else int(feel * 9 / 5) + 32
-            result += (f"Ощущается как {'+' if temp2 > 0 else ''}{ temp2 } "
+            result += (f"Ощущается как {'+' if temp2 > 0 else ''}{ temp2 }"
                        f"{'°' if is_celsium else declension(temp2, 'фаренгейт')} \n")
 
             result += f"Влажность: { humidity }% \n"

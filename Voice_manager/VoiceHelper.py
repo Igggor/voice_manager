@@ -90,6 +90,7 @@ class VoiceHelper:
         self.functions["weather-now"]["static-args"] = {
             "celsium": self.global_context.weather_temp_celsium,
             "mmHg": self.global_context.weather_pressure_mmHg,
+            "city": self.global_context.CITY,
             "__error_phrase": self.global_context.REQUEST_ERROR_PHRASE
         }
 
