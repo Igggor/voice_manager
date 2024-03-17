@@ -35,7 +35,7 @@ class VoiceHelper:
         self.functions = {
             "С-N-F":  # воспроизведение фразы, соответствующей состоянию 404
             {
-                "function": lambda: self.global_context.RECOGNITION_ERROR_PHRASE,
+                "function": self.not_found,
                 "static-args": dict()
             },
             "on":  # включить
@@ -75,7 +75,7 @@ class VoiceHelper:
         }
 
         self.update_args()
-
+    
     # В перспективе будет вызываться при каждом изменении настроек помощника. Это будет гарантировать актуальность
     # аргументов функции, а значит корректность их работы.
     def update_args(self):
@@ -130,6 +130,9 @@ class VoiceHelper:
 
         pass
 
+    def not_found(self, **kwargs):
+        return self.global_context.RECOGNITION_ERROR_PHRASE
+
     def listen_command(self):
         """
         Объединение несколько функций и методов. Выполнение работы от приёма и расшифровки голоса до непосредственного
@@ -148,6 +151,7 @@ class VoiceHelper:
         if selected_action is None:
             return
 
+        print(selected_action, additive)
         self.speak(self.functions[selected_action]["function"](
             **self.functions[selected_action]["static-args"],
             info=additive
