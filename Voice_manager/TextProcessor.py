@@ -50,28 +50,63 @@ class TextProcessor:
         self.AVAILABLE_COMMANDS["alias"] = [__global_context.NAME.lower()]
 
     # В РАЗРАБОТКЕ.
-    def clean(self, command: str, pick_additive: bool = False):
+    def clean_alias(self, command: str):
         """
-        Очистка текста, выделяющая из него только необходимые для распознавания команды части.
+        Метод, удаляющий обращение к помощнику.
 
         :param command: str: строка с распознанным текстом.
-        :param pick_additive: bool: если задано True, то в запросе выделяется только доп. информация.
 
         :return: Строка с полученной командой.
         """
         for item in self.AVAILABLE_COMMANDS['alias']:
             command = command.replace(item, "").strip()
 
-        if pick_additive:
-            for item in self.AVAILABLE_COMMANDS['commands'].values():
-                for ell in item:
-                    command = command.replace(ell, "").strip()
+        return None if command == "" else command
+
+    def clean_extend(self, command: str, prefix: str):
+        """
+        Выделение доп. информации для конкретной команды, заданной параметром prefix.
+
+        :param command: str: строка с распознанным текстом.
+        :param prefix: str: текст команды, для которой необходимо найти доп. информацию
+
+        :return: Доп. информация к этой команде / None, если таковой нет.
+        """
+        command = command[len(prefix) + 1:]
+
+        for key, value in self.AVAILABLE_COMMANDS["commands"].items():
+            for v in value:
+                find_result = command.find(v)
+                if find_result == -1:
+                    continue
+
+                # если find_result == 0, то пробела, который нужно удалить, перед ним нет, и вычитать единицу не нужно.
+                command = command[:(0 if find_result == 0 else find_result - 1)]
 
         return None if command == "" else command
 
-    # Важно! В текущем варианте строку можно сопоставить только одной команде. Иначе говоря, одной фразе соответствует
-    # ОДНА произвольная команда из этой фразы (та, которая будет найдена первой).
-    # *Комментарий автора: будет невероятно удобно, если так и останется)
+    def pick_additive(self, command: str, index: int):
+        """
+        Выделение доп. информации для команды, заданной положением в строке.
+
+        :param command: str: строка с распознанным текстом.
+        :param index: int: индекс в строке (нумерация с нуля), с которого, предположительно, начинается команда,
+                           для которой нужно выделить доп. информацию
+
+        :return: Если найдена команда, начинающаяся со слова с индексом index, то будет возвращена пара вида
+                 [ ключ команды, доп. информация к этой команде / None, если таковой нет ]. В противном случае будет
+                 возвращено None.
+        """
+        command = ' '.join(command.split()[index:])
+        for key, value in self.AVAILABLE_COMMANDS["commands"].items():
+            for v in value:
+                if not command.startswith(v):
+                    continue
+
+                additive_info = self.clean_extend(command, v)
+                return [key, additive_info]
+
+        return None
 
     # Важно! В этом методе планируется реализовать запись логов
     # (примерный вид: запрос -> что подошло -> доп. информация).
@@ -81,33 +116,48 @@ class TextProcessor:
         Поиск команды в словаре AVAILABLE_COMMANDS
         Возвращает пару вида {ключ команды; дополнительные данные}.
 
-        :param command: строка с командой;
-        :param ignore_all: bool-метка. Если ignore_all = True, то учитывается только команда ON.
+        :param command: строка с командой
+        :param ignore_all: bool-метка. Если ignore_all = True, то учитывается только команда ON
 
-        :return: Если в тексте не найдено обращения к голосовому помощнику, будет возвращено { None; None }.
+        :return: Если в тексте не найдено обращения к голосовому помощнику, будет возвращено [[ None; None ]].
                  Если обращение к голосовому помощнику найдено, однако в AVAILABLE_COMMANDS не существует запрашиваемой
-                 команды, будет возвращён служебный ключ { "С-N-F", None }. В случае успешного распознавания команды
-                 будет возвращен ключ этой команды и, возможно, доп. параметры или None в зависимости от типа команды.
+                 команды, будет возвращён служебный ключ [[ "С-N-F", None ]]. В случае успешного распознавания команд
+                 будет возвращен список из пар вида
+                 [ ключ команды, доп. информация к этой команде / None, если таковой нет ].
         """
-        if not command.startswith(self.AVAILABLE_COMMANDS["alias"][0]):
-            return None, None
+        selected_actions = list()
+        if not any(command.startswith(alias) for alias in self.AVAILABLE_COMMANDS["alias"]):
+            selected_actions.append([None, None])
+            return selected_actions
 
-        command = self.clean(command)
+        command = self.clean_alias(command)
         if ignore_all:
-            if command in self.AVAILABLE_COMMANDS["commands"]["on"]:
-                return "on", None
+            if any(on in command for on in self.AVAILABLE_COMMANDS["commands"]["on"]):
+                selected_actions.append(["on", None])
+            else:
+                selected_actions.append([None, None])
 
-            return None, None
+            return selected_actions
 
-        for key, values in self.AVAILABLE_COMMANDS["commands"].items():
-            if command in values:
-                return key, self.clean(command, True)
-        return "С-N-F", None
+        command_size = len(command.split())
+        for it in range(command_size):
+            picking_result = self.pick_additive(command, it)
+            if picking_result is None:
+                continue
+
+            selected_actions.append(picking_result)
+
+        print("[Log]:", selected_actions)
+        if len(selected_actions) != 0:
+            return selected_actions
+        else:
+            selected_actions.append(["С-N-F", None])
+            return selected_actions
 
 # ВЫЗОВ КОМАНД:
 #   1. ВКЛЮЧЕНИЕ: Среда, { включись / привет }
 #   2. ОТКЛЮЧЕНИЕ: Среда, отключись
-#   3. ПОЛНОЕ ОТКЛЮЧЕНИЕ: Not implemented yet
+#   3. ПОЛНОЕ ОТКЛЮЧЕНИЕ: Среда, отключись полностью
 #   4. ТЕКУЩЕЕ ВРЕМЯ: Среда, { текущее время / сколько времени }
 #   5. ТЕКУЩАЯ ДАТА: Среда, { какой сегодня день / сегодняшняя дата }
 #   6. КУРС ВАЛЮТ: Среда, курс валют

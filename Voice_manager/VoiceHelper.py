@@ -147,15 +147,15 @@ class VoiceHelper:
 
         print(recognized_query)
 
-        selected_action, additive = self.text_processor.match_command(recognized_query, not self.global_context.ON)
-        if selected_action is None:
+        selected_actions = self.text_processor.match_command(recognized_query, not self.global_context.ON)
+        if selected_actions == [[None, None]]:
             return
 
-        print(selected_action, additive)
-        self.speak(self.functions[selected_action]["function"](
-            **self.functions[selected_action]["static-args"],
-            info=additive
-        ))
+        for key, additive in selected_actions:
+            self.speak(self.functions[key]["function"](
+                **self.functions[key]["static-args"],
+                info=additive
+            ))
 
     # В перспективе здесь должно быть собрано несколько функций, в том числе запись логов.
     def speak(self, output_text: str):
