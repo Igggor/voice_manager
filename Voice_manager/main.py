@@ -1,7 +1,7 @@
 from VoiceHelper import *
 
 voiceHelper = VoiceHelper()
-voiceHelper.set_ON()
+voiceHelper.ON()
 
 while True:
     voiceHelper.listen_command()
