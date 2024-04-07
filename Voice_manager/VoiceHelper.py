@@ -2,6 +2,7 @@ from TextProcessor import *
 from SpeechTranslator import *
 from Functions import *
 from Classes import *
+from random import randint
 
 import sys
 
@@ -37,77 +38,103 @@ class VoiceHelper:
         self.functions = {
             "С-N-F":
                 Command(
-                    name="Команда не распознана",
-                    description="Запрошенная команда не найдена",
-                    function=self.not_found
+                    name="Команда не распознана.",
+                    description="Запрошенная команда не найдена.",
+                    function=self.not_found,
+                    additive_reference=0
                 ),
             "F-E":
                 Command(
-                    name="Неверный формат команды",
-                    description="Команда распознана корректно, однако нарушен её формат",
-                    function=self.wrong_format
+                    name="Неверный формат команды.",
+                    description="Команда распознана корректно, однако нарушен её формат.",
+                    function=self.wrong_format,
+                    additive_reference=2
                 ),
 
             "on":
                 Command(
-                    name="Включение голосового помощника",
-                    description="Во включенном состоянии глосовой помощник прослушивает команды и исполняет их",
-                    function=self.set_ON
+                    name="Включение голосового помощника.",
+                    description="Во включенном состоянии глосовой помощник прослушивает команды и исполняет их.",
+                    function=self.set_ON,
+                    additive_reference=0
+                ),
+            "features":
+                Command(
+                    name="Каковы же возможности голосового помощника?",
+                    description="Они безграничны!",
+                    function=self.features,
+                    additive_reference=0
+                ),
+            "thanks":
+                Command(
+                    name="Рада стараться.",
+                    description="Всегда!",
+                    function=self.thanks,
+                    additive_reference=0
                 ),
             "off":
                 Command(
                     name="Перевод голосового помощника в режим гибернации",
                     description="В режиме сна приложение не закрывается, однако не воспринимает голосовые команды",
-                    function=self.set_OFF
+                    function=self.set_OFF,
+                    additive_reference=0
                 ),
             "full-off":
                 Command(
                     name="Полное выключение голосового помощника",
                     description="Выключение приложения",
-                    function=self.exit
+                    function=self.exit,
+                    additive_reference=0
                 ),
             "time":
                 Command(
                     name="Получение текущего времени",
                     description="Голосовой помощник получает системное время и озвучивает его",
-                    function=get_time_now
+                    function=get_time_now,
+                    additive_reference=0
                 ),
             "date":
                 Command(
                     name="Получение текущей даты",
                     description="Голосовой помощник получает текущую дату и озвучивает её",
-                    function=get_date
+                    function=get_date,
+                    additive_reference=0
                 ),
             "course":
                 Command(
                     name="Получение текущего курса валют",
                     description="Голосовой помощник получает курс доллара и евро к рублю Центрального Банка России "
                                 "(по состоянию на данный момент) и озвучивает его",
-                    function=get_currency_course
+                    function=get_currency_course,
+                    additive_reference=0
                 ),
             "weather-now":
                 Command(
                     name="Получение текущей погоды",
                     description="Голосовой помощник получает текущую погоду с заданными параметрами и озвучивает её",
-                    function=get_weather_now
+                    function=get_weather_now,
+                    additive_reference=1
                 ),
             "create-scenario":
                 Command(
                     name="Создание сценария",
                     description="Создание группы команд с заданным именем, выполняющихся поочередно",
-                    function=self.scenario_interactor.add_scenario
+                    function=self.scenario_interactor.add_scenario,
+                    additive_reference=2
                 ),
             "execute-scenario":
                 Command(
                     name="Исполнение сценария",
                     description="Исполнение заданной группы команд, в том порядке, в котором они были даны при создании",
-                    function=self.scenario_interactor.execute
+                    function=self.scenario_interactor.execute,
+                    additive_reference=2
                 ),
             "delete-scenario":
                 Command(
                     name="Удаление сценария",
                     description="Удаление группы команд по заданному имени",
-                    function=self.scenario_interactor.delete_scenario
+                    function=self.scenario_interactor.delete_scenario,
+                    additive_reference=2
                 )
         }
 
@@ -150,7 +177,6 @@ class VoiceHelper:
     def EXIT(self):
         self.execute([self.functions["full-off"]])
 
-
     def set_ON(self, **kwargs):
         """
         Включение голосового помощника.
@@ -191,15 +217,49 @@ class VoiceHelper:
         pass
 
     def not_found(self, **kwargs):
+        """
+        Уведомление о том, что команда не была найдена.
+
+        :return:
+        """
+
         return self.global_context.RECOGNITION_ERROR_PHRASE
 
     def wrong_format(self, **kwargs):
-        wrong_command = kwargs["info"]
-        return self.global_context.WRONG_COMMAND_FORMAT_PHRASE + self.functions[wrong_command].name.lower()
+        """
+        Уведомление об ошибке формата команды  с доп. информацией: конкретика об ошибке и название команды,
+        в которой она была нарушена.
+
+        :return:
+        """
+
+        wrong_command = kwargs["info"][0]
+        error = kwargs["info"][1]
+
+        return (self.global_context.WRONG_COMMAND_FORMAT_PHRASE + self.functions[wrong_command].name.lower() + "; \n" +
+                error)
+
+    def features(self, **kwargs):
+        """
+        Полное выключение голосового помощника.
+
+        :return:
+        """
+
+        return self.global_context.FEATURES_PHRASE
+
+    def thanks(self, **kwargs):
+        """
+        Полное выключение голосового помощника.
+
+        :return:
+        """
+
+        return self.global_context.THANKS_PHRASES[randint(0, len(self.global_context.THANKS_PHRASES) - 1)]
 
     def translate_commands(self, commands: list):
         """
-        Перевод ключ функции -> функция.
+        Перевод ключ функции -> функция. Также проверяет соответствие аргументов команд требуемому формату.
 
         :param commands: list: список пар вида [ключ функции, доп. информация].
 
@@ -211,6 +271,19 @@ class VoiceHelper:
             command.additive = commands[0][1]
             command.subcommands = self.translate_commands(commands[1:])
 
+            if command.additive_reference == 0:
+                command.additive = None
+            if command.additive is None:
+                output = self.functions["F-E"]
+                output.additive = ["create-scenario", "Необходимо указывать имя создаваемого сценария."]
+
+                return output
+            if command.subcommands is None:
+                output = self.functions["F-E"]
+                output.additive = ["create-scenario", "Необходимо указывать исполняемые функции создаваемого сценария."]
+
+                return output
+
             translated.append(command)
             return translated
 
@@ -218,9 +291,17 @@ class VoiceHelper:
             command = self.functions[key]
             command.additive = additive
 
+            if command.additive_reference == 0:
+                command.additive = None
+            if command.additive_reference == 2 and (command.additive is None):
+                output = self.functions["F-E"]
+                output.additive = [key, "Недостаточно аргументов для вызова данной команды."]
+
+                return output
+
             translated.append(command)
 
-        return translated
+        return None if len(translated) == 0 else translated
 
     def listen_command(self):
         """

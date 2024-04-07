@@ -46,7 +46,10 @@ def get_currency_course(**kwargs):
 
     error_phrase = kwargs["__error_phrase"]
     try:
-        data = requests.get('https://www.cbr-xml-daily.ru/daily_json.js').json()
+        data = requests.get(
+            url="https://www.cbr-xml-daily.ru/daily_json.js",
+            timeout=1
+        ).json()
 
         usd_formal = round(data['Valute']['USD']['Value'], 2)
         euro_formal = round(data['Valute']['EUR']['Value'], 2)
@@ -85,7 +88,7 @@ def get_weather_now(**kwargs):
     try:
         r = requests.get(
             url=f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={open_weather_token}&units=metric",
-            timeout=0.5
+            timeout=1
         )
 
         data = r.json()

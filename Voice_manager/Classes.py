@@ -19,6 +19,12 @@ class Command:
         self.name = kwargs["name"]
         self.description = kwargs["description"]
         self.function = kwargs["function"]
+
+        # Если additive_reference равно 2, то доп. информация обязательна;
+        # Если additive_reference равно 1, то доп. информация опциональна;
+        # Если additive_reference равно 0, то доп. информация не нужна и удаляется.
+        self.additive_reference = kwargs["additive_reference"]
+
         self.additive = None
         self.static_args = dict()
         self.subcommands = list()
