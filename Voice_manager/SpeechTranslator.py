@@ -22,8 +22,6 @@ class SpeechTranslator:
         Конструктор класса.
         Инициализирует с необходимыми параметрами микрофон, распознаватель речи, язык работы.
 
-        :param __global_context: экземпляр класса глобальных настроек GlobalContext.
-
         :return:
         """
 
@@ -36,22 +34,22 @@ class SpeechTranslator:
         self.listening_timeout = None
         self.speak_speed = None
 
-    def update_settings(self, __global_context: GlobalContext):
+    def update_settings(self):
         """
         Метод обновления настроек микрофона и распознавателя речи.
-
-        :param __global_context: экземпляр класса глобальных настроек GlobalContext
 
         return:
         """
 
-        self.microphone_duration = __global_context.microphone_duration
-        self.RECOGNIZER.pause_threshold = __global_context.recognizer_threshold
+        global_context = GlobalContext()
 
-        self.language_listen = __global_context.language_listen
-        self.language_speak = __global_context.language_speak
-        self.listening_timeout = __global_context.microphone_timeout
-        self.speak_speed = __global_context.speak_speed
+        self.microphone_duration = global_context.microphone_duration
+        self.RECOGNIZER.pause_threshold = global_context.recognizer_threshold
+
+        self.language_listen = global_context.language_listen
+        self.language_speak = global_context.language_speak
+        self.listening_timeout = global_context.microphone_timeout
+        self.speak_speed = global_context.speak_speed
 
     # Важно! Запись логов по задумке должна производиться в классе TextProcessor!
     def listen_command(self):
@@ -65,9 +63,7 @@ class SpeechTranslator:
         try:
             with self.MICROPHONE as source:
                 self.RECOGNIZER.adjust_for_ambient_noise(source=source, duration=self.microphone_duration)
-
                 audio = self.RECOGNIZER.listen(source=source, timeout=self.listening_timeout)
-
                 query = self.RECOGNIZER.recognize_google(audio_data=audio, language=self.language_listen).lower()
 
             print(query)

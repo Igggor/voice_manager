@@ -13,17 +13,30 @@ class Command:
         Инициализирует имя команды, её описание, функцию для исполнения, доп. информацию к запросу,
         постоянные агументы, а также подкоманды (специально для сценариев).
 
+        Обязательные агрументы:
+            * name: имя команды;
+            * function: исполняемая функция;
+            * type: тип команды;
+            * key: ключ команды
+        Опциональные команды:
+            * description: описание команды;
+            * triggers: ключевые слова для вызова команды;
+            * additive_required: обязательна ли доп. информация к команде;
+            * subcommands_required: необходимы ли подкоманды.
+
         :return:
         """
 
         self.name = kwargs["name"]
-        self.description = kwargs["description"]
+        self.description = None if "description" not in kwargs.keys() else kwargs["description"]
+        self.key = kwargs["key"]
         self.function = kwargs["function"]
+        self.triggers = list() if "triggers" not in kwargs.keys() else kwargs["triggers"]
+        self.type = kwargs["type"]
 
-        # Если additive_reference равно 2, то доп. информация обязательна;
-        # Если additive_reference равно 1, то доп. информация опциональна;
-        # Если additive_reference равно 0, то доп. информация не нужна и удаляется.
-        self.additive_reference = kwargs["additive_reference"]
+        self.additive_required = False if "additive_required" not in kwargs.keys() else kwargs["additive_required"]
+        self.subcommands_required = False if "subcommands_required" not in kwargs.keys() else (
+            kwargs["subcommands_required"])
 
         self.additive = None
         self.static_args = dict()
@@ -65,6 +78,7 @@ class Scenario:
 
         :return: Возвращает текст результата выполнения команд сценария.
         """
+
         output_text = f"Исполняю сценарий { self.name }. \n\n"
         for item in self.units:
             output_text += item.function(
@@ -84,36 +98,42 @@ class ScenarioInteractor:
 
     __instance = None
 
-    def __new__(cls, scenarios: list):
+    def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super(ScenarioInteractor, cls).__new__(cls)
         return cls.__instance
 
-    def __init__(self, scenarios: dict):
-        self.scenarios = scenarios
+    def __init__(self):
+        self.scenarios = None
 
         self.CREATION_SUCCESS_PHRASE = None
         self.DELETION_SUCCESS_PHRASE = None
         self.ALREADY_EXISTS_PHRASE = None
         self.NOT_FOUND_PHRASE = None
 
-    def update_settings(self, __global_context: GlobalContext):
+    def update_settings(self):
         """
         Метод обновления настроек интерактора сценариев.
-
-        :param __global_context: экземпляр класса глобальных настроек GlobalContext.
 
         :return:
         """
 
-        self.CREATION_SUCCESS_PHRASE = __global_context.SCENARIO_CREATION_SUCCESS_PHRASE
-        self.DELETION_SUCCESS_PHRASE = __global_context.SCENARIO_DELETION_SUCCESS_PHRASE
-        self.ALREADY_EXISTS_PHRASE = __global_context.SCENARIO_ALREADY_EXISTS_PHRASE
-        self.NOT_FOUND_PHRASE = __global_context.SCENARIO_NOT_FOUND_PHRASE
+        global_context = GlobalContext()
+
+        self.scenarios = global_context.scenarios
+
+        self.CREATION_SUCCESS_PHRASE = global_context.SCENARIO_CREATION_SUCCESS_PHRASE
+        self.DELETION_SUCCESS_PHRASE = global_context.SCENARIO_DELETION_SUCCESS_PHRASE
+        self.ALREADY_EXISTS_PHRASE = global_context.SCENARIO_ALREADY_EXISTS_PHRASE
+        self.NOT_FOUND_PHRASE = global_context.SCENARIO_NOT_FOUND_PHRASE
 
     def add_scenario(self, **kwargs):
         """
         Метод добавления нового сценария.
+
+        Обязательные агрументы:
+            * info: имя нового сценария;
+            * subcommands: команды, которые исполняются при вызове сценария.
 
         :return: Создает новый сценарий и возвращает фразу-отклик.
         """
@@ -133,6 +153,9 @@ class ScenarioInteractor:
         """
         Метод удаления сценария.
 
+        Обязательные агрументы:
+            * info: имя удаляемого сценария.
+
         :return: Пытается удалить сценарий по предоставленному названию и возвращает фразу-отклик.
         """
 
@@ -147,6 +170,9 @@ class ScenarioInteractor:
     def execute(self, **kwargs):
         """
         Выполнение сценария по заданному в парметрах имени.
+
+        Обязательные агрументы:
+            * info: имя исполняемого сценария.
 
         :return: Возвращает текст результата выполнения команд сценария.
         """

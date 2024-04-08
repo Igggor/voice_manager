@@ -121,7 +121,7 @@ def get_weather_now(**kwargs):
                 else f"гекто{ declension(prs, 'паскаль')}"
 
             result += f"Давление: { prs } { prs_phrase } \n"
-            result += f"Ветер: { wind } { declension(wind, 'метр') } в секунду \n"
+            result += f"Ветер: { wind } { declension(wind, 'метр') } в секунду. \n"
 
             return result
 
