@@ -176,11 +176,16 @@ class VoiceHelper:
         """
 
         output_text = ""
-        for item in selected_actions:
-            output_text += item.function(
+        for i in range(len(selected_actions)):
+            item = selected_actions[i]
+            response = item.function(
                 **item.static_args,
                 info=item.additive,
                 subcommands=item.subcommands
             )
+
+            output_text += response
+            if i < len(selected_actions) - 1:
+                output_text += "\n\n"
 
         self.speech_translator.speak(output_text)

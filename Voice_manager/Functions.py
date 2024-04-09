@@ -61,7 +61,7 @@ def get_currency_course(**kwargs):
                 f"Доллар - { usd[0] } { declension(usd[0], 'рубль') } "
                 f"{ usd[1] } { declension(usd[1], 'копейка') }.\n"
                 f"Евро - { euro[0] } { declension(euro[0], 'рубль') } "
-                f"{ euro[1] } { declension(euro[1], 'копейка') }.\n"
+                f"{ euro[1] } { declension(euro[1], 'копейка') }."
                 )
     except:
         return error_phrase
@@ -100,9 +100,27 @@ def get_weather_now(**kwargs):
         humidity = int(data["main"]["humidity"])
         pressure = int(data["main"]["pressure"])
         wind = int(data["wind"]["speed"])
+        weather_key = str(data["weather"][0]["id"])
+
+        def get_translation():
+            if weather_key[0] == '2':
+                return "Гроза. \n"
+            if weather_key[0] == '3':
+                return "Слабый дождь. \n"
+            if weather_key[0] == '5':
+                return "Дождь. \n"
+            if weather_key[0] == '6':
+                return "Снег. \n"
+            if weather_key[0] == '8':
+                return "Облачно. \n"
+
+            return "Ясно. \n" if weather_key == "800" else None
 
         def prepare_result():
-            result = f"Погода в городе { city } \n"
+            result = f"Погода в городе { city }. \n"
+            weather_state = get_translation()
+            if weather_state is not None:
+                result += weather_state
 
             temp1 = cur_weather if is_celsium else int(cur_weather * 9 / 5) + 32
             temp1_pf = " " + declension(temp1, 'фаренгейт')
@@ -121,7 +139,7 @@ def get_weather_now(**kwargs):
                 else f"гекто{ declension(prs, 'паскаль')}"
 
             result += f"Давление: { prs } { prs_phrase } \n"
-            result += f"Ветер: { wind } { declension(wind, 'метр') } в секунду. \n"
+            result += f"Ветер: { wind } { declension(wind, 'метр') } в секунду."
 
             return result
 

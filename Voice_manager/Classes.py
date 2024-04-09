@@ -86,14 +86,12 @@ class Scenario:
                 info=item.additive
             )
 
-            output_text += "\n"
-
         return output_text
 
 
 class ScenarioInteractor:
     """
-        Класс, отвечающий за работу со сценариями.
+    Класс, отвечающий за работу со сценариями.
     """
 
     __instance = None
@@ -183,3 +181,21 @@ class ScenarioInteractor:
             return self.NOT_FOUND_PHRASE
 
         return self.scenarios[name].execute_scenario()
+
+
+class Logger:
+    """
+    Класс, отвечающий за запись логов.
+    """
+
+    __instance = None
+
+    def __new__(cls):
+        if cls.__instance is None:
+            cls.__instance = super(Logger, cls).__new__(cls)
+        return cls.__instance
+
+    def __init__(self):
+        self.logs_limit = None
+
+        pass

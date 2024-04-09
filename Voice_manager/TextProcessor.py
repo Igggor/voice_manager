@@ -194,15 +194,15 @@ class TextProcessor:
 
         global_context = GlobalContext()
         self.functions["course"].update_args(
-            __error_phrase=global_context.REQUEST_ERROR_PHRASE
+            __error_phrase=global_context.COURSE_REQUEST_ERROR_PHRASE
         )
 
         self.functions["weather-now"].update_args(
             celsium=global_context.weather_temp_celsium,
             mmHg=global_context.weather_pressure_mmHg,
             city=global_context.CITY,
-            __error_phrase=global_context.REQUEST_ERROR_PHRASE,
-            __not_found_phrase=global_context.NOT_FOUND_PHRASE
+            __error_phrase=global_context.WEATHER_REQUEST_ERROR_PHRASE,
+            __not_found_phrase=global_context.WEATHER_NOT_FOUND_PHRASE
         )
 
     # В РАЗРАБОТКЕ.
@@ -307,8 +307,6 @@ class TextProcessor:
 
         return None
 
-    # Важно! В этом методе планируется реализовать запись логов
-    # (примерный вид: запрос -> что подошло -> доп. информация).
     # В РАЗРАБОТКЕ.
     def match_command(self, command: str, ignore_all: bool):
         """
@@ -376,8 +374,6 @@ class TextProcessor:
 #       GlobalContext.CITY)
 #   8. ДОБАВЛЕНИЕ СЦЕНАРИЯ: Среда, { создай сценарий / добавь сценарий} { <название сценария> }
 #       { <команды в стандартном виде, которые будут запущены при выполнении сценария> }
-#       ВАЖНО! Команда добавления сценария должна быть произнесена отдельно от всех остальных,
-#       нарушение этого правила будет считаться нарушением формата команды.
 #       ВАЖНО! В сценарии не должно быть никаких действий с другими какими бы то ни было сценариями,
 #       нарушение этого правила будет считаться нарушением формата команды.
 #   9. ЗАПУСК СЦЕНАРИЯ: Среда, { запусти сценарий / исполни сценарий } { <название сценария> }
