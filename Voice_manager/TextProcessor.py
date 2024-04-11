@@ -26,8 +26,6 @@ class TextProcessor:
         :return:
         """
 
-        not_found = kwargs["not_found"]
-        wrong_format = kwargs["wrong_format"]
         set_ON = kwargs["set_ON"]
         features = kwargs["features"]
         thanks = kwargs["thanks"]
@@ -39,26 +37,8 @@ class TextProcessor:
         self.NAME = "NAME"
 
         # В РАЗРАБОТКЕ, все функции помощника должны быть здесь.
+        # Каждая функция возвращает структуру Response.
         self.functions = {
-            "command-not-found":
-                Command(
-                    name="Команда не распознана.",
-                    description="Запрошенная команда не найдена.",
-                    key="command-not-found",
-                    function=not_found,
-                    type="system"
-                ),
-            "format-error":
-                Command(
-                    name="Неверный формат команды.",
-                    description="Команда распознана корректно, однако нарушен её формат.",
-                    key="format-error",
-                    function=wrong_format,
-                    type="system",
-                    additive_required=True,
-                    subcommands_required=True
-                ),
-
             "on":
                 Command(
                     name="Включение голосового помощника.",
@@ -268,71 +248,31 @@ class TextProcessor:
 
         return None
 
-    def check_format(self, selected_actions: list):
-        """
-        Проверка формата расшифрованной команды.
-
-        :param selected_actions: list: список команд.
-
-        :return: Обнаруженная ошибка формата или None.
-        """
-
-        # Checking forbidden scenario working
-        for i in range(1, len(selected_actions)):
-            current_command = selected_actions[i]
-            if (len(selected_actions) and selected_actions[0].type == "scenario"
-                    and current_command.type == "scenario"):
-                error = self.functions["format-error"]
-                error.additive = ("При создании, удалении или исполнении сценария запрещена любая работа "
-                                  "с другими сценариями.")
-                error.subcommands = current_command
-
-                return error
-
-        # Checking arguments
-        for current_command in selected_actions:
-            if current_command.additive_required and current_command.additive is None:
-                error = self.functions["format-error"]
-                error.additive = "Недостаточно параметров к команде."
-                error.subcommands = current_command
-
-                return error
-
-            if current_command.subcommands_required and len(current_command.subcommands) == 0:
-                error = self.functions["format-error"]
-                error.additive = "Необходимо указать команды для исполнения."
-                error.subcommands = current_command
-
-                return error
-
-        return None
-
     # В РАЗРАБОТКЕ.
     def match_command(self, command: str, ignore_all: bool):
         """
-        Поиск команды в словаре AVAILABLE_COMMANDS
+        Поиск команды среди доступных.
         Возвращает список распознанных команд.
 
         :param command: str: строка с командой;
-        :param ignore_all: bool: если ignore_all = True, то учитывается только команда ON.
+        :param ignore_all: bool: если ``ignore_all`` = True, то учитывается только команда ON.
 
-        :return: Если в тексте не найдено обращения к голосовому помощнику, будет возвращён пустой список.
-                 Если обращение к голосовому помощнику найдено, однако в AVAILABLE_COMMANDS не существует запрашиваемой
-                 команды, будет возвращено command-not-found.
-                 Если хотя бы в одной из команд будет допущена ошибка формата (например, рекурсивное создание сценария
-                 в сценарие), то ВСЕ команды будут проигнорированы и возвращён format-error,
-                 извещающий об ошибке формата. В случае успешного распознавания команд будет возвращен список
-                 из команд.
+        :return: Если в тексте не найдено обращения к голосовому помощнику, будет возвращёно None.
+                 Если обращение к голосовому помощнику найдено, однако не существует запрашиваемой
+                 команды, будет возвращен пустой список.
+                 Иначе будет возвращен список из распознанных команд.
         """
 
         selected_actions = list()
         if not any(command.startswith(alias) for alias in self.NAME):
-            return selected_actions
+            return None
 
         command = self.clean_alias(command)
         if ignore_all:
             if any(on in command for on in self.functions["on"].triggers):
                 selected_actions.append(self.functions["on"])
+            else:
+                return None
 
             return selected_actions
 
@@ -352,29 +292,5 @@ class TextProcessor:
                 del selected_actions[(i + 1):]
                 break
 
-        format_verdict = self.check_format(selected_actions)
-        if format_verdict is not None:
-            return [format_verdict]
+        return selected_actions
 
-        if len(selected_actions) != 0:
-            return selected_actions
-        else:
-            selected_actions.append(self.functions["command-not-found"])
-            return selected_actions
-
-# ВЫЗОВ КОМАНД:
-#   1. ВКЛЮЧЕНИЕ: Среда, { включись / привет }
-#   2. ОТКЛЮЧЕНИЕ: Среда, отключись
-#   3. ПОЛНОЕ ОТКЛЮЧЕНИЕ: Среда, отключись полностью
-#   4. ТЕКУЩЕЕ ВРЕМЯ: Среда, { текущее время / сколько времени }
-#   5. ТЕКУЩАЯ ДАТА: Среда, { какой сегодня день / сегодняшняя дата }
-#   6. КУРС ВАЛЮТ: Среда, курс валют
-#   7. ТЕКУЩАЯ ПОГОДА: Среда, { какая сейчас погода / текущая погода } { <название населенного пункта> }
-#       (если название н.п. не будет названо явно, то будет возвращен прогноз погоды для города по умолчанию -
-#       GlobalContext.CITY)
-#   8. ДОБАВЛЕНИЕ СЦЕНАРИЯ: Среда, { создай сценарий / добавь сценарий} { <название сценария> }
-#       { <команды в стандартном виде, которые будут запущены при выполнении сценария> }
-#       ВАЖНО! В сценарии не должно быть никаких действий с другими какими бы то ни было сценариями,
-#       нарушение этого правила будет считаться нарушением формата команды.
-#   9. ЗАПУСК СЦЕНАРИЯ: Среда, { запусти сценарий / исполни сценарий } { <название сценария> }
-#   10. УДАЛЕНИЕ СЦЕНАРИЯ: Среда, удали сценарий { <название сценария> }

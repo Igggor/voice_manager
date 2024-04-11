@@ -1,5 +1,6 @@
 from RussianDeclensions import declension
 from Constants import month_keys
+from Classes import Response
 
 import datetime
 import requests
@@ -17,7 +18,9 @@ def get_time_now(**kwargs):
     hours = current_time.hour
     minutes = current_time.minute
 
-    return f"Сейчас { hours } { declension(hours, 'час') } { minutes } { declension(minutes, 'минута') }."
+    return Response(
+        text=f"Сейчас { hours } { declension(hours, 'час') } { minutes } { declension(minutes, 'минута') }."
+    )
 
 
 def get_date(**kwargs):
@@ -33,7 +36,9 @@ def get_date(**kwargs):
     month = current_date.month
     year = current_date.year
 
-    return f"Сегодня { day } { month_keys[month - 1] } { year } года."
+    return Response(
+        text=f"Сегодня { day } { month_keys[month - 1] } { year } года."
+    )
 
 
 def get_currency_course(**kwargs):
@@ -57,20 +62,31 @@ def get_currency_course(**kwargs):
         usd = [int(usd_formal * 100) // 100, int(usd_formal * 100) % 100]
         euro = [int(euro_formal * 100) // 100, int(euro_formal * 100) % 100]
 
-        return (f"Курс валют на данный момент:\n"
-                f"Доллар - { usd[0] } { declension(usd[0], 'рубль') } "
-                f"{ usd[1] } { declension(usd[1], 'копейка') }.\n"
-                f"Евро - { euro[0] } { declension(euro[0], 'рубль') } "
-                f"{ euro[1] } { declension(euro[1], 'копейка') }."
-                )
+        output_text = (f"Курс валют на данный момент:\n"
+                       f"Доллар - { usd[0] } { declension(usd[0], 'рубль') } "
+                       f"{ usd[1] } { declension(usd[1], 'копейка') }.\n"
+                       f"Евро - { euro[0] } { declension(euro[0], 'рубль') } "
+                       f"{ euro[1] } { declension(euro[1], 'копейка') }."
+                       )
+
+        return Response(
+            text=output_text
+        )
     except:
-        return error_phrase
+        return Response(
+            text=error_phrase,
+            is_correct=False
+        )
 
 
 def get_weather_now(**kwargs):
     """
     Функция для получения текущей погоды. В качестве параметра принимает название города (опционально).
     В случае, если город не передан, будет использован город по умолчанию.
+
+    Опциональные параметры:
+        * ``city``: город, для которого необходимо определить погоду. Если не задан, будет определена
+        погода для города по умолчанию.
 
     :return: Актуальная погода запрошенном месте, в том числе температура, влажность, давление, ветер.
              В случае непредвиденной ошибки возвращает строку с соответствующим предупреждением.
@@ -93,7 +109,12 @@ def get_weather_now(**kwargs):
 
         data = r.json()
         if data["cod"] == "404":
-            return not_found_phrase
+            return Response(
+                header=not_found_phrase,
+                text=city,
+                is_correct=False,
+                type="city-not-found-error"
+            )
 
         cur_weather = int(data["main"]["temp"])
         feel = int(data['main']['feels_like'])
@@ -143,6 +164,11 @@ def get_weather_now(**kwargs):
 
             return result
 
-        return prepare_result()
+        return Response(
+            text=prepare_result()
+        )
     except Exception:
-        return error_phrase
+        return Response(
+            text=error_phrase,
+            is_correct=False
+        )
