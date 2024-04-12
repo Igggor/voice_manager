@@ -1,5 +1,7 @@
-from Functions import *
-from Classes import *
+from GlobalContext import GlobalContext
+from Functions import FunctionsCore
+from Classes import Command
+from Scenarios import ScenarioInteractor
 
 
 class TextProcessor:

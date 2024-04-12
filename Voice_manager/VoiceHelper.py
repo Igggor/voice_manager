@@ -1,8 +1,12 @@
-from TextProcessor import *
-from SpeechTranslator import *
-from Classes import *
-from random import randint
+from GlobalContext import GlobalContext
+from Functions import FunctionsCore
+from Logger import Logger
+from TextProcessor import TextProcessor
+from SpeechTranslator import SpeechTranslator
+from Scenarios import ScenarioInteractor
+from Classes import Command, Response
 
+from random import randint
 import sys
 import os
 
