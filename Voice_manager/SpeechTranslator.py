@@ -51,7 +51,6 @@ class SpeechTranslator:
         self.listening_timeout = global_context.microphone_timeout
         self.speak_speed = global_context.speak_speed
 
-    # Важно! Запись логов по задумке должна производиться в классе TextProcessor!
     def listen_command(self):
         """
         Метод распознавания текста из речи.

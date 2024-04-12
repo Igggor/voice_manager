@@ -4,6 +4,7 @@ from Classes import *
 from random import randint
 
 import sys
+import os
 
 
 class VoiceHelper:
@@ -27,6 +28,7 @@ class VoiceHelper:
         """
 
         self.global_context = GlobalContext()
+        self.functions_core = FunctionsCore()
         self.text_processor = TextProcessor(
             set_ON=self.set_ON,
             features=self.features,
@@ -42,11 +44,11 @@ class VoiceHelper:
         self.update_all()
 
     def update_all(self):
+        self.functions_core.update_settings()
         self.logger.update_settings()
         self.text_processor.update_settings()
         self.speech_translator.update_settings()
         self.scenario_interactor.update_settings()
-        self.text_processor.update_functions_args()
 
     # Следующие три функции - оболочки, чтобы можно было адекватно вызывать функции выключения, включения и т.д
     def ON(self):
@@ -85,7 +87,7 @@ class VoiceHelper:
 
         self.global_context.ON = False
         return Response(
-            text=self.global_context.BYE_PHRASE
+            text=self.global_context.SMALL_BYE_PHRASE
         )
 
     # Важно! В перспективе здесь не только выход, но, возможно, какое-то сохранение в БД или что-то подобное.
@@ -97,13 +99,20 @@ class VoiceHelper:
         """
 
         self.global_context.ON = False
-        sys.exit()
 
-        pass
+        try:
+            os.remove("buffer.mp3")
+        except OSError:
+            pass
+
+        return Response(
+            text=self.global_context.BIG_BYE_PHRASE,
+            do_next=[self.logger.close, sys.exit]
+        )
 
     def features(self, **kwargs):
         """
-        Полное выключение голосового помощника.
+        Запрос о возможностях помощника.
 
         :return:
         """
@@ -114,7 +123,7 @@ class VoiceHelper:
 
     def thanks(self, **kwargs):
         """
-        Полное выключение голосового помощника.
+        Ответ на благодарность.
 
         :return:
         """
@@ -206,7 +215,7 @@ class VoiceHelper:
             return error
 
         return None
-    
+
     # В перспективе здесь должно быть собрано несколько функций, в том числе запись логов.
     def execute(self, selected_actions: list):
         """
@@ -234,14 +243,23 @@ class VoiceHelper:
                     response = format_error
                 else:
                     response = query.function(
-                        **query.static_args,
                         info=query.additive,
                         subcommands=query.subcommands
                     )
+
+                    if response.type is None:
+                        response.type = query.type
+
+                    if response.called_by is None:
+                        response.called_by = query
 
                 self.logger.write(query, response)
                 output_text += response.get_speech()
                 if i < len(selected_actions) - 1:
                     output_text += "\n\n"
+
+                if response.do_next is not None:
+                    for action in response.do_next:
+                        action()
 
         self.speech_translator.speak(output_text)

@@ -1,4 +1,3 @@
-from GlobalContext import GlobalContext
 from Functions import *
 from Classes import *
 
@@ -18,8 +17,7 @@ class TextProcessor:
     def __init__(self, **kwargs):
         """
         Конструктор класса.
-        Инициалиация словаря доступных команд AVAILABLE_COMMANDS, фразы приветствия (при включении) и прощания
-        (при выключении).
+        Инициалиация словаря доступных команд, фразы приветствия (при включении) и прощания (при выключении).
 
         Обязательные параметры: системные функции из головного класса VoiceHelper.
 
@@ -33,8 +31,9 @@ class TextProcessor:
         safe_exit = kwargs["exit"]
 
         scenario_interactor = ScenarioInteractor()
+        functions_core = FunctionsCore()
 
-        self.NAME = "NAME"
+        self.NAME = None
 
         # В РАЗРАБОТКЕ, все функции помощника должны быть здесь.
         # Каждая функция возвращает структуру Response.
@@ -64,15 +63,6 @@ class TextProcessor:
                     triggers=["спасибо", "благодарю"],
                     type="question"
                 ),
-            "off":
-                Command(
-                    name="Перевод голосового помощника в режим гибернации",
-                    description="В режиме сна приложение не закрывается, однако не воспринимает голосовые команды",
-                    key="off",
-                    function=set_OFF,
-                    triggers=["отключись", "отключение"],
-                    type="system"
-                ),
             "full-off":
                 Command(
                     name="Полное выключение голосового помощника",
@@ -82,12 +72,21 @@ class TextProcessor:
                     triggers=["отключись полностью", "отключить полностью", "полное отключение"],
                     type="system"
                 ),
+            "off":
+                Command(
+                    name="Перевод голосового помощника в режим гибернации",
+                    description="В режиме сна приложение не закрывается, однако не воспринимает голосовые команды",
+                    key="off",
+                    function=set_OFF,
+                    triggers=["отключись", "отключение"],
+                    type="system"
+                ),
             "time":
                 Command(
                     name="Получение текущего времени",
                     description="Голосовой помощник получает системное время и озвучивает его",
                     key="time",
-                    function=get_time_now,
+                    function=functions_core.get_time_now,
                     triggers=["сколько времени", "текущее время"],
                     type="question"
                 ),
@@ -96,7 +95,7 @@ class TextProcessor:
                     name="Получение текущей даты",
                     description="Голосовой помощник получает текущую дату и озвучивает её",
                     key="date",
-                    function=get_date,
+                    function=functions_core.get_date,
                     triggers=["какой сегодня день", "сегодняшняя дата", "текущая дата"],
                     type="question"
                 ),
@@ -106,7 +105,7 @@ class TextProcessor:
                     description="Голосовой помощник получает курс доллара и евро к рублю Центрального Банка России "
                                 "(по состоянию на данный момент) и озвучивает его",
                     key="course",
-                    function=get_currency_course,
+                    function=functions_core.get_currency_course,
                     triggers=["курс валют"],
                     type="question"
                 ),
@@ -115,8 +114,8 @@ class TextProcessor:
                     name="Получение текущей погоды",
                     description="Голосовой помощник получает текущую погоду с заданными параметрами и озвучивает её",
                     key="weather-now",
-                    function=get_weather_now,
-                    triggers=["какая сейчас погода", "текущая погода"],
+                    function=functions_core.get_weather_now,
+                    triggers=["какая сейчас погода", "текущая погода", "погода"],
                     type="question"
                 ),
             "create-scenario":
@@ -162,28 +161,6 @@ class TextProcessor:
 
         global_context = GlobalContext()
         self.NAME = [global_context.NAME.lower()]
-
-    # В перспективе будет вызываться при каждом изменении настроек помощника. Это будет гарантировать актуальность
-    # аргументов функций, а значит корректность их работы.
-    def update_functions_args(self):
-        """
-        Обновление аргументов функций голосового помощника, задаваемых настройками.
-
-        :return:
-        """
-
-        global_context = GlobalContext()
-        self.functions["course"].update_args(
-            __error_phrase=global_context.COURSE_REQUEST_ERROR_PHRASE
-        )
-
-        self.functions["weather-now"].update_args(
-            celsium=global_context.weather_temp_celsium,
-            mmHg=global_context.weather_pressure_mmHg,
-            city=global_context.CITY,
-            __error_phrase=global_context.WEATHER_REQUEST_ERROR_PHRASE,
-            __not_found_phrase=global_context.WEATHER_NOT_FOUND_PHRASE
-        )
 
     # В РАЗРАБОТКЕ.
     def clean_alias(self, command: str):
@@ -293,4 +270,3 @@ class TextProcessor:
                 break
 
         return selected_actions
-

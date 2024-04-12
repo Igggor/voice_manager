@@ -39,17 +39,7 @@ class Command:
             kwargs["subcommands_required"])
 
         self.additive = None
-        self.static_args = dict()
         self.subcommands = list()
-
-    def update_args(self, **kwargs):
-        """
-        Обновление статических аргументов команды.
-
-        :return:
-        """
-
-        self.static_args = kwargs
 
 
 class Response:
@@ -70,6 +60,8 @@ class Response:
             * ``is_correct``: корректно ли (без ошибки) завершилась функция;
             * ``type``: тип ответа;
             * ``called_by``: родительская функция;
+            * ``do_next``: сопутствующая функции, выполняемые автоматически сразу после ответа.
+            Не должны содержать аргументов.
 
         :return:
         """
@@ -85,6 +77,7 @@ class Response:
         self.called_by = None if "called_by" not in kwargs.keys() else kwargs["called_by"]
         self.is_correct = True if "is_correct" not in kwargs.keys() else kwargs["is_correct"]
         self.type = None if "type" not in kwargs.keys() else kwargs["type"]
+        self.do_next = None if "do_next" not in kwargs.keys() else kwargs["do_next"]
 
     def get_speech(self):
         if self.type == "city-not-found-error":
@@ -293,4 +286,3 @@ class Logger:
 
         global_context = GlobalContext()
         global_context.LOGS = self.logs
-
