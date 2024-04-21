@@ -87,7 +87,9 @@ class VoiceHelper:
         """
 
         if self.global_context.ON:
-            return
+            return Response(
+                text="Привет!"
+            )
 
         self.global_context.ON = True
         return Response(
@@ -102,7 +104,9 @@ class VoiceHelper:
         """
 
         if not self.global_context.ON:
-            return
+            return Response(
+                text=""
+            )
 
         self.global_context.ON = False
         return Response(
@@ -295,10 +299,14 @@ class VoiceHelper:
                 self.logger.write(query, response)
                 output_text.add(response.get_speech())
 
+                print(threading.get_native_id(), self.speech_translator.LOCKER.controlling_thread_id)
                 self.speech_translator.LOCKER.capture_control()
+                print(threading.get_native_id(), self.speech_translator.LOCKER.controlling_thread_id)
 
+                print("NOTE")
+                print(threading.get_native_id(), self.speech_translator.LOCKER.controlling_thread_id, self.speech_translator.LOCKER.can_enter(thread_id=threading.get_native_id()))
                 while not self.speech_translator.LOCKER.can_enter(thread_id=threading.get_native_id()):
-                    pass
+                    await asyncio.sleep(0)
 
                 self.speech_translator.speak(output_text)
 
@@ -316,6 +324,7 @@ class VoiceHelper:
                         subcommands=query.subcommands
                     )
 
+                    print("!", response, query.name)
                     if response.type is None:
                         response.type = query.type
 

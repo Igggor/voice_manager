@@ -30,8 +30,10 @@ class StreamLocker:
         :return:
         """
 
+        if self.controlling_thread_id is not None:
+            self.collision = True
+
         self.lock(force=True)
-        self.collision = True
 
     def lock(self, force: bool = False):
         """
@@ -125,6 +127,7 @@ class StreamLocker:
         :return: ``True`` или ``False``.
         """
 
+        print(self.controlling_thread_id, thread_id)
         return (self.is_controller(thread_id=thread_id) or self.controlling_thread_id is None) and not self.collision
 
 
@@ -187,8 +190,9 @@ class SpeechTranslator:
             или, в случае произвольной ошибки, ``None``.
         """
 
-        if not self.LOCKER.available(thread_id=threading.get_native_id()):
-            return None
+        # print("LISTEN", self.LOCKER.controlling_thread_id, threading.get_native_id())
+        # if not self.LOCKER.available(thread_id=threading.get_native_id()):
+        #     return None
 
         try:
             with self.MICROPHONE as source:
@@ -230,7 +234,9 @@ class SpeechTranslator:
         :return:
         """
 
+        print(output.get_normal_text)
         locked = self.LOCKER.lock()
+        print(locked)
         if not locked:
             return
 

@@ -177,8 +177,8 @@ class TimeWorker:
 
         if len(self.notifications) == 0:
             self.notifications = [
-                Notification(text="тестовое уведомление выключить утюг", id=1, hour=19, minute=8, second=25),
-                Notification(text="тестовое уведомление номер два включить чайник", id=2, hour=19, minute=8, second=35)
+                Notification(text="тЕстовое уведомление выключить утюг", id=1, hour=16, minute=19, second=20),
+                Notification(text="уведомление номер два включить чайник", id=2, hour=19, minute=8, second=35)
             ]
 
             print(self.find_nearest())

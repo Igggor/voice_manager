@@ -216,11 +216,9 @@ class Notification:
             if self.previous_check["hour"] <= self.hour <= current_hour \
                     and self.previous_check["minute"] <= self.minute <= current_minute \
                     and self.previous_check["second"] <= self.second <= current_second:
+                print("FOUND")
                 return True
             else:
-                print(self.previous_check)
-                print(self.hour, self.minute, self.second)
-                print(current_hour, current_minute, current_second)
                 return False
 
         result = in_segment()
