@@ -1,2 +1,4 @@
 /venv/
 .idea
+/Api/node_modules
+/Web/node_modules
