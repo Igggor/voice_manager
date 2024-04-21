@@ -11,8 +11,8 @@ class Scenario:
         """
         Конструктор класса.
 
-        :param name: str: имя (название) сценария;
-        :param functions: list: список команд класса Command, которые нужно исполнить при вызове сценария.
+        :param name: ``str``: имя (название) сценария;
+        :param functions: ``list``: список команд класса ``Command``, которые нужно исполнить при вызове сценария.
 
         Инициализирует название сценария, а также команды, которые исполняются при его вызове.
 
@@ -29,7 +29,7 @@ class Scenario:
         :return: Возвращает текст результата выполнения команд сценария.
         """
 
-        output_text = f"Исполняю сценарий { self.name }. \n\n"
+        output_text = f"Исполняю сценарий { self.name }. \n"
         for item in self.units:
             output_text += item.function(
                 **item.static_args,

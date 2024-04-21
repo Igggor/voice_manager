@@ -1,4 +1,4 @@
 /venv/
 .idea
 Voice_manager/__pycache__/
-Voice_manager/buffer.mp3
+Voice_manager/buffer/

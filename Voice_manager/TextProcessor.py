@@ -1,5 +1,6 @@
 from GlobalContext import GlobalContext
 from Functions import FunctionsCore
+from TimeWorker import TimeWorker
 from Classes import Command
 from Scenarios import ScenarioInteractor
 
@@ -21,7 +22,7 @@ class TextProcessor:
         Конструктор класса.
         Инициалиация словаря доступных команд, фразы приветствия (при включении) и прощания (при выключении).
 
-        Обязательные параметры: системные функции из головного класса VoiceHelper.
+        Обязательные параметры: системные функции из головного класса ``VoiceHelper``.
 
         :return:
         """
@@ -34,123 +35,128 @@ class TextProcessor:
 
         scenario_interactor = ScenarioInteractor()
         functions_core = FunctionsCore()
+        time_core = TimeWorker()
 
         self.NAME = None
 
         # В РАЗРАБОТКЕ, все функции помощника должны быть здесь.
         # Каждая функция возвращает структуру Response.
         self.functions = {
+            "notification":
+                Command(
+                    name=None, description=None, key="notification", function=None, type="system-call"
+                ),
+
             "on":
                 Command(
                     name="Включение голосового помощника.",
                     description="Во включенном состоянии глосовой помощник прослушивает команды и исполняет их.",
-                    key="on",
-                    function=set_ON,
-                    triggers=["привет", "включись", "включение"],
-                    type="system"
+                    key="on", function=set_ON, triggers=["привет", "включись", "включение"], type="system"
                 ),
             "features":
                 Command(
                     name="Возможности голосового помощника.",
-                    key="features",
-                    function=features,
-                    triggers=["что ты умеешь", "возможности"],
-                    type="question"
+                    key="features", function=features, triggers=["что ты умеешь", "возможности"], type="question"
                 ),
             "thanks":
                 Command(
                     name="Рада стараться.",
-                    key="thanks",
-                    function=thanks,
-                    triggers=["спасибо", "благодарю"],
-                    type="question"
+                    key="thanks", function=thanks, triggers=["спасибо", "благодарю"], type="question"
                 ),
             "full-off":
                 Command(
                     name="Полное выключение голосового помощника",
                     description="Выключение приложения",
-                    key="full-off",
-                    function=safe_exit,
-                    triggers=["отключись полностью", "отключить полностью", "полное отключение"],
-                    type="system"
+                    key="full-off", function=safe_exit,
+                    triggers=["отключись полностью", "отключить полностью", "полное отключение"], type="system"
                 ),
             "off":
                 Command(
                     name="Перевод голосового помощника в режим гибернации",
                     description="В режиме сна приложение не закрывается, однако не воспринимает голосовые команды",
-                    key="off",
-                    function=set_OFF,
-                    triggers=["отключись", "отключение"],
-                    type="system"
+                    key="off", function=set_OFF, triggers=["отключись", "отключение"], type="system"
                 ),
             "time":
                 Command(
                     name="Получение текущего времени",
                     description="Голосовой помощник получает системное время и озвучивает его",
-                    key="time",
-                    function=functions_core.get_time_now,
-                    triggers=["сколько времени", "текущее время"],
+                    key="time", function=time_core.get_time_now, triggers=["сколько времени", "текущее время"],
                     type="question"
                 ),
             "date":
                 Command(
                     name="Получение текущей даты",
                     description="Голосовой помощник получает текущую дату и озвучивает её",
-                    key="date",
-                    function=functions_core.get_date,
-                    triggers=["какой сегодня день", "сегодняшняя дата", "текущая дата"],
-                    type="question"
+                    key="date", function=functions_core.get_date,
+                    triggers=["какой сегодня день", "сегодняшняя дата", "текущая дата"], type="question"
                 ),
             "course":
                 Command(
                     name="Получение текущего курса валют",
                     description="Голосовой помощник получает курс доллара и евро к рублю Центрального Банка России "
                                 "(по состоянию на данный момент) и озвучивает его",
-                    key="course",
-                    function=functions_core.get_currency_course,
-                    triggers=["курс валют"],
-                    type="question"
+                    key="course", function=functions_core.get_currency_course, triggers=["курс валют"], type="question"
                 ),
             "weather-now":
                 Command(
                     name="Получение текущей погоды",
                     description="Голосовой помощник получает текущую погоду с заданными параметрами и озвучивает её",
-                    key="weather-now",
-                    function=functions_core.get_weather_now,
-                    triggers=["какая сейчас погода", "текущая погода", "погода"],
-                    type="question"
+                    key="weather-now", function=functions_core.get_weather_now,
+                    triggers=["какая сейчас погода", "текущая погода", "погода"], type="question"
                 ),
             "create-scenario":
                 Command(
                     name="Создание сценария",
                     description="Создание группы команд с заданным именем, выполняющихся поочередно",
-                    key="create-scenario",
-                    function=scenario_interactor.add_scenario,
-                    triggers=["создай сценарий", "добавь сценарий", "добавление сценария"],
-                    type="scenario",
-                    additive_required=True,
-                    subcommands_required=True
+                    key="create-scenario", function=scenario_interactor.add_scenario,
+                    triggers=["создай сценарий", "добавь сценарий", "добавление сценария"], type="scenario",
+                    additive_required=True, subcommands_required=True
                 ),
             "execute-scenario":
                 Command(
                     name="Исполнение сценария",
                     description="Исполнение заданной группы команд, "
                                 "в том порядке, в котором они были даны при создании",
-                    key="execute-scenario",
-                    function=scenario_interactor.execute,
-                    triggers=["запусти сценарий", "исполни сценарий", "исполнение сценария"],
-                    type="scenario",
+                    key="execute-scenario", function=scenario_interactor.execute,
+                    triggers=["запусти сценарий", "исполни сценарий", "исполнение сценария"], type="scenario",
                     additive_required=True
                 ),
             "delete-scenario":
                 Command(
                     name="Удаление сценария",
                     description="Удаление группы команд по заданному имени",
-                    key="delete-scenario",
-                    function=scenario_interactor.delete_scenario,
-                    triggers=["удали сценарий", "удаление сценария"],
-                    type="scenario",
+                    key="delete-scenario", function=scenario_interactor.delete_scenario,
+                    triggers=["удали сценарий", "удаление сценария"], type="scenario",
                     additive_required=True
+                ),
+            "add-notification":
+                Command(
+                    name="Добавление напоминания",
+                    description="Добавление напоминания с заданным текстом и временем запуска",
+                    key="add-notification", function=time_core.add_notification,
+                    triggers=["добавь уведомление", "добавь напоминание", "создай уведомление", "создай напоминание"],
+                    type="notification-adding", additive_required=True
+                ),
+            "add-timer":
+                Command(
+                    name="Добавление таймера",
+                    description="Добавление таймера на заданное количество времени. "
+                                "Отличие от уведомления - автоматическое удаление по зевершении",
+                    key="add-timer", function=time_core.add_timer, triggers=["добавь таймер", "создай таймер"],
+                    type="notification-adding", additive_required=True
+                ),
+            "delete-notification":
+                Command(
+                    name="Удаление напоминания",
+                    description="Удаление напоминания по заданному порядковому номеру",
+                    key="delete-notification", function=time_core.delete_notification,
+                    triggers=["удали напоминание", "удали уведомление"], type="notification", additive_required=True
+                ),
+            "nearest-notification":
+                Command(
+                    name="Поиск ближайшего к текущему моменту уведомления",
+                    key="nearest-notification", function=time_core.find_nearest,
+                    triggers=["ближайшее уведомление", "ближайшее напоминание"], type="notification"
                 )
         }
 
@@ -169,7 +175,7 @@ class TextProcessor:
         """
         Метод, удаляющий обращение к помощнику.
 
-        :param command: str: строка с распознанным текстом.
+        :param command: ``str``: строка с распознанным текстом.
 
         :return: Строка с полученной командой.
         """
@@ -179,14 +185,14 @@ class TextProcessor:
 
         return None if command == "" else command
 
-    def clean_extend(self, command: str, prefix: str):
+    def find_extend_info(self, command: str, prefix: str):
         """
-        Выделение доп. информации для конкретной команды, заданной параметром prefix.
+        Выделение доп. информации для конкретной команды, заданной параметром ``prefix``.
 
-        :param command: str: строка с распознанным текстом;
-        :param prefix: str: текст команды, для которой необходимо найти доп. информацию.
+        :param command: ``str``: строка с распознанным текстом;
+        :param prefix: ``str``: текст команды, для которой необходимо найти доп. информацию.
 
-        :return: Доп. информация к этой команде / None, если таковой нет.
+        :return: Доп. информация к переданной команде / ``None``, если таковой нет.
         """
 
         command = command[len(prefix) + 1:]
@@ -206,12 +212,13 @@ class TextProcessor:
         """
         Выделение доп. информации для команды, заданной положением в строке.
 
-        :param command: str: строка с распознанным текстом;
-        :param index: int: индекс в строке (нумерация с нуля), с которого, предположительно, начинается команда,
+        :param command: ``str``: строка с распознанным текстом;
+        :param index: ``int``: индекс в строке (нумерация с нуля), с которого, предположительно, начинается команда,
                            для которой нужно выделить доп. информацию.
 
-        :return: Если найдена команда, начинающаяся со слова с индексом index, то будет возвращена
-        искомая команда с дополнительной информацией.
+        :return: Если найдена команда, начинающаяся со слова с индексом ``index``, то будет возвращена
+        искомая команда с дополнительной информацией, а также число ``shift``, определяющее количество слов в
+        выделенной команде (включая доп. информацию).
         """
 
         command = ' '.join(command.split()[index:])
@@ -220,10 +227,15 @@ class TextProcessor:
                 if not command.startswith(v):
                     continue
 
-                additive_info = self.clean_extend(command, v)
+                additive_info = self.find_extend_info(command, v)
                 out = self.functions[key]
                 out.additive = additive_info
-                return out
+
+                shift = len(v.split())
+                if additive_info is not None:
+                    shift += len(additive_info.split())
+
+                return [out, shift]
 
         return None
 
@@ -233,10 +245,10 @@ class TextProcessor:
         Поиск команды среди доступных.
         Возвращает список распознанных команд.
 
-        :param command: str: строка с командой;
-        :param ignore_all: bool: если ``ignore_all`` = True, то учитывается только команда ON.
+        :param command: ``str``: строка с командой;
+        :param ignore_all: ``bool``: если ``ignore_all = True``, то учитывается только команда ``ON``.
 
-        :return: Если в тексте не найдено обращения к голосовому помощнику, будет возвращёно None.
+        :return: Если в тексте не найдено обращения к голосовому помощнику, будет возвращено ``None``.
                  Если обращение к голосовому помощнику найдено, однако не существует запрашиваемой
                  команды, будет возвращен пустой список.
                  Иначе будет возвращен список из распознанных команд.
@@ -256,12 +268,16 @@ class TextProcessor:
             return selected_actions
 
         command_size = len(command.split())
-        for it in range(command_size):
+
+        it = 0
+        while it < command_size:
             picking_result = self.pick_additive(command, it)
             if picking_result is None:
+                it += 1
                 continue
 
-            selected_actions.append(picking_result)
+            selected_actions.append(picking_result[0])
+            it += picking_result[1]
 
         for i in range(len(selected_actions)):
             current_command = selected_actions[i]
@@ -271,4 +287,15 @@ class TextProcessor:
                 del selected_actions[(i + 1):]
                 break
 
+            if current_command.type == "notification-adding":
+                additive_parts = current_command.additive.split(" текст ")
+
+                time = additive_parts[0]
+                text = additive_parts[1]
+
+                current = 0
+                for index in range(len(time.split())):
+                    pass
+
+        print(selected_actions)
         return selected_actions

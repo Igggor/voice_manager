@@ -32,17 +32,17 @@ class Logger:
 
     def write(self, query: Command, response: Response):
         """
-        Логирование пары вида [ запрос, ответ ].
+        Логирование пары вида ``[ запрос, ответ ]``.
 
-        :param query: Command: распознанный запрос;
-        :param response: Response: ответ на запрос;
+        :param query: ``Command``: распознанный запрос;
+        :param response: ``Response``: ответ на запрос;
 
         :return:
         """
 
         self.logs.append([query, response])
 
-        if len(self.logs) > self.logs_limit:
+        while len(self.logs) > self.logs_limit:
             del self.logs[0]
 
     def close(self):

@@ -1,5 +1,5 @@
-from RussianDeclensions import declension
-from Constants import month_keys
+from Russian import declension
+from Constants import MONTH_KEYS
 from Classes import Response
 from GlobalContext import GlobalContext
 
@@ -8,6 +8,10 @@ import requests
 
 
 class FunctionsCore:
+    """
+    Класс, содержащий в себе весь (за несколькими исключениями) функционал помощника.
+    """
+
     __instance = None
 
     def __new__(cls):
@@ -36,24 +40,7 @@ class FunctionsCore:
         self.city = global_context.CITY
 
     @staticmethod
-    def get_time_now(self, **kwargs):
-        """
-        Функция для получения актуального времени, с точностью до минут.
-
-        :return: Строка в формате 'Сейчас X часов Y минут.'
-        """
-
-        current_time = datetime.datetime.now()
-
-        hours = current_time.hour
-        minutes = current_time.minute
-
-        return Response(
-            text=f"Сейчас { hours } { declension(hours, 'час') } { minutes } { declension(minutes, 'минута') }."
-        )
-
-    @staticmethod
-    def get_date(self, **kwargs):
+    def get_date(**kwargs):
         """
         Функция для получения актуальной даты.
 
@@ -67,14 +54,15 @@ class FunctionsCore:
         year = current_date.year
 
         return Response(
-            text=f"Сегодня { day } { month_keys[month - 1] } { year } года."
+            text=f"Сегодня { day } { MONTH_KEYS[month - 1] } { year } года."
         )
 
     def get_currency_course(self, **kwargs):
         """
         Функция для получения актуального курса валют, а именно доллара и евро.
 
-        :return: Актуальный курс валют на данный момент в формате "Доллар - A рублей B копеек. Евро - C рублей D копеек."
+        :return: Актуальный курс валют на данный момент в формате
+                 ``"Доллар - A рублей B копеек. Евро - C рублей D копеек."``
                  В случае непредвиденной ошибки возвращает строку с соответствующим предупреждением.
         """
 
@@ -160,7 +148,7 @@ class FunctionsCore:
                 return "Ясно. \n" if weather_key == "800" else None
 
             def prepare_result():
-                result = f"Погода в городе { city }. \n"
+                result = f"Погода в городе { city.title() }. \n"
                 weather_state = get_translation()
                 if weather_state is not None:
                     result += weather_state
