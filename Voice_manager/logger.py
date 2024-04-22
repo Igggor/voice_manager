@@ -1,8 +1,9 @@
-from GlobalContext import GlobalContext
-from Classes import Command, Response
+from context import GlobalContext
+from classes import Command, Response
+from meta import SingletonMetaclass
 
 
-class Logger:
+class Logger(metaclass=SingletonMetaclass):
     """
     Класс, отвечающий за запись логов.
     """
@@ -12,6 +13,7 @@ class Logger:
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super(Logger, cls).__new__(cls)
+
         return cls.__instance
 
     def __init__(self):

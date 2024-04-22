@@ -1,8 +1,8 @@
 import threading
-import time
 
-from GlobalContext import GlobalContext
-from Classes import PlayableText
+from context import GlobalContext
+from classes import PlayableText
+from meta import SingletonMetaclass
 
 import os
 import speech_recognition
@@ -20,9 +20,19 @@ class StreamLocker:
         self.controlling_thread_id = None
         self.collision = False
 
+    def free(self):
+        """
+        Метод, проверяющий, является ли ввод-вывод в данный момент свободным,
+        то есть не контролируемым ни одним из потоков.
+
+        :return: ``True`` или ``False``.
+        """
+
+        return self.controlling_thread_id is None
+
     def capture_control(self):
         """
-        Метод передачи контроля голосового ввода-вывода текущему потоку.
+        Метод форсированной передачи контроля голосового ввода-вывода текущему потоку.
 
         По завершении блока текста немедленно прерывает воспроизведение, без возможности возобновления.
         После этого передает контроль над вводом-выводом потоку, вызвавшему метод.
@@ -30,7 +40,7 @@ class StreamLocker:
         :return:
         """
 
-        if self.controlling_thread_id is not None:
+        if not self.free():
             self.collision = True
 
         self.lock(force=True)
@@ -54,7 +64,7 @@ class StreamLocker:
             self.controlling_thread_id = threading.get_native_id()
             return True
 
-        if self.controlling_thread_id is None or self.controlling_thread_id == threading.get_native_id():
+        if self.free() or self.is_controller(thread_id=threading.get_native_id()):
             self.controlling_thread_id = threading.get_native_id()
             return True
 
@@ -75,13 +85,13 @@ class StreamLocker:
             ввод-вывод разблокирован не будет, при этом будет возвращено ``False``.
         """
 
-        if self.controlling_thread_id is None:
+        if self.free():
             return True
 
         if force:
             self.controlling_thread_id = None
             return True
-        if self.controlling_thread_id == threading.get_native_id():
+        if self.is_controller(thread_id=threading.get_native_id()):
             self.controlling_thread_id = None
             return True
 
@@ -116,7 +126,7 @@ class StreamLocker:
         :return: ``True`` или ``False``.
         """
 
-        return self.is_controller(thread_id=thread_id) or self.controlling_thread_id is None
+        return self.is_controller(thread_id=thread_id) or self.free()
 
     def can_enter(self, thread_id: int):
         """
@@ -127,11 +137,10 @@ class StreamLocker:
         :return: ``True`` или ``False``.
         """
 
-        print(self.controlling_thread_id, thread_id)
-        return (self.is_controller(thread_id=thread_id) or self.controlling_thread_id is None) and not self.collision
+        return (self.is_controller(thread_id=thread_id) or self.free()) and not self.collision
 
 
-class SpeechTranslator:
+class SpeechTranslator(metaclass=SingletonMetaclass):
     """
     Класс, отвечающий за перевод СТРОКА <-> ГОЛОС (распознавание и произнесение).
     """
@@ -141,6 +150,7 @@ class SpeechTranslator:
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super(SpeechTranslator, cls).__new__(cls)
+
         return cls.__instance
 
     def __init__(self):
@@ -190,6 +200,7 @@ class SpeechTranslator:
             или, в случае произвольной ошибки, ``None``.
         """
 
+        # TODO: TEST BELOW
         # print("LISTEN", self.LOCKER.controlling_thread_id, threading.get_native_id())
         # if not self.LOCKER.available(thread_id=threading.get_native_id()):
         #     return None
@@ -207,7 +218,7 @@ class SpeechTranslator:
             print(f"An error occurred while recognizing voice: {error}")
             return None
 
-    def prepare_text(self, output_text: str, index: int):
+    def __prepare_text(self, output_text: str, index: int):
         """
         С помощью ``API`` переводит текст в речь и сохраняет её в виде файла ``.mp3``.
 
@@ -267,7 +278,7 @@ class SpeechTranslator:
                 self.LOCKER.collision = False
                 return
 
-            self.prepare_text(output_text=output_text, index=i)
+            self.__prepare_text(output_text=output_text, index=i)
 
         for i in range(len(blocks)):
             print('playing...', blocks[i], self.LOCKER.get_controller(), threading.get_native_id())

@@ -1,4 +1,4 @@
-from Constants import D_WORDS
+from constants import D_WORDS
 
 
 def base_declension(number: int):

@@ -114,9 +114,9 @@ class PlayableText:
         """
 
         blocks = text.split('\n')
-        self.join_blocks(blocks)
+        self.__join_blocks(blocks)
 
-    def join_blocks(self, blocks: list):
+    def __join_blocks(self, blocks: list):
         """
         Добавление текстового блока к воспроизводимому тексту.
 

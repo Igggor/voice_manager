@@ -1,11 +1,12 @@
-from GlobalContext import GlobalContext
-from Functions import FunctionsCore
-from TimeWorker import TimeWorker
-from Classes import Command
-from Scenarios import ScenarioInteractor
+from context import GlobalContext
+from functions import get_currency_course, get_weather_now
+from time_thread import TimeWorker
+from classes import Command
+from scenarios import ScenarioInteractor
+from meta import SingletonMetaclass
 
 
-class TextProcessor:
+class TextProcessor(metaclass=SingletonMetaclass):
     """
     Класс, отвечающий за сопоставление текста с необходимой командой.
     """
@@ -15,6 +16,7 @@ class TextProcessor:
     def __new__(cls, **kwargs):
         if cls.__instance is None:
             cls.__instance = super(TextProcessor, cls).__new__(cls)
+
         return cls.__instance
 
     def __init__(self, **kwargs):
@@ -34,7 +36,6 @@ class TextProcessor:
         safe_exit = kwargs["exit"]
 
         scenario_interactor = ScenarioInteractor()
-        functions_core = FunctionsCore()
         time_core = TimeWorker()
 
         self.NAME = None
@@ -87,7 +88,7 @@ class TextProcessor:
                 Command(
                     name="Получение текущей даты",
                     description="Голосовой помощник получает текущую дату и озвучивает её",
-                    key="date", function=functions_core.get_date,
+                    key="date", function=time_core.get_date,
                     triggers=["какой сегодня день", "сегодняшняя дата", "текущая дата"], type="question"
                 ),
             "course":
@@ -95,13 +96,13 @@ class TextProcessor:
                     name="Получение текущего курса валют",
                     description="Голосовой помощник получает курс доллара и евро к рублю Центрального Банка России "
                                 "(по состоянию на данный момент) и озвучивает его",
-                    key="course", function=functions_core.get_currency_course, triggers=["курс валют"], type="question"
+                    key="course", function=get_currency_course, triggers=["курс валют"], type="question"
                 ),
             "weather-now":
                 Command(
                     name="Получение текущей погоды",
                     description="Голосовой помощник получает текущую погоду с заданными параметрами и озвучивает её",
-                    key="weather-now", function=functions_core.get_weather_now,
+                    key="weather-now", function=get_weather_now,
                     triggers=["какая сейчас погода", "текущая погода", "погода"], type="question"
                 ),
             "create-scenario":
@@ -155,7 +156,7 @@ class TextProcessor:
             "nearest-notification":
                 Command(
                     name="Поиск ближайшего к текущему моменту уведомления",
-                    key="nearest-notification", function=time_core.find_nearest,
+                    key="nearest-notification", function=time_core.find_nearest_notification,
                     triggers=["ближайшее уведомление", "ближайшее напоминание"], type="notification"
                 )
         }
@@ -171,7 +172,7 @@ class TextProcessor:
         self.NAME = [global_context.NAME.lower()]
 
     # В РАЗРАБОТКЕ.
-    def clean_alias(self, command: str):
+    def __clean_alias(self, command: str):
         """
         Метод, удаляющий обращение к помощнику.
 
@@ -185,7 +186,7 @@ class TextProcessor:
 
         return None if command == "" else command
 
-    def find_extend_info(self, command: str, prefix: str):
+    def __find_extend_info(self, command: str, prefix: str):
         """
         Выделение доп. информации для конкретной команды, заданной параметром ``prefix``.
 
@@ -208,7 +209,7 @@ class TextProcessor:
 
         return None if command == "" else command
 
-    def pick_additive(self, command: str, index: int):
+    def __pick_additive(self, command: str, index: int):
         """
         Выделение доп. информации для команды, заданной положением в строке.
 
@@ -227,7 +228,7 @@ class TextProcessor:
                 if not command.startswith(v):
                     continue
 
-                additive_info = self.find_extend_info(command, v)
+                additive_info = self.__find_extend_info(command, v)
                 out = self.functions[key]
                 out.additive = additive_info
 
@@ -258,7 +259,7 @@ class TextProcessor:
         if not any(command.startswith(alias) for alias in self.NAME):
             return None
 
-        command = self.clean_alias(command)
+        command = self.__clean_alias(command)
         if ignore_all:
             if any(on in command for on in self.functions["on"].triggers):
                 selected_actions.append(self.functions["on"])
@@ -271,7 +272,7 @@ class TextProcessor:
 
         it = 0
         while it < command_size:
-            picking_result = self.pick_additive(command, it)
+            picking_result = self.__pick_additive(command, it)
             if picking_result is None:
                 it += 1
                 continue
@@ -293,9 +294,7 @@ class TextProcessor:
                 time = additive_parts[0]
                 text = additive_parts[1]
 
-                current = 0
-                for index in range(len(time.split())):
-                    pass
+                raise NotImplementedError
 
         print(selected_actions)
         return selected_actions

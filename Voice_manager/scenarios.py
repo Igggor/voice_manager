@@ -1,5 +1,7 @@
-from GlobalContext import GlobalContext
-from Classes import Response
+from context import GlobalContext
+from classes import Response
+from constants import get_phrase
+from meta import SingletonMetaclass
 
 
 class Scenario:
@@ -41,7 +43,7 @@ class Scenario:
         )
 
 
-class ScenarioInteractor:
+class ScenarioInteractor(metaclass=SingletonMetaclass):
     """
     Класс, отвечающий за работу со сценариями.
     """
@@ -51,15 +53,11 @@ class ScenarioInteractor:
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super(ScenarioInteractor, cls).__new__(cls)
+
         return cls.__instance
 
     def __init__(self):
         self.scenarios = None
-
-        self.CREATION_SUCCESS_PHRASE = None
-        self.DELETION_SUCCESS_PHRASE = None
-        self.ALREADY_EXISTS_PHRASE = None
-        self.NOT_FOUND_PHRASE = None
 
     def update_settings(self):
         """
@@ -71,11 +69,6 @@ class ScenarioInteractor:
         global_context = GlobalContext()
 
         self.scenarios = global_context.SCENARIOS
-
-        self.CREATION_SUCCESS_PHRASE = global_context.SCENARIO_CREATION_SUCCESS_PHRASE
-        self.DELETION_SUCCESS_PHRASE = global_context.SCENARIO_DELETION_SUCCESS_PHRASE
-        self.ALREADY_EXISTS_PHRASE = global_context.SCENARIO_ALREADY_EXISTS_PHRASE
-        self.NOT_FOUND_PHRASE = global_context.SCENARIO_NOT_FOUND_PHRASE
 
     def add_scenario(self, **kwargs):
         """
@@ -94,14 +87,14 @@ class ScenarioInteractor:
         if name in self.scenarios.keys():
             # Scenario with this name already exists
             return Response(
-                text=self.ALREADY_EXISTS_PHRASE,
+                text=get_phrase("SCENARIO_ALREADY_EXISTS_ERROR"),
                 is_correct=False
             )
 
         self.scenarios[name] = Scenario(name, scenario)
         # success
         return Response(
-            text=self.CREATION_SUCCESS_PHRASE + name + '.'
+            text=get_phrase("SCENARIO_CREATION_SUCCESS") + name + '.'
         )
 
     def delete_scenario(self, **kwargs):
@@ -118,13 +111,13 @@ class ScenarioInteractor:
 
         if name not in self.scenarios.keys():
             return Response(
-                text=self.NOT_FOUND_PHRASE,
+                text=get_phrase("SCENARIO_NOT_FOUND_ERROR"),
                 is_correct=False
             )
 
         del self.scenarios[name]
         return Response(
-            text=self.DELETION_SUCCESS_PHRASE
+            text=get_phrase("SCENARIO_DELETION_SUCCESS")
         )
 
     def execute(self, **kwargs):
@@ -141,7 +134,7 @@ class ScenarioInteractor:
 
         if name not in self.scenarios.keys():
             return Response(
-                text=self.NOT_FOUND_PHRASE,
+                text=get_phrase("SCENARIO_NOT_FOUND_ERROR"),
                 is_correct=False
             )
 

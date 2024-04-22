@@ -1,13 +1,28 @@
-from GlobalContext import GlobalContext
-from Classes import Response, Notification
-from Russian import declension
+from context import GlobalContext
+from classes import Response, Notification
+from local import declension
+from constants import MONTH_KEYS
+from meta import SingletonMetaclass
+from constants import get_phrase
 
 import datetime
 
 
-class TimeWorker:
+class TimeWorker(metaclass=SingletonMetaclass):
     """
     Класс, отвечающий за работу с временем.
+
+    **Поля класса:**
+        * ``notifications_limit`` - ограничение на количество созданный напоминаний;
+        * ``notifications_accuracy`` - точность (вещественное число, в секундах), с которой будет происходит поиск
+          напоминаний, таймеров и т.д. Иными словами, представляет периодичность поиска напоминаний;
+        * ``notifications`` - список напоминаний;
+
+    **Методы класса:**
+        * ``update_settings()`` - обновление настроек класса;
+        * ``get_time_static()`` - низкоуровневая функция получения текущего времени;
+
+        ``...``
     """
 
     __instance = None
@@ -15,17 +30,13 @@ class TimeWorker:
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super(TimeWorker, cls).__new__(cls)
+
         return cls.__instance
 
     def __init__(self):
         self.notifications_limit = None
         self.notifications_accuracy = None
         self.notifications = None
-
-        self.CREATION_SUCCESS_PHRASE = None
-        self.DELETION_SUCCESS_PHRASE = None
-        self.DELETION_FAILED_PHRASE = None
-        self.EMPTY_NOTIFICATIONS_ERROR_PHRASE = None
 
     def update_settings(self):
         """
@@ -40,13 +51,32 @@ class TimeWorker:
         self.notifications_accuracy = global_context.notifications_accuracy
         self.notifications = global_context.NOTIFICATIONS
 
-        self.CREATION_SUCCESS_PHRASE = global_context.NOTIFICATION_CREATION_SUCCESS_PHRASE
-        self.DELETION_SUCCESS_PHRASE = global_context.NOTIFICATION_DELETION_SUCCESS_PHRASE
-        self.DELETION_FAILED_PHRASE = global_context.NOTIFICATION_DELETION_FAILED_PHRASE
-        self.EMPTY_NOTIFICATIONS_ERROR_PHRASE = global_context.EMPTY_NOTIFICATIONS_ERROR_PHRASE
+    @staticmethod
+    def get_date(**kwargs):
+        """
+        Функция для получения актуальной даты.
+
+        :return: Строка, обозначающая дату, в формате "Сегодня ..."
+        """
+
+        current_date = datetime.date.today()
+
+        day = current_date.day
+        month = current_date.month
+        year = current_date.year
+
+        return Response(
+            text=f"Сегодня { day } { MONTH_KEYS[month - 1] } { year } года."
+        )
 
     @staticmethod
-    def get_time_static():
+    def __get_time_static():
+        """
+        Получение текущего времени с точностью до секунд.
+
+        :return: Список вида [час, минута, секунда].
+        """
+
         current_time = datetime.datetime.now()
 
         hours = current_time.hour
@@ -62,13 +92,14 @@ class TimeWorker:
         :return: Строка в формате ``'Сейчас X часов Y минут.'``
         """
 
-        current_time = self.get_time_static()
+        current_time = self.__get_time_static()
 
         hours = current_time[0]
         minutes = current_time[1]
 
         return Response(
-            text=f"Сейчас { hours } { declension(hours, 'час') } { minutes } { declension(minutes, 'минута') }."
+            text=f"Сейчас { hours } { declension(hours, 'час') } "
+                 f"{ minutes } { declension(minutes, 'минута') }."
         )
 
     def add_notification(self, **kwargs):
@@ -102,7 +133,10 @@ class TimeWorker:
                 second=kwargs["second"]
             ))
 
-        return self.CREATION_SUCCESS_PHRASE + f" Созданное уведомление имеет порядковый номер {current_id}."
+        return Response(
+            text=get_phrase("NOTIFICATION_CREATION_SUCCESS") +
+            f" Созданное уведомление имеет порядковый номер {current_id}."
+        )
 
     def add_timer(self, **kwargs):
         raise NotImplementedError
@@ -120,14 +154,15 @@ class TimeWorker:
         note_id = kwargs["id"]
         if note_id < len(self.notifications):
             del self.notifications[note_id]
+
             for i in range(len(self.notifications)):
                 self.notifications[i].id = i
 
-            return self.DELETION_SUCCESS_PHRASE
+            return get_phrase("NOTIFICATION_DELETION_SUCCESS")
         else:
-            return self.DELETION_FAILED_PHRASE
+            return get_phrase("NOTIFICATION_DELETION_ERROR")
 
-    def find_nearest(self):
+    def find_nearest_notification(self):
         """
         Поиск ближайшего напоминания к текущему моменту.
 
@@ -161,9 +196,9 @@ class TimeWorker:
             return response
         except ValueError:
             response = Response(
-                text=self.EMPTY_NOTIFICATIONS_ERROR_PHRASE,
+                text=get_phrase("EMPTY_NOTIFICATIONS_ERROR"),
                 is_correct=False,
-                called_by=self.find_nearest
+                called_by=self.find_nearest_notification
             )
 
             return response
@@ -177,14 +212,14 @@ class TimeWorker:
 
         if len(self.notifications) == 0:
             self.notifications = [
-                Notification(text="тЕстовое уведомление выключить утюг", id=1, hour=16, minute=19, second=20),
+                Notification(text="тестовое уведомление выключить утюг", id=1, hour=16, minute=19, second=20),
                 Notification(text="уведомление номер два включить чайник", id=2, hour=19, minute=8, second=35)
             ]
 
-            print(self.find_nearest())
+            print(self.find_nearest_notification())
 
         print("[Log]: notifications detecting...")
-        current_time = self.get_time_static()
+        current_time = self.__get_time_static()
 
         for note in self.notifications:
             if note.check_corresponding(
