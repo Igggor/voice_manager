@@ -4,12 +4,14 @@ const {where} = require("sequelize")
 const seq = require('../dbmodels')
 
 router.get('/', async (req, res, next) => {
-  console.log(req.body.table)
+  console.log(req.query)
   let data = {}
-  if (seq.hasOwnProperty(req.body.table)) {
+  if (seq.hasOwnProperty(req.query.table)) {
     try {
-      data = await seq[req.body.table].findAll({
-        where: JSON.parse(req.body.params)
+      let table = req.query.table
+      delete req.query.table
+      data = await seq[table].findAll({
+        where: req.query
       })
     }
     catch (e) {
