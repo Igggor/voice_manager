@@ -29,7 +29,7 @@ router.post('/', async (req, res, next) => {
   let data = {}
   if (seq.hasOwnProperty(req.body.table)) {
     try {
-      data = await seq[req.body.table].create(JSON.parse(req.body.params))
+      data = await seq[req.body.table].create(req.body.params)
     }
     catch (e) {
       data = {error: e}
@@ -46,8 +46,8 @@ router.put('/', async (req, res, next) => {
   let data = {}
   if (seq.hasOwnProperty(req.body.table)) {
     try {
-      data = await seq[req.body.table].update(JSON.parse(req.body.changes),{
-        where: JSON.parse(req.body.params)
+      data = await seq[req.body.table].update(req.body.changes,{
+        where: req.body.params
       })
     }
     catch (e) {
@@ -61,12 +61,14 @@ router.put('/', async (req, res, next) => {
 })
 
 router.delete('/', async (req, res, next) => {
-  console.log(req.body.table)
+  console.log(req.query)
   let data = {}
-  if (seq.hasOwnProperty(req.body.table)) {
+  if (seq.hasOwnProperty(req.query.table)) {
     try {
-      data = await seq[req.body.table].destroy({
-        where: JSON.parse(req.body.params)
+      let table = req.query.table
+      delete req.query.table
+      data = await seq[table].destroy({
+        where: req.query
       })
     }
     catch (e) {
@@ -77,8 +79,6 @@ router.delete('/', async (req, res, next) => {
     data = {error: 'table not found'}
   }
   res.json(data)
-
-  console.log(req.body)
 })
 
 module.exports = router
