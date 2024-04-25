@@ -5,26 +5,37 @@ const sequelize = new Sequelize({
     dialect: 'sqlite',
 })
 
-const User = sequelize.define(
-    'User',
+const Users = sequelize.define(
+    'Users',
     {
         id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
             primaryKey: true,
             autoIncrement: true,
-        },
-        username: {
-            type: DataTypes.STRING,
-            defaultValue: 'None',
             allowNull: false,
         },
-        firstName: {
+        email: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        lastName: {
+        password: {
             type: DataTypes.STRING,
+            allowNull: false,
+        },
+        logo: {
+            type: DataTypes.STRING,
+            defaultValue: '/static/userdata/avatar/logo.png',
+        },
+        name: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
+        surname: {
+            type: DataTypes.TEXT,
+        },
+        role: {
+            type: DataTypes.STRING,
+            allowNull: false,
         },
     },
     {
@@ -32,26 +43,26 @@ const User = sequelize.define(
     }
 )
 
-const Logs = sequelize.define(
-    'Logs',
+const Questions = sequelize.define(
+    'Questions',
     {
         id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
             primaryKey: true,
             autoIncrement: true,
+            allowNull: false,
         },
-        userId: {
+        user_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        text: {
-            type: DataTypes.TEXT,
-            defaultValue: 'None',
+        question: {
+            type: DataTypes.TEXT('tiny'),
+            allowNull: false,
         },
-        status: {
+        description: {
             type: DataTypes.TEXT,
-        }
+        },
     },
     {
         updatedAt: false,
@@ -63,27 +74,77 @@ const Devices = sequelize.define(
     {
         id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
             primaryKey: true,
             autoIncrement: true,
+            allowNull: false,
         },
-        userId: {
+        user_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        type: {
-            type: DataTypes.TEXT,
+        logo: {
+            type: DataTypes.STRING,
+            defaultValue: '/static/images/devices_logo/logo.png',
         },
-
+        title: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        room: {
+            type: DataTypes.TEXT('tiny'),
+            defaultValue: 'Main',
+        },
+        status: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        settings: {
+            type: DataTypes.JSON,
+            allowNull: false,
+        },
     },
     {
         timestamps: false,
     }
 )
 
-User.sync({ alter: true })
-Logs.sync({ alter: true })
-Devices.sync({ alter: true })
-// Logs.sync()
+const Scenarios = sequelize.define(
+    'Scenarios',
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false,
+        },
+        title: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        description: {
+            type: DataTypes.TEXT,
+        },
+        user_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        status: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+        },
+        commands: {
+            type: DataTypes.JSON,
+            allowNull: false,
+        },
+    },
+    {
+        timestamps: false,
+    }
+)
 
-module.exports = {'Users':User, 'Logs':Logs, 'Devices':Devices}
+Users.sync({ alter: true })
+Devices.sync({ alter: true })
+Questions.sync({ alter: true })
+Scenarios.sync({ alter: true })
+
+module.exports = {'Users': Users, 'Devices': Devices, 'Questions': Questions, 'Scenarios': Scenarios}
