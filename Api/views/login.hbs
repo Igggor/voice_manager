@@ -1,0 +1,10 @@
+<h1>Вход в аккаунт</h1>
+
+<form onsubmit="sendLoginForm();return false" class="form" id="loginForm">
+    <p>Заполните форму ниже</p>
+    <input type="text" name="username" id="username" class="field" placeholder="Username" required="required">
+    <input type="password" name="password" id="password" class="field" placeholder="Пароль" required="required">
+    <p class="err" id="loginErr" style="display: none">Ошибка логина или пароля</p>
+    <input type="submit" value="Войти" class="loginButton">
+    <p class="signInUp">Ещё нет аккаунта? <a href="/account/signup">Зарегистрироваться</a></p>
+</form>

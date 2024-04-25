@@ -1,0 +1,12 @@
+<h1>Регистрация</h1>
+
+<form onsubmit="sendSignupForm();return false" class="form" id="signupForm">
+    <p>Заполните форму ниже</p>
+    <input type="text" name="username" id="username" class="field" placeholder="Username" required="required">
+    <input type="password" name="password" id="password" class="field" placeholder="Пароль" required="required">
+    <input type="password" name="passwordSecond" id="passwordSecond" class="field" placeholder="Повторите пароль" required="required">
+    <p class="err" id="signupErr1" style="display: none">Пароли не совпадают</p>
+    <p class="err" id="signupErr2" style="display: none">Такой пользователь уже существует</p>
+    <input type="submit" value="Зарегистрироваться" class="loginButton">
+    <p class="signInUp">Уже есть аккаунт? <a href="/account/login">Войти</a></p>
+</form>

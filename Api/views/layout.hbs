@@ -1,10 +1,36 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{title}}</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
+    <link rel='stylesheet' href='/static/stylesheets/style.css'/>
+    {{#if isSignInUp}}
+        <link rel='stylesheet' href="/static/stylesheets/signinup.css"/>
+    {{/if}}
+</head>
+<body>
+<header>
+    <img src="/static/images/menu-icon.svg" class="menu-button" alt="menu button">
+    <img src="/static/images/logo.png" class="logo-img" alt="logo">
+    <a href="/account"><img src="https://github.com/mdo.png" class="avatar-img" alt="avatar"></a>
+</header>
+<nav>
+    <ul class="nav-buttons-list">
+        <li><a href="/">Главная</a></li>
+        <li><a href="/scenarios">Сценарий</a></li>
+        <li><a href="/device">Устройства</a></li>
+        <li><a href="/help">Помощь</a></li>
+    </ul>
+</nav>
+<main>
     {{{body}}}
-  </body>
+</main>
+
+
+<script src="/static/javascripts/cookies.js"></script>
+{{#if isSignInUp}}
+    <script src="/static/javascripts/signInUp.js"></script>
+{{/if}}
+</body>
 </html>
