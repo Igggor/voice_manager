@@ -2,3 +2,4 @@
 .idea
 Voice_manager/__pycache__/
 Voice_manager/buffer/
+/Voice_manager/model/

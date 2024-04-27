@@ -1,4 +1,4 @@
-from app import VoiceHelper
+from VoiceHelper import VoiceHelper
 
 voiceHelper = VoiceHelper()
 voiceHelper.ON()

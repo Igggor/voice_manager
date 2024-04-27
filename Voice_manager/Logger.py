@@ -1,6 +1,6 @@
-from context import GlobalContext
-from classes import Command, Response
-from meta import SingletonMetaclass
+from GlobalContext import GlobalContext
+from Units import Command, Response
+from Metaclasses import SingletonMetaclass
 
 
 class Logger(metaclass=SingletonMetaclass):

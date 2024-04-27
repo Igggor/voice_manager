@@ -1,8 +1,8 @@
 import threading
 
-from context import GlobalContext
-from classes import PlayableText
-from meta import SingletonMetaclass
+from GlobalContext import GlobalContext
+from Units import PlayableText
+from Metaclasses import SingletonMetaclass
 
 import os
 import speech_recognition
@@ -200,10 +200,9 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
             или, в случае произвольной ошибки, ``None``.
         """
 
-        # TODO: TEST BELOW
-        # print("LISTEN", self.LOCKER.controlling_thread_id, threading.get_native_id())
-        # if not self.LOCKER.available(thread_id=threading.get_native_id()):
-        #     return None
+        print("LISTEN", self.LOCKER.controlling_thread_id, threading.get_native_id())
+        if not self.LOCKER.available(thread_id=threading.get_native_id()):
+            return None
 
         try:
             with self.MICROPHONE as source:
@@ -212,13 +211,13 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
                                                phrase_time_limit=self.phrase_limit)
                 query = self.RECOGNIZER.recognize_google(audio_data=audio, language=self.language_listen).lower()
 
-            print("[Log]:", query)
+            print("[Log: listen command]:", query)
             return query
         except (speech_recognition.UnknownValueError, speech_recognition.WaitTimeoutError) as error:
             print(f"An error occurred while recognizing voice: {error}")
             return None
 
-    def __prepare_text(self, output_text: str, index: int):
+    def prepare_text(self, output_text: str, index: int):
         """
         С помощью ``API`` переводит текст в речь и сохраняет её в виде файла ``.mp3``.
 
@@ -232,9 +231,16 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
             tts = gTTS(text=output_text, lang=self.language_speak, tld="com", timeout=10)
             tts.save(f"buffer/{index}.mp3")
         except OSError as error:
-            print(f"An error while saving file occurred: {error}")
-        except (RuntimeError, ValueError) as error:
+            print(f"An error occurred while saving file with index {index}: {error}")
+        except (RuntimeError, ValueError, AssertionError) as error:
             print(f"Google-server error occurred: {error}")
+
+    @staticmethod
+    def play_text(index: int, tempo: float):
+        try:
+            os.system(f"play buffer/{index}.mp3 tempo {tempo}")
+        except OSError as error:
+            print(f"An error occurred while playing file with index {index}: {error}")
 
     def speak(self, output: PlayableText):
         """
@@ -245,9 +251,9 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         :return:
         """
 
-        print(output.get_normal_text)
+        print(output.get_normal_text())
+
         locked = self.LOCKER.lock()
-        print(locked)
         if not locked:
             return
 
@@ -272,30 +278,27 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         print(blocks)
 
         for i in range(len(blocks)):
-            output_text = blocks[i]
-            print('saving...', output_text, self.LOCKER.get_controller(), threading.get_native_id())
             if not self.LOCKER.is_controller(thread_id=threading.get_native_id()):
                 self.LOCKER.collision = False
                 return
 
-            self.__prepare_text(output_text=output_text, index=i)
+            self.prepare_text(output_text=blocks[i], index=i)
 
         for i in range(len(blocks)):
-            print('playing...', blocks[i], self.LOCKER.get_controller(), threading.get_native_id())
             if not self.LOCKER.is_controller(thread_id=threading.get_native_id()):
                 self.LOCKER.collision = False
                 return
 
-            os.system(f"play buffer/{i}.mp3 tempo {resulting_tempo}")
+            self.play_text(index=i, tempo=resulting_tempo)
 
         if not self.LOCKER.is_controller(thread_id=threading.get_native_id()):
             self.LOCKER.collision = False
             return
 
         self.LOCKER.collision = False
-        locker = self.LOCKER.unlock()
 
-        assert locker
+        unlocked = self.LOCKER.unlock()
+        assert unlocked
 
     @staticmethod
     def clear_buffer():

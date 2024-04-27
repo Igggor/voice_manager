@@ -1,4 +1,4 @@
-from constants import D_WORDS
+from Constants import D_WORDS, MONTH_KEYS
 
 
 def base_declension(number: int):
@@ -36,5 +36,17 @@ def declension(number: int, string: str):
     return D_WORDS[string][key]
 
 
-def get_time_from_text(query: str):
-    raise NotImplementedError
+def get_base(text: str):
+    for base in D_WORDS.keys():
+        if any(text == sub for sub in D_WORDS[base].values()):
+            return base
+
+    return None
+
+
+def get_month(key: str):
+    for index in range(len(MONTH_KEYS)):
+        if MONTH_KEYS[index] == key:
+            return index + 1
+
+    return None

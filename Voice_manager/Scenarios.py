@@ -1,46 +1,7 @@
-from context import GlobalContext
-from classes import Response
-from constants import get_phrase
-from meta import SingletonMetaclass
-
-
-class Scenario:
-    """
-    Структура сценария.
-    """
-
-    def __init__(self, name: str, functions: list):
-        """
-        Конструктор класса.
-
-        :param name: ``str``: имя (название) сценария;
-        :param functions: ``list``: список команд класса ``Command``, которые нужно исполнить при вызове сценария.
-
-        Инициализирует название сценария, а также команды, которые исполняются при его вызове.
-
-        :return:
-        """
-
-        self.name = name
-        self.units = functions
-
-    def execute_scenario(self):
-        """
-        Выполнение сценария.
-
-        :return: Возвращает текст результата выполнения команд сценария.
-        """
-
-        output_text = f"Исполняю сценарий { self.name }. \n"
-        for item in self.units:
-            output_text += item.function(
-                **item.static_args,
-                info=item.additive
-            )
-
-        return Response(
-            text=output_text
-        )
+from GlobalContext import GlobalContext
+from Units import Scenario
+from Responses import ResponsesHandler
+from Metaclasses import SingletonMetaclass
 
 
 class ScenarioInteractor(metaclass=SingletonMetaclass):
@@ -59,6 +20,11 @@ class ScenarioInteractor(metaclass=SingletonMetaclass):
     def __init__(self):
         self.scenarios = None
 
+        self.scenario_already_exists_error = None
+        self.scenario_creation_success = None
+        self.scenario_deletion_success = None
+        self.scenario_not_found_error = None
+
     def update_settings(self):
         """
         Метод обновления настроек интерактора сценариев.
@@ -69,6 +35,13 @@ class ScenarioInteractor(metaclass=SingletonMetaclass):
         global_context = GlobalContext()
 
         self.scenarios = global_context.SCENARIOS
+
+        handler = ResponsesHandler()
+
+        self.scenario_already_exists_error = handler.scenario_already_exists_error
+        self.scenario_creation_success = handler.scenario_creation_success
+        self.scenario_deletion_success = handler.scenario_deletion_success
+        self.scenario_not_found_error = handler.scenario_not_found_error
 
     def add_scenario(self, **kwargs):
         """
@@ -81,21 +54,18 @@ class ScenarioInteractor(metaclass=SingletonMetaclass):
         :return: Создает новый сценарий и возвращает фразу-отклик.
         """
 
-        name = kwargs["info"]
+        name = kwargs["main"]
         scenario = kwargs["subcommands"]
 
         if name in self.scenarios.keys():
             # Scenario with this name already exists
-            return Response(
-                text=get_phrase("SCENARIO_ALREADY_EXISTS_ERROR"),
-                is_correct=False
-            )
+            return self.scenario_already_exists_error
 
         self.scenarios[name] = Scenario(name, scenario)
         # success
-        return Response(
-            text=get_phrase("SCENARIO_CREATION_SUCCESS") + name + '.'
-        )
+        response = self.scenario_creation_success
+        response.info = f"{name}."
+        return response
 
     def delete_scenario(self, **kwargs):
         """
@@ -107,18 +77,13 @@ class ScenarioInteractor(metaclass=SingletonMetaclass):
         :return: Пытается удалить сценарий по предоставленному названию и возвращает фразу-отклик.
         """
 
-        name = kwargs["info"]
+        name = kwargs["main"]
 
         if name not in self.scenarios.keys():
-            return Response(
-                text=get_phrase("SCENARIO_NOT_FOUND_ERROR"),
-                is_correct=False
-            )
+            return self.scenario_not_found_error
 
         del self.scenarios[name]
-        return Response(
-            text=get_phrase("SCENARIO_DELETION_SUCCESS")
-        )
+        return self.scenario_deletion_success
 
     def execute(self, **kwargs):
         """
@@ -130,12 +95,9 @@ class ScenarioInteractor(metaclass=SingletonMetaclass):
         :return: Возвращает текст результата выполнения команд сценария с заданным именем.
         """
 
-        name = kwargs["info"]
+        name = kwargs["main"]
 
         if name not in self.scenarios.keys():
-            return Response(
-                text=get_phrase("SCENARIO_NOT_FOUND_ERROR"),
-                is_correct=False
-            )
+            return self.scenario_not_found_error
 
         return self.scenarios[name].execute_scenario()

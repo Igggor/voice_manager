@@ -1,18 +1,21 @@
-from context import GlobalContext
-from constants import get_phrase
-from time_thread import TimeWorker
-from logger import Logger
-from text_processing import TextProcessor
-from speech import SpeechTranslator
-from scenarios import ScenarioInteractor
-from classes import Command, Response, PlayableText
-from meta import SingletonMetaclass
+from GlobalContext import GlobalContext
+from TimeThread import TimeWorker
+from Logger import Logger
+from TextProcessing import TextProcessor
+from SpeechTranslator import SpeechTranslator
+from Scenarios import ScenarioInteractor
+from Units import Response, PlayableText
+from Metaclasses import SingletonMetaclass
+from Responses import ResponsesHandler
+from FormatChecking import FormatChecker
+from Functions import FunctionsCore
 
 from time import sleep
 
 import threading
 import sys
 import asyncio
+import random
 
 
 class VoiceHelper(metaclass=SingletonMetaclass):
@@ -65,8 +68,40 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         self.speech_translator = SpeechTranslator()
         self.scenario_interactor = ScenarioInteractor()
         self.logger = Logger()
+        self.format_checker = FormatChecker()
+        self.functions_core = FunctionsCore()
+
+        self.greeting = None
+        self.small_bye = None
+        self.big_bye = None
+        self.features = None
+        self.thanks = None
 
         self.update_all()
+
+    def update_all(self):
+        """
+        Рекурсивное обновление настроек всех частей приложения. Вызывается при изменении настроек приложения.
+
+        :return:
+        """
+
+        handler = ResponsesHandler()
+
+        self.greeting = handler.greeting
+        self.small_bye = handler.small_bye
+        self.big_bye = handler.big_bye
+        self.big_bye.do_next = [self.logger.close, sys.exit]
+        self.features = handler.features
+        self.thanks = handler.thanks
+
+        self.time_core.update_settings()
+        self.text_processor.update_settings()
+        self.speech_translator.update_settings()
+        self.scenario_interactor.update_settings()
+        self.logger.update_settings()
+        self.format_checker.update_settings()
+        self.functions_core.update_settings()
 
     def set_ON(self, **kwargs):
         """
@@ -81,9 +116,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
             )
 
         self.global_context.ON = True
-        return Response(
-            text=get_phrase("GREETING")
-        )
+        return self.greeting
 
     def set_OFF(self, **kwargs):
         """
@@ -96,9 +129,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
             return None
 
         self.global_context.ON = False
-        return Response(
-            text=get_phrase("SMALL_BYE")
-        )
+        return self.small_bye
 
     # Важно! В перспективе здесь не только выход, но, возможно, какое-то сохранение в БД или что-то подобное.
     def exit(self, **kwargs):
@@ -115,111 +146,25 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         except OSError:
             pass
 
-        return Response(
-            text=get_phrase("BIG_BYE"),
-            do_next=[self.logger.close, sys.exit]
-        )
+        return self.big_bye
 
-    @staticmethod
-    def features(**kwargs):
+    def features(self, **kwargs):
         """
         Запрос о возможностях помощника.
 
         :return:
         """
 
-        return Response(
-            text=get_phrase("FEATURES")
-        )
+        return self.features
 
-    @staticmethod
-    def thanks(**kwargs):
+    def thanks(self, **kwargs):
         """
         Ответ на благодарность.
 
         :return:
         """
 
-        return Response(
-            text=get_phrase("THANKS")
-        )
-
-    @staticmethod
-    def check_recognition(selected_actions: list):
-        """
-        Проверка корректности распознавания.
-
-        :param selected_actions: ``list``: проверяемый список команд.
-
-        :return: Обнаруженная ошибка, упакованная в класс Response, или None.
-        """
-
-        if len(selected_actions) == 0:
-            return Response(
-                text=get_phrase("RECOGNITION_ERROR"),
-                is_correct=False
-            )
-
-        return None
-
-    @staticmethod
-    def check_format(current_command: Command):
-        """
-        Проверка формата расшифрованной команды.
-
-        :param current_command: ``Command``: проверяемая команда.
-
-        :return: Обнаруженная ошибка формата, упакованная в ``Response``, или ``None``.
-        """
-
-        # Checking forbidden scenario working
-        if (current_command.type == "scenario" and
-                any(sub.type == "scenario" for sub in current_command.subcommands)):
-            error = Response(
-                type="format-error",
-                header=get_phrase("WRONG_COMMAND_FORMAT_ERROR"),
-                text="Внутри сценария недопустима работа с другими сценариями.",
-                is_correct=False,
-                called_by=current_command
-            )
-
-            return error
-
-        # Checking arguments
-        if current_command.additive_required and current_command.additive is None:
-            error = Response(
-                type="format-error",
-                header=get_phrase("WRONG_COMMAND_FORMAT_ERROR"),
-                text="Недостаточно параметров к команде.",
-                is_correct=False,
-                called_by=current_command
-            )
-
-            return error
-
-        if current_command.subcommands_required and len(current_command.subcommands) == 0:
-            error = Response(
-                type="format-error",
-                header=get_phrase("WRONG_COMMAND_FORMAT_ERROR"),
-                text="Необходимо указать команды для исполнения.",
-                is_correct=False,
-                called_by=current_command
-            )
-
-            return error
-
-        if current_command.type == "notification-adding":
-            error = Response(
-                type="format-error",
-                header=get_phrase("WRONG_COMMAND_FORMAT_ERROR"),
-                text="Заданы неправильные параметры к команде.",
-                is_correct=False,
-                called_by=current_command
-            )
-
-            return error
-
-        return None
+        return self.thanks[random.randint(0, len(self.thanks) - 1)]
 
     def periodic_task(self, function, sleeping_time: float):
         """
@@ -238,10 +183,14 @@ class VoiceHelper(metaclass=SingletonMetaclass):
             if detecting_result is None:
                 continue
 
-            executable = self.text_processor.functions["notification"]
-            executable.function = detecting_result.call
+            actions = list()
+            for note in detecting_result:
+                executable = self.text_processor.functions["notification"]
+                executable.function = note.call
 
-            asyncio.run(self.execute(selected_actions=[executable], notification=True))
+                actions.append(executable)
+
+                asyncio.run(self.execute(selected_actions=[executable], notification=True))
 
     # В перспективе здесь должно быть собрано несколько функций, в том числе запись логов.
     async def execute(self, selected_actions: list, notification: bool = False):
@@ -259,7 +208,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
         output_text = PlayableText()
 
-        recognition_fail = self.check_recognition(selected_actions)
+        recognition_fail = self.format_checker.check_recognition(selected_actions)
         if recognition_fail is not None:
             output_text.add(recognition_fail.get_speech())
         else:
@@ -270,34 +219,25 @@ class VoiceHelper(metaclass=SingletonMetaclass):
                 self.logger.write(query, response)
                 output_text.add(response.get_speech())
 
-                print(threading.get_native_id(), self.speech_translator.LOCKER.controlling_thread_id)
                 self.speech_translator.LOCKER.capture_control()
-                print(threading.get_native_id(), self.speech_translator.LOCKER.controlling_thread_id)
 
-                print("NOTE")
-                print(threading.get_native_id(), self.speech_translator.LOCKER.controlling_thread_id, self.speech_translator.LOCKER.can_enter(thread_id=threading.get_native_id()))
                 while not self.speech_translator.LOCKER.can_enter(thread_id=threading.get_native_id()):
                     await asyncio.sleep(0)
 
                 self.speech_translator.speak(output_text)
-
                 return
 
             for i in range(len(selected_actions)):
                 query = selected_actions[i]
+                print("[Log: executing]: ", query.additive)
 
-                format_error = self.check_format(query)
+                format_error = self.format_checker.check_format(query)
                 if format_error is not None:
                     response = format_error
                 else:
-                    response = query.function(
-                        info=query.additive,
-                        subcommands=query.subcommands
-                    )
+                    response = query.function(**query.additive)
 
                     print("!", response, query.name)
-                    if response.type is None:
-                        response.type = query.type
 
                     if response.called_by is None:
                         response.called_by = query
@@ -313,19 +253,6 @@ class VoiceHelper(metaclass=SingletonMetaclass):
             await asyncio.sleep(0)
 
         self.speech_translator.speak(output_text)
-
-    def update_all(self):
-        """
-        Рекурсивное обновление настроек всех частей приложения. Вызывается при изменении настроек приложения.
-
-        :return:
-        """
-
-        self.logger.update_settings()
-        self.time_core.update_settings()
-        self.text_processor.update_settings()
-        self.speech_translator.update_settings()
-        self.scenario_interactor.update_settings()
 
     # Следующие три функции - оболочки, чтобы можно было адекватно вызывать функции выключения, включения и т.д
     def ON(self):
@@ -369,7 +296,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
             return
 
         selected_actions = self.text_processor.match_command(recognized_query, not self.global_context.ON)
-        print("[Log]:", recognized_query, selected_actions)
+        print("[Log: match commands]:", recognized_query, selected_actions)
         if selected_actions is None:
             return
 

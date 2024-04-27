@@ -1,9 +1,10 @@
-from context import GlobalContext
-from functions import get_currency_course, get_weather_now
-from time_thread import TimeWorker
-from classes import Command
-from scenarios import ScenarioInteractor
-from meta import SingletonMetaclass
+from GlobalContext import GlobalContext
+from Functions import FunctionsCore
+from TimeThread import TimeWorker
+from Units import Command
+from Scenarios import ScenarioInteractor
+from Metaclasses import SingletonMetaclass
+from Parser import parse_info
 
 
 class TextProcessor(metaclass=SingletonMetaclass):
@@ -37,6 +38,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
 
         scenario_interactor = ScenarioInteractor()
         time_core = TimeWorker()
+        functions_core = FunctionsCore()
 
         self.NAME = None
 
@@ -96,13 +98,13 @@ class TextProcessor(metaclass=SingletonMetaclass):
                     name="Получение текущего курса валют",
                     description="Голосовой помощник получает курс доллара и евро к рублю Центрального Банка России "
                                 "(по состоянию на данный момент) и озвучивает его",
-                    key="course", function=get_currency_course, triggers=["курс валют"], type="question"
+                    key="course", function=functions_core.get_currency_course, triggers=["курс валют"], type="question"
                 ),
             "weather-now":
                 Command(
                     name="Получение текущей погоды",
                     description="Голосовой помощник получает текущую погоду с заданными параметрами и озвучивает её",
-                    key="weather-now", function=get_weather_now,
+                    key="weather-now", function=functions_core.get_weather_now,
                     triggers=["какая сейчас погода", "текущая погода", "погода"], type="question"
                 ),
             "create-scenario":
@@ -134,7 +136,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
                 Command(
                     name="Добавление напоминания",
                     description="Добавление напоминания с заданным текстом и временем запуска",
-                    key="add-notification", function=time_core.add_notification,
+                    key="add-notification", function=time_core.notifications_interactor.add_notification,
                     triggers=["добавь уведомление", "добавь напоминание", "создай уведомление", "создай напоминание"],
                     type="notification-adding", additive_required=True
                 ),
@@ -143,20 +145,20 @@ class TextProcessor(metaclass=SingletonMetaclass):
                     name="Добавление таймера",
                     description="Добавление таймера на заданное количество времени. "
                                 "Отличие от уведомления - автоматическое удаление по зевершении",
-                    key="add-timer", function=time_core.add_timer, triggers=["добавь таймер", "создай таймер"],
+                    key="add-timer", function=time_core.notifications_interactor.add_timer, triggers=["добавь таймер", "создай таймер"],
                     type="notification-adding", additive_required=True
                 ),
             "delete-notification":
                 Command(
                     name="Удаление напоминания",
                     description="Удаление напоминания по заданному порядковому номеру",
-                    key="delete-notification", function=time_core.delete_notification,
+                    key="delete-notification", function=time_core.notifications_interactor.delete_notification,
                     triggers=["удали напоминание", "удали уведомление"], type="notification", additive_required=True
                 ),
             "nearest-notification":
                 Command(
                     name="Поиск ближайшего к текущему моменту уведомления",
-                    key="nearest-notification", function=time_core.find_nearest_notification,
+                    key="nearest-notification", function=time_core.notifications_interactor.find_nearest_notification,
                     triggers=["ближайшее уведомление", "ближайшее напоминание"], type="notification"
                 )
         }
@@ -172,7 +174,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
         self.NAME = [global_context.NAME.lower()]
 
     # В РАЗРАБОТКЕ.
-    def __clean_alias(self, command: str):
+    def clean_alias(self, command: str):
         """
         Метод, удаляющий обращение к помощнику.
 
@@ -186,7 +188,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
 
         return None if command == "" else command
 
-    def __find_extend_info(self, command: str, prefix: str):
+    def find_extend_info(self, command: str, prefix: str):
         """
         Выделение доп. информации для конкретной команды, заданной параметром ``prefix``.
 
@@ -209,7 +211,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
 
         return None if command == "" else command
 
-    def __pick_additive(self, command: str, index: int):
+    def pick_additive(self, command: str, index: int):
         """
         Выделение доп. информации для команды, заданной положением в строке.
 
@@ -228,9 +230,9 @@ class TextProcessor(metaclass=SingletonMetaclass):
                 if not command.startswith(v):
                     continue
 
-                additive_info = self.__find_extend_info(command, v)
+                additive_info = self.find_extend_info(command, v)
                 out = self.functions[key]
-                out.additive = additive_info
+                out.additive["main"] = additive_info
 
                 shift = len(v.split())
                 if additive_info is not None:
@@ -256,10 +258,26 @@ class TextProcessor(metaclass=SingletonMetaclass):
         """
 
         selected_actions = list()
-        if not any(command.startswith(alias) for alias in self.NAME):
-            return None
 
-        command = self.__clean_alias(command)
+        # Поиск первого обращения к голосовому помощнику и срез информации ДО него.
+        start_pos = None
+        for alias in self.NAME:
+            index = command.find(alias)
+
+            if index == -1:
+                continue
+
+            if start_pos is None:
+                start_pos = index
+            else:
+                start_pos = min(start_pos, index)
+
+        if start_pos is None:
+            return None
+        else:
+            command = command[start_pos:]
+
+        command = self.clean_alias(command)
         if ignore_all:
             if any(on in command for on in self.functions["on"].triggers):
                 selected_actions.append(self.functions["on"])
@@ -272,7 +290,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
 
         it = 0
         while it < command_size:
-            picking_result = self.__pick_additive(command, it)
+            picking_result = self.pick_additive(command, it)
             if picking_result is None:
                 it += 1
                 continue
@@ -281,20 +299,15 @@ class TextProcessor(metaclass=SingletonMetaclass):
             it += picking_result[1]
 
         for i in range(len(selected_actions)):
+            selected_actions[i] = parse_info(selected_actions[i])
+
+        for i in range(len(selected_actions)):
             current_command = selected_actions[i]
             if current_command.key == "create-scenario":
-                current_command.subcommands = selected_actions[(i + 1):]
+                current_command.additive["subcommands"] = selected_actions[(i + 1):]
 
                 del selected_actions[(i + 1):]
                 break
-
-            if current_command.type == "notification-adding":
-                additive_parts = current_command.additive.split(" текст ")
-
-                time = additive_parts[0]
-                text = additive_parts[1]
-
-                raise NotImplementedError
 
         print(selected_actions)
         return selected_actions

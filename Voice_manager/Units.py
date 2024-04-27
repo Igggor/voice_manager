@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 class Command:
     """
     Структура команды (запроса к голосовому помощнику).
@@ -35,8 +38,9 @@ class Command:
         self.subcommands_required = False if "subcommands_required" not in kwargs.keys() else (
             kwargs["subcommands_required"])
 
-        self.additive = None
-        self.subcommands = list()
+        self.additive = {
+            "main": None
+        }
 
 
 class Response:
@@ -53,47 +57,28 @@ class Response:
         Обязательные агрументы:
             * ``text``: текст ответа.
         Опциональные аргументы:
-            * ``header``: заголовок ответа [по умолчанию = ``None``];
-            * ``is_correct``: корректно ли (без ошибки) завершилась функция [по умолчанию = ``True``];
-            * ``type``: тип ответа [по умолчанию = ``None``];
+            * ``info``: доп. информация (в основном, для ошибок) [по умолчанию = ``None``];
+            * ``error``: завершилась ли функция с ошибкой [по умолчанию = ``False``];
             * ``called_by``: родительская функция [по умолчанию = ``None``];
             * ``do_next``: функции (без аргументов), выполняемые автоматически сразу после ответа.
 
         :return:
         """
 
-        self.text = None
-        self.header = None
-        self.called_by = None
-        self.is_correct = None
-        self.type = None
-
         self.text = kwargs["text"]
-        self.header = None if "header" not in kwargs.keys() else kwargs["header"]
-        self.called_by = None if "called_by" not in kwargs.keys() else kwargs["called_by"]
-        self.is_correct = True if "is_correct" not in kwargs.keys() else kwargs["is_correct"]
-        self.type = None if "type" not in kwargs.keys() else kwargs["type"]
+        self.info = None if "info" not in kwargs.keys() else kwargs["info"]
+        self.error = False if "error" not in kwargs.keys() else kwargs["error"]
         self.do_next = None if "do_next" not in kwargs.keys() else kwargs["do_next"]
+        self.called_by = None if "called_by" not in kwargs.keys() else kwargs["called_by"]
 
     def get_speech(self):
         """
         Получение фразы из экземпляра класса.
 
-        :return: Список из частей фраз (блоков).
-            Каждый блок является смысловым предложением, чтобы при остановке воспроизведения не произходило
-            заметного разрыва фразы.
+        :return: Сама фраза в строковом формате.
         """
 
-        if self.type == "city-not-found-error":
-            return self.header + "\n" + "Распознанный город: " + self.text.title() + "."
-        if self.type == "format-error":
-            return self.header + self.called_by.name.lower() + "." + "\n" + self.text
-        if self.type == "notification":
-            return self.header + "\n" + "Текст напоминания: " + self.text + "."
-        if self.header is not None:
-            return self.header + '\n' + self.text
-
-        return self.text
+        return self.text + (self.info if self.info is not None else "")
 
 
 class PlayableText:
@@ -114,9 +99,9 @@ class PlayableText:
         """
 
         blocks = text.split('\n')
-        self.__join_blocks(blocks)
+        self.join_blocks(blocks)
 
-    def __join_blocks(self, blocks: list):
+    def join_blocks(self, blocks: list):
         """
         Добавление текстового блока к воспроизводимому тексту.
 
@@ -127,6 +112,10 @@ class PlayableText:
 
         self.blocks.append(list())
         for block in blocks:
+            # Empty block
+            if not block:
+                continue
+
             self.blocks[len(self.blocks) - 1].append(block)
 
     def get_normal_text(self):
@@ -173,11 +162,7 @@ class Notification:
         Обязательные агрументы:
             * ``text``: текст уведомления;
             * ``id``: уникальный идентификатор уведомления.
-            Время воспроизведения уведомления:
-                * ``hour``: час;
-                * ``hour``: минута.
-        Опциональные аргументы:
-            * ``second``: секунда [по умолчанию = ``0``].
+            * ````
 
         :return:
         """
@@ -187,21 +172,22 @@ class Notification:
 
         self.hour = kwargs["hour"]
         self.minute = kwargs["minute"]
-        self.second = 0 if "second" not in kwargs.keys() else kwargs["second"]
+        self.second = kwargs["second"]
+        self.month = kwargs["month"]
+        self.day = kwargs["day"]
+        self.timer = kwargs["timer"]
 
         self.previous_check = None
 
-    def check_corresponding(self, current_hour: int, current_minute: int, current_second: int):
+    def check_corresponding(self):
         """
         Метод проверки на необходимость воспроизведения данного уведомления прямо сейчас (проверка на то, что его
         время настало).
 
-        :param current_hour: ``int``: текущее время (час);
-        :param current_minute: ``int``: текущее время (минута);
-        :param current_second: ``int``: текущее время (секунда);
-
         :return: ``True`` или ``False``.
         """
+
+        current_time = datetime.now()
 
         def in_segment():
             """
@@ -213,27 +199,27 @@ class Notification:
             if self.previous_check is None:
                 return False
 
-            if self.previous_check["hour"] <= self.hour <= current_hour \
-                    and self.previous_check["minute"] <= self.minute <= current_minute \
-                    and self.previous_check["second"] <= self.second <= current_second:
-                print("FOUND")
-                return True
+            if self.day is None:
+                moment = datetime(year=current_time.year, month=current_time.month, day=current_time.day,
+                                  hour=self.hour, minute=self.minute, second=self.second)
             else:
-                return False
+                moment = datetime(year=current_time.year, month=self.month, day=self.day,
+                                  hour=self.hour, minute=self.minute, second=self.second)
+
+            if self.previous_check <= moment <= current_time:
+                return True
+
+            return False
 
         result = in_segment()
 
         print(self.previous_check)
         print(self.hour, self.minute, self.second)
-        print(current_hour, current_minute, current_second)
+        print(current_time.hour, current_time.minute, current_time.second)
         print(result)
 
         if not result:
-            self.previous_check = {
-                "hour": current_hour,
-                "minute": current_minute,
-                "second": current_second
-            }
+            self.previous_check = current_time
         else:
             self.previous_check = None
 
@@ -246,8 +232,51 @@ class Notification:
         :return: Уведомление, упакованное в класс ``Response``.
         """
 
+        if self.timer:
+            return Response(
+                text=f"Внимание! Таймер! \n",
+                info="Текст таймера: " + self.text,
+                type="notification"
+            )
+        else:
+            return Response(
+                text=f"Напоминание (порядковый номер {self.id}). \n",
+                info="Текст напоминания: " + self.text,
+                type="notification"
+            )
+
+
+class Scenario:
+    """
+    Структура сценария.
+    """
+
+    def __init__(self, name: str, functions: list):
+        """
+        Конструктор класса.
+
+        :param name: ``str``: имя (название) сценария;
+        :param functions: ``list``: список команд класса ``Command``, которые нужно исполнить при вызове сценария.
+
+        Инициализирует название сценария, а также команды, которые исполняются при его вызове.
+
+        :return:
+        """
+
+        self.name = name
+        self.units = functions
+
+    def execute_scenario(self):
+        """
+        Выполнение сценария.
+
+        :return: Возвращает текст результата выполнения команд сценария.
+        """
+
+        output_text = f"Исполняю сценарий { self.name }. \n"
+        for item in self.units:
+            output_text += item.function(**item.additive)
+
         return Response(
-            header=f"Напоминание (порядковый номер {self.id}).",
-            text=self.text,
-            type="notification"
+            text=output_text
         )
