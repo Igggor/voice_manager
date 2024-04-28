@@ -1,6 +1,6 @@
 from Units import Command
 from Metaclasses import SingletonMetaclass
-from Responses import ResponsesHandler
+from GlobalContext import GlobalContext
 
 
 class FormatChecker(metaclass=SingletonMetaclass):
@@ -17,10 +17,10 @@ class FormatChecker(metaclass=SingletonMetaclass):
         self.wrong_command_format_error = None
 
     def update_settings(self):
-        handler = ResponsesHandler()
+        global_context = GlobalContext()
 
-        self.recognition_error = handler.recognition_error
-        self.wrong_command_format_error = handler.wrong_command_format_error
+        self.recognition_error = global_context.recognition_error
+        self.wrong_command_format_error = global_context.wrong_command_format_error
 
     def check_recognition(self, selected_actions: list):
         """

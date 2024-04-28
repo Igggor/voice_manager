@@ -1,6 +1,5 @@
 from Local import declension
 from Metaclasses import SingletonMetaclass
-from Responses import ResponsesHandler
 from Units import Response
 from GlobalContext import GlobalContext
 
@@ -33,11 +32,9 @@ class FunctionsCore(metaclass=SingletonMetaclass):
         self.weather_celsium = global_context.weather_celsium
         self.weather_mmHg = global_context.weather_mmHg
 
-        handler = ResponsesHandler()
-
-        self.course_request_error = handler.course_request_error
-        self.weather_not_found_error = handler.weather_not_found_error
-        self.weather_request_error = handler.weather_request_error
+        self.course_request_error = global_context.course_request_error
+        self.weather_not_found_error = global_context.weather_not_found_error
+        self.weather_request_error = global_context.weather_request_error
 
     def get_currency_course(self, **kwargs):
         """

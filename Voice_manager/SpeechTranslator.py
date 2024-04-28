@@ -1,9 +1,8 @@
-import threading
-
 from GlobalContext import GlobalContext
 from Units import PlayableText
 from Metaclasses import SingletonMetaclass
 
+import threading
 import os
 import speech_recognition
 from gtts import gTTS

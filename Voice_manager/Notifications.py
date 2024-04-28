@@ -1,7 +1,6 @@
 from Metaclasses import SingletonMetaclass
 from GlobalContext import GlobalContext
 from Units import Notification
-from Responses import ResponsesHandler
 from Constants import MONTH_KEYS
 from Local import declension
 
@@ -43,6 +42,9 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
         for i in range(len(self.notifications)):
             self.notifications[i].id = i
 
+        for i in range(len(self.timers)):
+            self.timers[i].id = i
+
     def shrink(self):
         """
         Удаляет старые уведомления до того момента, пока количество уведомлений превышает лимит.
@@ -71,15 +73,13 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
         self.notifications = global_context.NOTIFICATIONS
         self.timers = global_context.TIMERS
 
-        handler = ResponsesHandler()
-
-        self.timer_creation_success = handler.timer_creation_success
-        self.note_creation_success = handler.note_creation_success
-        self.note_deletion_success = handler.note_deletion_success
-        self.notes_list_empty_error = handler.notes_list_empty_error
-        self.notes_list_overflow_error = handler.notes_list_overflow_error
-        self.timers_list_overflow_error = handler.timers_list_overflow_error
-        self.note_not_found_error = handler.note_not_found_error
+        self.timer_creation_success = global_context.timer_creation_success
+        self.note_creation_success = global_context.note_creation_success
+        self.note_deletion_success = global_context.note_deletion_success
+        self.notes_list_empty_error = global_context.notes_list_empty_error
+        self.notes_list_overflow_error = global_context.notes_list_overflow_error
+        self.timers_list_overflow_error = global_context.timers_list_overflow_error
+        self.note_not_found_error = global_context.note_not_found_error
 
     def add_notification(self, **kwargs):
         """
@@ -172,12 +172,25 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
         if note_id < len(self.notifications):
             del self.notifications[note_id]
 
-            for i in range(len(self.notifications)):
-                self.notifications[i].id = i
+            self.renumerate()
 
             return self.note_deletion_success
         else:
             return self.note_not_found_error
+
+    def delete_timer(self, index: int):
+        """
+        Метод удаления таймера. Не может быть вызван пользователем.
+
+        Обязательные аргументы:
+            * ``id``: индекс таймера в списке таймеров.
+
+        :return: Удаляет уведомление и возвращает фразу-отклик.
+        """
+
+        del self.timers[index]
+
+        self.renumerate()
 
     def find_nearest_notification(self, **kwargs):
         """

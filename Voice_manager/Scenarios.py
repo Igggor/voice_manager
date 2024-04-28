@@ -1,6 +1,5 @@
 from GlobalContext import GlobalContext
 from Units import Scenario
-from Responses import ResponsesHandler
 from Metaclasses import SingletonMetaclass
 
 
@@ -36,12 +35,10 @@ class ScenarioInteractor(metaclass=SingletonMetaclass):
 
         self.scenarios = global_context.SCENARIOS
 
-        handler = ResponsesHandler()
-
-        self.scenario_already_exists_error = handler.scenario_already_exists_error
-        self.scenario_creation_success = handler.scenario_creation_success
-        self.scenario_deletion_success = handler.scenario_deletion_success
-        self.scenario_not_found_error = handler.scenario_not_found_error
+        self.scenario_already_exists_error = global_context.scenario_already_exists_error
+        self.scenario_creation_success = global_context.scenario_creation_success
+        self.scenario_deletion_success = global_context.scenario_deletion_success
+        self.scenario_not_found_error = global_context.scenario_not_found_error
 
     def add_scenario(self, **kwargs):
         """

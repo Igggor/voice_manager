@@ -6,7 +6,6 @@ from SpeechTranslator import SpeechTranslator
 from Scenarios import ScenarioInteractor
 from Units import Response, PlayableText
 from Metaclasses import SingletonMetaclass
-from Responses import ResponsesHandler
 from FormatChecking import FormatChecker
 from Functions import FunctionsCore
 
@@ -86,14 +85,8 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         :return:
         """
 
-        handler = ResponsesHandler()
-
-        self.greeting = handler.greeting
-        self.small_bye = handler.small_bye
-        self.big_bye = handler.big_bye
-        self.big_bye.do_next = [self.logger.close, sys.exit]
-        self.features = handler.features
-        self.thanks = handler.thanks
+        self.global_context.update_settings()
+        self.global_context.big_bye.do_next = [self.logger.close, sys.exit]
 
         self.time_core.update_settings()
         self.text_processor.update_settings()
@@ -116,7 +109,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
             )
 
         self.global_context.ON = True
-        return self.greeting
+        return self.global_context.greeting
 
     def set_OFF(self, **kwargs):
         """
@@ -129,7 +122,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
             return None
 
         self.global_context.ON = False
-        return self.small_bye
+        return self.global_context.small_bye
 
     # Важно! В перспективе здесь не только выход, но, возможно, какое-то сохранение в БД или что-то подобное.
     def exit(self, **kwargs):
@@ -146,7 +139,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         except OSError:
             pass
 
-        return self.big_bye
+        return self.global_context.big_bye
 
     def features(self, **kwargs):
         """
@@ -155,7 +148,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         :return:
         """
 
-        return self.features
+        return self.global_context.features
 
     def thanks(self, **kwargs):
         """
@@ -164,7 +157,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         :return:
         """
 
-        return self.thanks[random.randint(0, len(self.thanks) - 1)]
+        return self.global_context.thanks[random.randint(0, len(self.global_context.thanks) - 1)]
 
     def periodic_task(self, function, sleeping_time: float):
         """

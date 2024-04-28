@@ -1,4 +1,4 @@
-from Units import Response, Notification
+from Units import Response
 from Local import declension
 from Constants import MONTH_KEYS
 from Metaclasses import SingletonMetaclass
@@ -52,6 +52,15 @@ class TimeWorker(metaclass=SingletonMetaclass):
         """
 
         return self.notifications_interactor.notifications
+
+    def get_timers(self):
+        """
+        Метод получения списка таймеров.
+
+        :return: Список таймеров, состоящий из экземпляров класса ``Notification``.
+        """
+
+        return self.notifications_interactor.timers
 
     @staticmethod
     def get_date(**kwargs):
@@ -114,15 +123,17 @@ class TimeWorker(metaclass=SingletonMetaclass):
         print("[Log: time_thread]: notifications detecting...")
 
         corresponding_notes = list()
-        for note in self.get_notifications():
-            if note.check_corresponding():
-                corresponding_notes.append(note)
+        notifications = self.get_notifications()
+        for i in range(len(notifications)):
+            if notifications[i].check_corresponding():
+                corresponding_notes.append(notifications[i])
 
         corresponding_timers = list()
-        for i in range(len(self.notifications_interactor.timers)):
-            if self.notifications_interactor.timers[i].check_corresponding():
-                corresponding_timers.append(self.notifications_interactor.timers[i])
-                del self.notifications_interactor.timers[i]
+        timers = self.get_timers()
+        for i in range(len(timers)):
+            if timers[i].check_corresponding():
+                corresponding_timers.append(timers[i])
+                self.notifications_interactor.delete_timer(index=i)
 
         return None if len(corresponding_notes) + len(corresponding_timers) == 0 \
             else corresponding_notes + corresponding_timers
