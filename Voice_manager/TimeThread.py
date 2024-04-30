@@ -123,17 +123,21 @@ class TimeWorker(metaclass=SingletonMetaclass):
         print("[Log: time_thread]: notifications detecting...")
 
         corresponding_notes = list()
-        notifications = self.get_notifications()
-        for i in range(len(notifications)):
-            if notifications[i].check_corresponding():
-                corresponding_notes.append(notifications[i])
+        index = 0
+        while index < len(self.notifications_interactor.notifications):
+            if self.notifications_interactor.notifications[index].check_corresponding():
+                corresponding_notes.append(self.notifications_interactor.notifications[index])
+
+            index += 1
 
         corresponding_timers = list()
-        timers = self.get_timers()
-        for i in range(len(timers)):
-            if timers[i].check_corresponding():
-                corresponding_timers.append(timers[i])
-                self.notifications_interactor.delete_timer(index=i)
+        index = 0
+        while index < len(self.notifications_interactor.timers):
+            if self.notifications_interactor.timers[index].check_corresponding():
+                corresponding_timers.append(self.notifications_interactor.timers[index])
+                self.notifications_interactor.delete_timer(index=index)
+
+            index += 1
 
         return None if len(corresponding_notes) + len(corresponding_timers) == 0 \
             else corresponding_notes + corresponding_timers

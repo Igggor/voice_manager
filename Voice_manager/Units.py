@@ -177,7 +177,8 @@ class Notification:
         self.day = kwargs["day"]
         self.timer = kwargs["timer"]
 
-        self.previous_check = None
+        current_time = datetime.now()
+        self.previous_check = current_time
 
     def check_corresponding(self):
         """
@@ -196,9 +197,6 @@ class Notification:
             :return: ``True`` или ``False``.
             """
 
-            if self.previous_check is None:
-                return False
-
             if self.day is None:
                 moment = datetime(year=current_time.year, month=current_time.month, day=current_time.day,
                                   hour=self.hour, minute=self.minute, second=self.second)
@@ -213,15 +211,7 @@ class Notification:
 
         result = in_segment()
 
-        print(self.previous_check)
-        print(self.hour, self.minute, self.second)
-        print(current_time.hour, current_time.minute, current_time.second)
-        print(result)
-
-        if not result:
-            self.previous_check = current_time
-        else:
-            self.previous_check = None
+        self.previous_check = current_time
 
         return result
 
@@ -232,16 +222,17 @@ class Notification:
         :return: Уведомление, упакованное в класс ``Response``.
         """
 
+        text = "отсутствует (не указан)." if self.text is None else self.text
         if self.timer:
             return Response(
                 text=f"Внимание! Таймер! \n",
-                info="Текст таймера: " + self.text,
+                info="Текст таймера: " + text,
                 type="notification"
             )
         else:
             return Response(
                 text=f"Напоминание (порядковый номер {self.id}). \n",
-                info="Текст напоминания: " + self.text,
+                info="Текст напоминания: " + text,
                 type="notification"
             )
 

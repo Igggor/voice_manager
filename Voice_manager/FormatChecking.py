@@ -1,9 +1,21 @@
-from Units import Command
+from Units import Command, Response
 from Metaclasses import SingletonMetaclass
-from GlobalContext import GlobalContext
 
 
 class FormatChecker(metaclass=SingletonMetaclass):
+    """
+    ``Singleton``-класс, отвечающий за проверку формата команд.
+
+    **Поля класса:**
+        * ``recognition_error`` - ``Response``-объект, возвращаемый при ошибке распознавания команды;
+        * ``wrong_command_format_error`` - ``Response``-объект, возвращаемый при нахождении ошибки формата.
+
+    **Публичные методы класса:**
+        * ``update_settings()`` - метод обновления полей класса в соответствии с ``GlobalContext``;
+        * ``check_recognition()`` - метод проверки на корректность распознавания;
+        * ``check_format()`` - метод проверки формата команды.
+    """
+
     __instance = None
 
     def __new__(cls):
@@ -13,14 +25,15 @@ class FormatChecker(metaclass=SingletonMetaclass):
         return cls.__instance
 
     def __init__(self):
-        self.recognition_error = None
-        self.wrong_command_format_error = None
+        self.recognition_error = Response(
+            text="Команда не распознана",
+            error=True
+        )
 
-    def update_settings(self):
-        global_context = GlobalContext()
-
-        self.recognition_error = global_context.recognition_error
-        self.wrong_command_format_error = global_context.wrong_command_format_error
+        self.wrong_command_format_error = Response(
+            text="Неправильный формат запрашиваемой команды: ",
+            error=True
+        )
 
     def check_recognition(self, selected_actions: list):
         """
@@ -69,6 +82,11 @@ class FormatChecker(metaclass=SingletonMetaclass):
             return error
 
         if current_command.type == "notification-adding":
+            if current_command.additive["time"] is None:
+                error.info += "Заданы неправильные параметры к команде: указано некорректное время."
+
+                return error
+
             hours, minutes, seconds = current_command.additive["time"].values()
             if current_command.key == "add-notification" and (hours < 0 or hours > 23):
                 error.info += ("Заданы неправильные параметры к команде: количество часов должно быть в пределах "

@@ -1,5 +1,7 @@
 from Constants import D_WORDS, MONTH_KEYS
 
+from text_to_num import alpha2digit
+
 
 def base_declension(number: int):
     """
@@ -37,6 +39,14 @@ def declension(number: int, string: str):
 
 
 def get_base(text: str):
+    """
+    Находит исходное слово по склонённому (обратная функция для ``declension``).
+
+    :param text: ``str``: слово, для которого необходимо найти исходное (в именительном падеже).
+
+    :return: Исходное слово или, если оно не найдено, ``None``.
+    """
+
     for base in D_WORDS.keys():
         if any(text == sub for sub in D_WORDS[base].values()):
             return base
@@ -45,8 +55,31 @@ def get_base(text: str):
 
 
 def get_month(key: str):
+    """
+    Возвращает порядковый номер месяцы по его названию.
+
+    :param key: ``str``: название месяца ("января", "февраля" и т.д).
+
+    :return: Порядковый номер месяца или ``None``, если передан некорректный аргумент.
+    """
+
     for index in range(len(MONTH_KEYS)):
         if MONTH_KEYS[index] == key:
             return index + 1
 
     return None
+
+
+def replace_numbers(text: str):
+    """
+    Заменяет все слова, выражающие числа, числовыми занчениями.
+
+    Например, ``"двадцать пять штук" → "25 штук"``.
+
+    :param text: ``str``: исходный текст.
+
+    :return: Изменённая строка.
+    """
+
+    text = alpha2digit(text=text, lang="ru")
+    return text

@@ -2,7 +2,39 @@ from Units import Command
 from Local import get_base, get_month
 
 
+def remove_whitespaces(text: str):
+    """
+    Удаляет из строки лишние пробелы.
+
+    :param text: ``str``: строка, из которой необходимо выделить время.
+
+    :return: Словарь с полями ``hours``, ``minutes``, ``seconds`` в случае,
+    если в строке успешно найдены данные времени. В противном случае будет возвращено ``None``.
+    """
+
+    cleared = str()
+    previous_char = " "
+
+    for char in text:
+        if char == " " and previous_char == " ":
+            continue
+
+        cleared += char
+        previous_char = char
+
+    return cleared
+
+
 def parse_time(text: str):
+    """
+    Выделяет из строки время.
+
+    :param text: ``str``: строка, из которой необходимо выделить время.
+
+    :return: Словарь с полями ``hours``, ``minutes``, ``seconds`` в случае,
+        если в строке успешно найдены данные времени. В противном случае будет возвращено ``None``.
+    """
+
     hours = 0
     minutes = 0
     seconds = 0
@@ -14,15 +46,6 @@ def parse_time(text: str):
     units = text.split()
     for i in range(len(units)):
         unit = units[i]
-        if ':' in unit:
-            if hours_filled or minutes_filled:
-                return None
-
-            hours, minutes = map(int, unit.split(':'))
-
-            hours_filled = True
-            minutes_filled = True
-            continue
 
         if unit.isdigit():
             if i + 1 >= len(units):
@@ -62,6 +85,9 @@ def parse_time(text: str):
         else:
             continue
 
+    if not hours_filled and not minutes_filled and not seconds_filled:
+        return None
+
     response = {
         "hours": hours,
         "minutes": minutes,
@@ -73,6 +99,15 @@ def parse_time(text: str):
 
 
 def parse_date(text: str):
+    """
+    Выделяет из строки дату.
+
+    :param text: ``str``: строка, из которой необходимо выделить дату.
+
+    :return: Словарь с полями ``month``, ``day`` в случае,
+        если в строке успешно найдена дата. В противном случае будет возвращено ``None``.
+    """
+
     units = text.split()
     for i in range(len(units)):
         unit = units[i]
@@ -110,6 +145,11 @@ def parse_info(command: Command):
 
     :return: Возвращает экземпляр класса ``Command`` - обработанную команду.
     """
+
+    if command.additive["main"] is None:
+        return command
+
+    print("[Log: parse]: " + command.additive["main"])
 
     if command.type == "notification-adding":
         additive = command.additive["main"]
@@ -157,7 +197,7 @@ def parse_info(command: Command):
 
         time_response = parse_time(' '.join(time))
         date_response = parse_date(' '.join(date))
-        text_response = ' '.join(text)
+        text_response = None if len(text) == 0 else ' '.join(text)
 
         command.additive["main"] = text_response
         command.additive["time"] = time_response
@@ -165,4 +205,9 @@ def parse_info(command: Command):
         if command.key == "add-notification":
             command.additive["date"] = date_response
 
+    if command.key == "delete-notification":
+        command.additive["main"] = command.additive["main"].replace("порядковый", "")
+        command.additive["main"] = command.additive["main"].replace("номер", "")
+
+    command.additive["main"] = remove_whitespaces(command.additive["main"])
     return command

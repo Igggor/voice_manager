@@ -5,7 +5,16 @@ from Metaclasses import SingletonMetaclass
 
 class Logger(metaclass=SingletonMetaclass):
     """
-    Класс, отвечающий за запись логов.
+    ``Singleton``-класс, отвечающий за запись логов.
+
+    **Поля класса:**
+        * ``logs_limit`` - ограничение на количество логов;
+        * ``logs`` - список логов.
+
+    **Публичные методы класса:**
+        * ``update_settings()`` - метод обновления полей класса в соответствии с ``GlobalContext``;
+        * ``write()`` - добавить запись в список логов;
+        * ``close()`` - закрытие записи и сохранение.
     """
 
     __instance = None

@@ -109,7 +109,7 @@ class StreamLocker:
         """
         Метод, проверяющий, является ли поток c ``native_id = thread_id`` контролирующим.
 
-        :param thread_id: ``int``: нативный id потока, для которого проверяется доступность ввода-вывода.
+        :param thread_id: ``int``: нативный ``id`` потока, для которого проверяется доступность ввода-вывода.
 
         :return: ``True`` или ``False``.
         """
@@ -120,7 +120,7 @@ class StreamLocker:
         """
         Метод, проверяющий, может ли в данный момент поток c ``native_id = thread_id`` получить доступ к вводу-выводу.
 
-        :param thread_id: ``int``: нативный id потока, для которого проверяется доступность ввода-вывода.
+        :param thread_id: ``int``: нативный ``id`` потока, для которого проверяется доступность ввода-вывода.
 
         :return: ``True`` или ``False``.
         """
@@ -131,7 +131,7 @@ class StreamLocker:
         """
         Метод, проверяющий, доступен ли перехват управления голосовым вводом-выводом потоку c ``native_id = thread_id``.
 
-        :param thread_id: ``int``: нативный id потока, для которого проверяется доступность ввода-вывода.
+        :param thread_id: ``int``: нативный ``id`` потока, для которого проверяется доступность ввода-вывода.
 
         :return: ``True`` или ``False``.
         """
@@ -199,7 +199,6 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
             или, в случае произвольной ошибки, ``None``.
         """
 
-        print("LISTEN", self.LOCKER.controlling_thread_id, threading.get_native_id())
         if not self.LOCKER.available(thread_id=threading.get_native_id()):
             return None
 
@@ -208,17 +207,17 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
                 self.RECOGNIZER.adjust_for_ambient_noise(source=source, duration=self.microphone_duration)
                 audio = self.RECOGNIZER.listen(source=source, timeout=self.listening_timeout,
                                                phrase_time_limit=self.phrase_limit)
-                query = self.RECOGNIZER.recognize_google(audio_data=audio, language=self.language_listen).lower()
+                query = self.RECOGNIZER.recognize_vosk(audio_data=audio, language=self.language_listen)
 
-            print("[Log: listen command]:", query)
-            return query
+            print("[Log: listen command]:", query[14:len(query) - 3])
+            return query[14:len(query) - 3]
         except (speech_recognition.UnknownValueError, speech_recognition.WaitTimeoutError) as error:
-            print(f"An error occurred while recognizing voice: {error}")
+            print(f"Warning: something went wrong while recognizing voice: {error}")
             return None
 
     def prepare_text(self, output_text: str, index: int):
         """
-        С помощью ``API`` переводит текст в речь и сохраняет её в виде файла ``.mp3``.
+        С помощью ``gTTS-API`` переводит текст в речь и сохраняет её в виде файла ``.mp3``.
 
         :param output_text: ``str``: блок ответа голосового помощника;
         :param index: ``int``: индекс блока (фрагмента).
@@ -230,16 +229,16 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
             tts = gTTS(text=output_text, lang=self.language_speak, tld="com", timeout=10)
             tts.save(f"buffer/{index}.mp3")
         except OSError as error:
-            print(f"An error occurred while saving file with index {index}: {error}")
+            print(f"Warning: something went wrong while saving file with index {index}: {error}")
         except (RuntimeError, ValueError, AssertionError) as error:
-            print(f"Google-server error occurred: {error}")
+            print(f"Warning: something went wrong preparing text to playing: {error}")
 
     @staticmethod
     def play_text(index: int, tempo: float):
         try:
             os.system(f"play buffer/{index}.mp3 tempo {tempo}")
         except OSError as error:
-            print(f"An error occurred while playing file with index {index}: {error}")
+            print(f"Warning: something went wrong while playing file with index {index}: {error}")
 
     def speak(self, output: PlayableText):
         """
@@ -250,11 +249,9 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         :return:
         """
 
-        print(output.get_normal_text())
-
         locked = self.LOCKER.lock()
         if not locked:
-            return
+            print("Warning: stream was not locked, but the first phrase will be played.")
 
         self.clear_buffer()
 
@@ -277,14 +274,10 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         print(blocks)
 
         for i in range(len(blocks)):
-            if not self.LOCKER.is_controller(thread_id=threading.get_native_id()):
-                self.LOCKER.collision = False
-                return
-
             self.prepare_text(output_text=blocks[i], index=i)
 
         for i in range(len(blocks)):
-            if not self.LOCKER.is_controller(thread_id=threading.get_native_id()):
+            if i > 0 and not self.LOCKER.is_controller(thread_id=threading.get_native_id()):
                 self.LOCKER.collision = False
                 return
 
@@ -297,7 +290,8 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         self.LOCKER.collision = False
 
         unlocked = self.LOCKER.unlock()
-        assert unlocked
+        if not unlocked:
+            print("Warning: stream was not unlocked. High probability of unexpected behavior")
 
     @staticmethod
     def clear_buffer():
@@ -312,4 +306,4 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         try:
             os.system("rm buffer/*")
         except OSError as error:
-            print(f"An error occurred while removing files from buffer: {error}")
+            print(f"Warning: something went wrong while removing files from buffer: {error}")

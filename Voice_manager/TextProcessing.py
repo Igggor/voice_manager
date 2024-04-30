@@ -5,6 +5,7 @@ from Units import Command
 from Scenarios import ScenarioInteractor
 from Metaclasses import SingletonMetaclass
 from Parser import parse_info
+from Local import replace_numbers
 
 
 class TextProcessor(metaclass=SingletonMetaclass):
@@ -138,15 +139,15 @@ class TextProcessor(metaclass=SingletonMetaclass):
                     description="Добавление напоминания с заданным текстом и временем запуска",
                     key="add-notification", function=time_core.notifications_interactor.add_notification,
                     triggers=["добавь уведомление", "добавь напоминание", "создай уведомление", "создай напоминание"],
-                    type="notification-adding", additive_required=True
+                    type="notification-adding"
                 ),
             "add-timer":
                 Command(
                     name="Добавление таймера",
                     description="Добавление таймера на заданное количество времени. "
                                 "Отличие от уведомления - автоматическое удаление по зевершении",
-                    key="add-timer", function=time_core.notifications_interactor.add_timer, triggers=["добавь таймер", "создай таймер"],
-                    type="notification-adding", additive_required=True
+                    key="add-timer", function=time_core.notifications_interactor.add_timer,
+                    triggers=["добавь таймер", "создай таймер"], type="notification-adding"
                 ),
             "delete-notification":
                 Command(
@@ -184,7 +185,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
         """
 
         for item in self.NAME:
-            command = command.replace(item, "").strip()
+            command = command.replace(item, "", 1).strip()
 
         return None if command == "" else command
 
@@ -257,6 +258,8 @@ class TextProcessor(metaclass=SingletonMetaclass):
                  Иначе будет возвращен список из распознанных команд.
         """
 
+        command = replace_numbers(text=command)
+
         selected_actions = list()
 
         # Поиск первого обращения к голосовому помощнику и срез информации ДО него.
@@ -309,5 +312,4 @@ class TextProcessor(metaclass=SingletonMetaclass):
                 del selected_actions[(i + 1):]
                 break
 
-        print(selected_actions)
         return selected_actions

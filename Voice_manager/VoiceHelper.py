@@ -71,10 +71,31 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         self.functions_core = FunctionsCore()
 
         self.greeting = None
-        self.small_bye = None
-        self.big_bye = None
-        self.features = None
-        self.thanks = None
+
+        self.features = Response(
+            text=("Сейчас я мало что умею, да и понимаю человека с трудом. "
+                  "Но обещаю, буквально через месяц я смогу очень многое!")
+        )
+
+        self.thanks = [
+            Response(
+                text="Я всегда к вашим услугам."
+            ),
+            Response(
+                text="Всегда пожалуйста!"
+            ),
+            Response(
+                text="Рада стараться."
+            )
+        ]
+        self.small_bye = Response(
+            text="Была рада помочь."
+        )
+
+        self.big_bye = Response(
+            text="Всего доброго, буду рада быть полезной снова."
+        )
+        self.big_bye.do_next = [self.logger.close, sys.exit]
 
         self.update_all()
 
@@ -85,15 +106,17 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         :return:
         """
 
-        self.global_context.update_settings()
-        self.global_context.big_bye.do_next = [self.logger.close, sys.exit]
+        self.greeting = Response(
+            text=(f"Приветствую, я твой универсальный голосовой помощник {self.global_context.NAME}.\n"
+                  f"Ты можешь узнать о моих возможностях на сайте или просто спросив меня: "
+                  f"{self.global_context.NAME}, что ты умеешь?")
+        )
 
         self.time_core.update_settings()
         self.text_processor.update_settings()
         self.speech_translator.update_settings()
         self.scenario_interactor.update_settings()
         self.logger.update_settings()
-        self.format_checker.update_settings()
         self.functions_core.update_settings()
 
     def set_ON(self, **kwargs):
@@ -109,7 +132,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
             )
 
         self.global_context.ON = True
-        return self.global_context.greeting
+        return self.greeting
 
     def set_OFF(self, **kwargs):
         """
@@ -122,7 +145,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
             return None
 
         self.global_context.ON = False
-        return self.global_context.small_bye
+        return self.small_bye
 
     # Важно! В перспективе здесь не только выход, но, возможно, какое-то сохранение в БД или что-то подобное.
     def exit(self, **kwargs):
@@ -139,7 +162,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         except OSError:
             pass
 
-        return self.global_context.big_bye
+        return self.big_bye
 
     def features(self, **kwargs):
         """
@@ -148,7 +171,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         :return:
         """
 
-        return self.global_context.features
+        return self.features
 
     def thanks(self, **kwargs):
         """
@@ -157,7 +180,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         :return:
         """
 
-        return self.global_context.thanks[random.randint(0, len(self.global_context.thanks) - 1)]
+        return self.thanks[random.randint(0, len(self.thanks) - 1)]
 
     def periodic_task(self, function, sleeping_time: float):
         """
@@ -230,7 +253,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
                 else:
                     response = query.function(**query.additive)
 
-                    print("!", response, query.name)
+                    print("[Log: executing]: COMMAND_NAME =", query.name)
 
                     if response.called_by is None:
                         response.called_by = query

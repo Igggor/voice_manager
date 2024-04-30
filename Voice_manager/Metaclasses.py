@@ -1,4 +1,8 @@
 class SingletonMetaclass(type):
+    """
+    Мета-класс паттерна "одиночка".
+    """
+
     __instances = {}
 
     def __call__(cls, **kwargs):

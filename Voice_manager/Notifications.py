@@ -1,6 +1,6 @@
 from Metaclasses import SingletonMetaclass
 from GlobalContext import GlobalContext
-from Units import Notification
+from Units import Notification, Response
 from Constants import MONTH_KEYS
 from Local import declension
 
@@ -8,6 +8,29 @@ from datetime import datetime, timedelta
 
 
 class NotificationsInteractor(metaclass=SingletonMetaclass):
+    """
+    ``Singleton``-класс, отвечающий за взаимодействие с напоминаниями и таймерами.
+
+    **Поля класса:**
+        * ``timers_limit`` - ограничение на количество установленных таймеров;
+        * ``notifications_limit`` - ограничение на количество установленных уведомлений;
+        * ``accuracy`` - точность воспроизведения напоминаний и таймеров;
+        * ``notifications`` - список напоминаний;
+        * ``timers`` - список таймеров;
+        * ``timer_creation_success`` - ``Response``-объект, возвращаемый при успешном создании таймера;
+        * ``note_creation_success`` - ``Response``-объект, возвращаемый при умпешном создании напоминания;
+        * ``note_deletion_success`` - ``Response``-объект, возвращаемый при успешном удалении напоминания;
+        * ``notes_list_empty_error`` - ``Response``-объект, возвращаемый при невозможности выполнить операцию
+          над пустым списком напоминаний;
+        * ``notes_list_overflow_error`` - ``Response``-объект, возвращаемый при превышении ``notifications_limit``;
+        * ``timers_list_overflow_error`` - ``Response``-объект, возвращаемый при превышении ``timers_limit``;
+        * ``note_not_found_error`` - ``Response``-объект, возвращаемый при невозможности найти запрашиваемое
+          напоминание.
+
+    **Публичные методы класса:**
+        * ...
+    """
+
     __instance = None
 
     def __new__(cls):
@@ -19,18 +42,36 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
     def __init__(self):
         self.timers_limit = None
         self.notifications_limit = None
-        self.notifications_accuracy = None
+        self.accuracy = None
 
         self.notifications = None
         self.timers = None
 
-        self.timer_creation_success = None
-        self.note_creation_success = None
-        self.note_deletion_success = None
-        self.notes_list_empty_error = None
+        self.note_creation_success = Response(
+            text="Напоминание успешно создано. \n"
+        )
+        self.timer_creation_success = Response(
+            text="Таймер успешно создан. \n"
+        )
+        self.note_deletion_success = Response(
+            text="Напоминание успешно удалено. Первое из оставшихся уведомлений теперь имеет номер 1."
+        )
+
+        self.note_not_found_error = Response(
+            text=("Не удалось удалить напоминание с заданным порядковым номером.\n"
+                  "Похоже, такого напоминания не существует. Уточните команду и повторите попытку."),
+            error=True
+        )
+        self.notes_list_empty_error = Response(
+            text="Невозможно найти ближайшее напоминание: список уведомлений пуст.",
+            error=True
+        )
         self.notes_list_overflow_error = None
-        self.timers_list_overflow_error = None
-        self.note_not_found_error = None
+        self.timers_list_overflow_error = Response(
+            text="Достигнут лимит количества установленных таймеров. \n"
+                 "Вы можете увеличить его в настройках.",
+            error=True
+        )
 
     def renumerate(self):
         """
@@ -68,18 +109,18 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
 
         self.notifications_limit = global_context.notifications_limit
         self.timers_limit = global_context.timers_limit
-        self.notifications_accuracy = global_context.notifications_accuracy
+        self.accuracy = global_context.notifications_accuracy
 
         self.notifications = global_context.NOTIFICATIONS
         self.timers = global_context.TIMERS
 
-        self.timer_creation_success = global_context.timer_creation_success
-        self.note_creation_success = global_context.note_creation_success
-        self.note_deletion_success = global_context.note_deletion_success
-        self.notes_list_empty_error = global_context.notes_list_empty_error
-        self.notes_list_overflow_error = global_context.notes_list_overflow_error
-        self.timers_list_overflow_error = global_context.timers_list_overflow_error
-        self.note_not_found_error = global_context.note_not_found_error
+        self.notes_list_overflow_error = Response(
+            text=f"Достигнут лимит количества напоминаний. \n"
+                 f"Вы можете увеличить его в настройках или удалить произвольное напоминание, сказав: "
+                 f"{global_context.NAME}, удали напоминание. \n"
+                 f"Не забудьте указать номер удаляемого напоминания.",
+            error=True
+        )
 
     def add_notification(self, **kwargs):
         """
@@ -100,20 +141,44 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
         if current_id > self.notifications_limit:
             return self.notes_list_overflow_error
 
+        hour = kwargs["time"]["hours"]
+        minute = kwargs["time"]["minutes"]
+        second = kwargs["time"]["seconds"]
+        month = None if kwargs["date"] is None else kwargs["date"]["month"]
+        day = None if kwargs["date"] is None else kwargs["date"]["day"]
+
         self.notifications.append(Notification(
             text=kwargs["main"],
             id=current_id,
-            hour=kwargs["time"]["hours"],
-            minute=kwargs["time"]["minutes"],
-            second=kwargs["time"]["seconds"],
-            month=(None if kwargs["date"] is None else kwargs["date"]["month"]),
-            day=(None if kwargs["date"] is None else kwargs["date"]["day"]),
+            hour=hour,
+            minute=minute,
+            second=second,
+            month=month,
+            day=day,
             timer=False
         ))
 
-        response = self.note_creation_success
-        response.info = f"Созданное уведомление имеет порядковый номер {current_id}."
-        return response
+        if kwargs["date"] is None:
+            moment = datetime.now()
+            potential = datetime(year=moment.year, month=moment.month, day=moment.day, hour=hour,
+                                 minute=minute, second=second)
+
+            day_key = "сегодня" if potential > moment else "завтра"
+
+            response = self.note_creation_success
+            response.info = (f"Оно будет запущено {day_key} в {hour} {declension(hour, 'час')} "
+                             f"{minute} {declension(minute, 'минута')} "
+                             f"{second} {declension(second, 'секунда') }. "
+                             f"Созданное уведомление имеет порядковый номер {current_id}.")
+            return response
+        else:
+            response = self.note_creation_success
+            response.info = (f"Оно будет запущено {day} {MONTH_KEYS[month - 1]} "
+                             f"в {hour} {declension(hour, 'час')} "
+                             f"{minute} {declension(minute, 'минута')} "
+                             f"{second} {declension(second, 'секунда')}. "
+                             f"Созданное уведомление имеет порядковый номер {current_id}.")
+            return response
 
     def add_timer(self, **kwargs):
         """
@@ -139,7 +204,6 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
             seconds=kwargs["time"]["seconds"]
         )
 
-        print(moment.hour, moment.minute, moment.second)
         self.timers.append(Notification(
             text=kwargs["main"],
             id=current_id,
@@ -152,10 +216,10 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
         ))
 
         response = self.timer_creation_success
-        response.info = (f"Он завершится { moment.day } { MONTH_KEYS[moment.month - 1] } в "
-                         f"{ moment.hour } { declension(moment.hour, 'час') } "
-                         f"{ moment.minute } { declension(moment.minute, 'минута') } "
-                         f"{ moment.second } {declension(moment.second, 'секунда') }")
+        response.info = (f"Он завершится {moment.day} {MONTH_KEYS[moment.month - 1]} в "
+                         f"{moment.hour} {declension(moment.hour, 'час')} "
+                         f"{moment.minute} {declension(moment.minute, 'минута')} "
+                         f"{moment.second} {declension(moment.second, 'секунда')}.")
         return response
 
     def delete_notification(self, **kwargs):

@@ -7,6 +7,25 @@ import requests
 
 
 class FunctionsCore(metaclass=SingletonMetaclass):
+    """
+    ``Singleton``-класс функциональности.
+
+    **Поля класса:**
+        * ``city`` - город по умолчанию;
+        * ``course_request_error`` - ``Response``-объект, возвращаемый при ошибке во время запроса курса валют;
+        * ``weather_not_found_error`` - ``Response``-объект, возвращаемый, когда при запросе погоды в каком-либо городе
+          для этого города нет данных;
+        * ``weather_request_error`` - ``Response``-объект, возвращаемый при ошибке во время запроса погоды;
+        * ``weather_celsium`` - отображается ли температура в градусах цельсия
+          (если ``False``, то отображается в фаренгейтах);
+        * ``weather_mmHg`` - отображается ли давление в мм. рт. ст. (если ``False``, то отображается в гПа).
+
+    **Публичные методы класса:**
+        * ``update_settings()`` - метод обновления полей класса в соответствии с ``GlobalContext``;
+        * ``get_currency_course()`` - метод получения курса валют;
+        * ``get_weather_now()`` - метод получения текущей погоды.
+    """
+
     __instance = None
 
     def __new__(cls):
@@ -18,23 +37,36 @@ class FunctionsCore(metaclass=SingletonMetaclass):
     def __init__(self):
         self.city = None
 
-        self.course_request_error = None
-        self.weather_not_found_error = None
-        self.weather_request_error = None
+        self.weather_request_error = Response(
+            text=("Извините, во время получения данных о погоде произошла непредвиденная ошибка. \n"
+                  "Повторите запрос позднее."),
+            error=True
+        )
+        self.course_request_error = Response(
+            text=("Извините, во время получения данных о курсе валют произошла непредвиденная ошибка. \n"
+                  "Повторите запрос позднее."),
+            error=True
+        )
+        self.weather_not_found_error = Response(
+            text="Извините, информация о погоде в заданном городе не найдена. Уточните запрос.",
+            error=True
+        )
 
         self.weather_celsium = None
         self.weather_mmHg = None
 
     def update_settings(self):
+        """
+        Метод обновления настроек.
+
+        :return:
+        """
+
         global_context = GlobalContext()
 
         self.city = global_context.CITY
         self.weather_celsium = global_context.weather_celsium
         self.weather_mmHg = global_context.weather_mmHg
-
-        self.course_request_error = global_context.course_request_error
-        self.weather_not_found_error = global_context.weather_not_found_error
-        self.weather_request_error = global_context.weather_request_error
 
     def get_currency_course(self, **kwargs):
         """

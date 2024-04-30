@@ -1,5 +1,5 @@
 from GlobalContext import GlobalContext
-from Units import Scenario
+from Units import Scenario, Response
 from Metaclasses import SingletonMetaclass
 
 
@@ -21,8 +21,16 @@ class ScenarioInteractor(metaclass=SingletonMetaclass):
 
         self.scenario_already_exists_error = None
         self.scenario_creation_success = None
-        self.scenario_deletion_success = None
-        self.scenario_not_found_error = None
+
+        self.scenario_deletion_success = Response(
+            text="Сценарий успешно удалён."
+        )
+
+        self.scenario_not_found_error = Response(
+            text=("Запрошенный сценарий не найден. \n"
+                  "Уточните команду и повторите попытку."),
+            error=True
+        )
 
     def update_settings(self):
         """
@@ -35,10 +43,17 @@ class ScenarioInteractor(metaclass=SingletonMetaclass):
 
         self.scenarios = global_context.SCENARIOS
 
-        self.scenario_already_exists_error = global_context.scenario_already_exists_error
-        self.scenario_creation_success = global_context.scenario_creation_success
-        self.scenario_deletion_success = global_context.scenario_deletion_success
-        self.scenario_not_found_error = global_context.scenario_not_found_error
+        self.scenario_creation_success = Response(
+            text=(f"Сценарий успешно создан. \n"
+                  f"Вы можете запустить его, сказав: {global_context.NAME}, запусти сценарий "),
+        )
+
+        self.scenario_already_exists_error = Response(
+            text=(f"Сценарий с данным именем уже существует. \n"
+                  f"Попробуйте изменить имя создаваемого сценария. \n"
+                  f"Также Вы можете удалить старый сценарий, сказав: {global_context.NAME}, удали сценарий."),
+            error=True
+        )
 
     def add_scenario(self, **kwargs):
         """
