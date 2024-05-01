@@ -161,6 +161,19 @@ class TextProcessor(metaclass=SingletonMetaclass):
                     name="Поиск ближайшего к текущему моменту уведомления",
                     key="nearest-notification", function=time_core.notifications_interactor.find_nearest_notification,
                     triggers=["ближайшее уведомление", "ближайшее напоминание"], type="notification"
+                ),
+            "create-stopwatch":
+                Command(
+                    name="Запуск секундомера",
+                    description="Важно, что запуск сразу нескольких секундомеров не поддерживается - "
+                                "в любой момент времени может быть запущен только один секундомер",
+                    key="create-stopwatch", function=time_core.start_stopwatch,
+                    triggers=["создай секундомер", "запусти секундомер", "поставь секундомер"], type="stopwatch"
+                ),
+            "stop-stopwatch":
+                Command(
+                    name="Остановка секундомера", key="stop-stopwatch", function=time_core.stop_stopwatch,
+                    triggers=["останови секундомер", "заверши секундомер"], type="stopwatch"
                 )
         }
 

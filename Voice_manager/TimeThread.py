@@ -3,6 +3,7 @@ from Local import declension
 from Constants import MONTH_KEYS
 from Metaclasses import SingletonMetaclass
 from Notifications import NotificationsInteractor
+from GlobalContext import GlobalContext
 
 import datetime
 
@@ -34,6 +35,19 @@ class TimeWorker(metaclass=SingletonMetaclass):
 
     def __init__(self):
         self.notifications_interactor = NotificationsInteractor()
+        self.stopwatch_initial_time = None
+
+        self.stopwatch_creation_success = None
+        self.double_stopwatch_error = None
+
+        self.empty_stopwatch_error = Response(
+            text="Невозможно остановить секундомер: в данный момент секундомер не запущен.",
+            error=True
+        )
+
+        self.stopwatch_finished = Response(
+            text="Секундомер успешно завершён."
+        )
 
     def update_settings(self):
         """
@@ -42,25 +56,20 @@ class TimeWorker(metaclass=SingletonMetaclass):
         :return:
         """
 
+        global_context = GlobalContext()
+
         self.notifications_interactor.update_settings()
+        self.double_stopwatch_error = Response(
+            text=f"Невозможно запустить секундомер: параллельная работа нескольких секундомеров "
+                 f"не поддерживается. \n"
+                 f"Сначала остановите действующий секундомер, сказав: {global_context.NAME}, останови секундомер.",
+            error=True
+        )
 
-    def get_notifications(self):
-        """
-        Метод получения списка уведомлений.
-
-        :return: Список уведомлений, состоящий из экземпляров класса ``Notification``.
-        """
-
-        return self.notifications_interactor.notifications
-
-    def get_timers(self):
-        """
-        Метод получения списка таймеров.
-
-        :return: Список таймеров, состоящий из экземпляров класса ``Notification``.
-        """
-
-        return self.notifications_interactor.timers
+        self.stopwatch_creation_success = Response(
+            text=f"Секундомер запущен. \n"
+                 f"В любой момент вы можете остановить его, сказав: {global_context.NAME}, останови секундомер."
+        )
 
     @staticmethod
     def get_date(**kwargs):
@@ -80,21 +89,28 @@ class TimeWorker(metaclass=SingletonMetaclass):
             text=f"Сегодня { day } { MONTH_KEYS[month - 1] } { year } года."
         )
 
-    @staticmethod
-    def get_time_static():
-        """
-        Получение текущего времени с точностью до секунд.
+    def start_stopwatch(self, **kwargs):
+        if self.stopwatch_initial_time is not None:
+            return self.double_stopwatch_error
 
-        :return: Список вида [час, минута, секунда].
-        """
+        self.stopwatch_initial_time = datetime.datetime.now()
+        return self.stopwatch_creation_success
 
-        current_time = datetime.datetime.now()
+    def stop_stopwatch(self, **kwargs):
+        if self.stopwatch_initial_time is None:
+            return self.empty_stopwatch_error
 
-        hours = current_time.hour
-        minutes = current_time.minute
-        seconds = current_time.second
+        moment = datetime.datetime.now()
+        delta = moment - self.stopwatch_initial_time
 
-        return [hours, minutes, seconds]
+        self.stopwatch_initial_time = None
+
+        response = self.stopwatch_finished
+
+        seconds = int(delta.total_seconds())
+        response.info = f" Отмеренное время: {seconds} {declension(seconds, 'секунда')}"
+
+        return response
 
     def get_time_now(self, **kwargs):
         """
@@ -103,10 +119,10 @@ class TimeWorker(metaclass=SingletonMetaclass):
         :return: Строка в формате ``'Сейчас X часов Y минут.'``
         """
 
-        current_time = self.get_time_static()
+        moment = datetime.datetime.now()
 
-        hours = current_time[0]
-        minutes = current_time[1]
+        hours = moment.hour
+        minutes = moment.minute
 
         return Response(
             text=f"Сейчас { hours } { declension(hours, 'час') } "

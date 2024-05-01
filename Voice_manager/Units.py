@@ -242,20 +242,21 @@ class Scenario:
     Структура сценария.
     """
 
-    def __init__(self, name: str, functions: list):
+    def __init__(self, **kwargs):
         """
         Конструктор класса.
 
-        :param name: ``str``: имя (название) сценария;
-        :param functions: ``list``: список команд класса ``Command``, которые нужно исполнить при вызове сценария.
+        Обязательные аргументы:
+            * ``name``: имя (название) сценария;
+            * ``functions``: список команд класса ``Command``, которые нужно исполнить при вызове сценария.
 
         Инициализирует название сценария, а также команды, которые исполняются при его вызове.
 
         :return:
         """
 
-        self.name = name
-        self.units = functions
+        self.name = kwargs["name"]
+        self.units = kwargs["functions"]
 
     def execute_scenario(self):
         """
@@ -271,3 +272,20 @@ class Scenario:
         return Response(
             text=output_text
         )
+
+
+class TodoUnit:
+    """
+    Структура элемента списка дел.
+    """
+
+    def __init__(self, **kwargs):
+        """
+        Конструктор класса.
+
+        Обязательные аргументы:
+            * ``text``: текст элемента;
+            * ``category``: категория элемента.
+        """
+
+        raise NotImplementedError
