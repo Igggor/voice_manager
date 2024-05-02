@@ -3,4 +3,4 @@ PyAudio>=0.2.11
 SpeechRecognition>=3.10.1
 gTTS==2.5.1
 text2num==2.5.1
-asyncio==3.4.3
+googletrans==4.0.0rc1

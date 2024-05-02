@@ -114,7 +114,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
                     description="Создание группы команд с заданным именем, выполняющихся поочередно",
                     key="create-scenario", function=scenario_interactor.add_scenario,
                     triggers=["создай сценарий", "добавь сценарий", "добавление сценария"], type="scenario",
-                    additive_required=True, subcommands_required=True
+                    required_params=["main", "subcommands"], ignore_following=True
                 ),
             "execute-scenario":
                 Command(
@@ -123,7 +123,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
                                 "в том порядке, в котором они были даны при создании",
                     key="execute-scenario", function=scenario_interactor.execute,
                     triggers=["запусти сценарий", "исполни сценарий", "исполнение сценария"], type="scenario",
-                    additive_required=True
+                    required_params=["main"]
                 ),
             "delete-scenario":
                 Command(
@@ -131,7 +131,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
                     description="Удаление группы команд по заданному имени",
                     key="delete-scenario", function=scenario_interactor.delete_scenario,
                     triggers=["удали сценарий", "удаление сценария"], type="scenario",
-                    additive_required=True
+                    required_params=["main"]
                 ),
             "add-notification":
                 Command(
@@ -139,7 +139,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
                     description="Добавление напоминания с заданным текстом и временем запуска",
                     key="add-notification", function=time_core.notifications_interactor.add_notification,
                     triggers=["добавь уведомление", "добавь напоминание", "создай уведомление", "создай напоминание"],
-                    type="notification-adding"
+                    type="notification-adding", required_params=["time"], ignore_following=True
                 ),
             "add-timer":
                 Command(
@@ -147,14 +147,15 @@ class TextProcessor(metaclass=SingletonMetaclass):
                     description="Добавление таймера на заданное количество времени. "
                                 "Отличие от уведомления - автоматическое удаление по зевершении",
                     key="add-timer", function=time_core.notifications_interactor.add_timer,
-                    triggers=["добавь таймер", "создай таймер"], type="notification-adding"
+                    triggers=["добавь таймер", "создай таймер"], type="notification-adding", required_params=["time"],
+                    ignore_following=True
                 ),
             "delete-notification":
                 Command(
                     name="Удаление напоминания",
                     description="Удаление напоминания по заданному порядковому номеру",
                     key="delete-notification", function=time_core.notifications_interactor.delete_notification,
-                    triggers=["удали напоминание", "удали уведомление"], type="notification", additive_required=True
+                    triggers=["удали напоминание", "удали уведомление"], type="notification", required_params=["main"]
                 ),
             "nearest-notification":
                 Command(
@@ -174,6 +175,13 @@ class TextProcessor(metaclass=SingletonMetaclass):
                 Command(
                     name="Остановка секундомера", key="stop-stopwatch", function=time_core.stop_stopwatch,
                     triggers=["останови секундомер", "заверши секундомер"], type="stopwatch"
+                ),
+            "translate":
+                Command(
+                    name="Перевод текста", description="Перевод заданного текста с русского языка на любой доступный",
+                    key="translate", function=functions_core.translate_text,
+                    triggers=["переведи текст", "переведи", "сделай перевод"], type="question",
+                    required_params=["main", "language"], ignore_following=True
                 )
         }
 
@@ -202,17 +210,21 @@ class TextProcessor(metaclass=SingletonMetaclass):
 
         return None if command == "" else command
 
-    def find_extend_info(self, command: str, prefix: str):
+    def find_extend_info(self, command: str, prefix: str, ignore_following: bool):
         """
         Выделение доп. информации для конкретной команды, заданной параметром ``prefix``.
 
         :param command: ``str``: строка с распознанным текстом;
-        :param prefix: ``str``: текст команды, для которой необходимо найти доп. информацию.
+        :param prefix: ``str``: текст команды, для которой необходимо найти доп. информацию;
+        :param ignore_following: ``bool``: если ``True``, то игнорируются все последующие команды.
 
         :return: Доп. информация к переданной команде / ``None``, если таковой нет.
         """
 
         command = command[len(prefix) + 1:]
+
+        if ignore_following:
+            return command
 
         for key, value in self.functions.items():
             for v in value.triggers:
@@ -244,7 +256,10 @@ class TextProcessor(metaclass=SingletonMetaclass):
                 if not command.startswith(v):
                     continue
 
-                additive_info = self.find_extend_info(command, v)
+                additive_info = self.find_extend_info(
+                    command=command, prefix=v, ignore_following=value.ignore_following
+                )
+
                 out = self.functions[key]
                 out.additive["main"] = additive_info
 
@@ -321,6 +336,8 @@ class TextProcessor(metaclass=SingletonMetaclass):
             current_command = selected_actions[i]
             if current_command.key == "create-scenario":
                 current_command.additive["subcommands"] = selected_actions[(i + 1):]
+                if len(current_command.additive["subcommands"]) == 0:
+                    current_command.additive["subcommands"] = None
 
                 del selected_actions[(i + 1):]
                 break

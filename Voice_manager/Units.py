@@ -21,8 +21,8 @@ class Command:
         Опциональные аргументы:
             * ``description``: описание команды [по умолчанию = ``None``];
             * ``triggers``: ключевые слова для вызова команды [по умолчанию - пустой список];
-            * ``additive_required``: обязательна ли доп. информация к команде [по умолчанию = ``False``];
-            * ``subcommands_required``: необходимы ли подкоманды [по умолчанию = ``False``].
+            * ``required_params``: список из необходимых параметров для данной команды [по умолчанию - пустой список];
+            * ``ignore_following``: игнорируются ли последующие команды после данной [по умолчанию = ``False``].
 
         :return:
         """
@@ -34,9 +34,8 @@ class Command:
         self.triggers = list() if "triggers" not in kwargs.keys() else kwargs["triggers"]
         self.type = kwargs["type"]
 
-        self.additive_required = False if "additive_required" not in kwargs.keys() else kwargs["additive_required"]
-        self.subcommands_required = False if "subcommands_required" not in kwargs.keys() else (
-            kwargs["subcommands_required"])
+        self.required_params = list() if "required_params" not in kwargs.keys() else kwargs["required_params"]
+        self.ignore_following = False if "ignore_following" not in kwargs.keys() else kwargs["ignore_following"]
 
         self.additive = {
             "main": None
@@ -60,7 +59,8 @@ class Response:
             * ``info``: доп. информация (в основном, для ошибок) [по умолчанию = ``None``];
             * ``error``: завершилась ли функция с ошибкой [по умолчанию = ``False``];
             * ``called_by``: родительская функция [по умолчанию = ``None``];
-            * ``do_next``: функции (без аргументов), выполняемые автоматически сразу после ответа.
+            * ``do_next``: функции (без аргументов), выполняемые автоматически сразу после ответа;
+            * ``extend_lang``: код используемого языка, помимо русского [по умолчанию = ``None``].
 
         :return:
         """
@@ -70,6 +70,7 @@ class Response:
         self.error = False if "error" not in kwargs.keys() else kwargs["error"]
         self.do_next = None if "do_next" not in kwargs.keys() else kwargs["do_next"]
         self.called_by = None if "called_by" not in kwargs.keys() else kwargs["called_by"]
+        self.extend_lang = None if "extend_lang" not in kwargs.keys() else kwargs["extend_lang"]
 
     def get_speech(self):
         """
@@ -80,47 +81,65 @@ class Response:
 
         return self.text + (self.info if self.info is not None else "")
 
+    def get_language(self, __undefined: str):
+        """
+        Получение доп. языка воспроизведения текста.
+
+        :param __undefined: ``str``: код языка по умолчанию, который будет возвращён, если язык текста не задан явно.
+
+        :return: Язык, на котором будет воспроизведен доп. текст (``info``), если он задан явно, или ``__undefined``.
+        """
+
+        return __undefined if self.extend_lang is None else self.extend_lang
+
 
 class PlayableText:
     """
     Обертка воспроизводимого текста для многофункциональной работы с ним.
+
+    **Структура:**
+        Представляет собой список ``blocks``, причём один элемент соответствует одной команде.
+
+        Элементами являются "непрерывные части" текста одной команды. При переходе от одной такой части к другой
+        вопроизведение может быть безопасно прервано.
+
+        "Непрерывные части" состоят из словарей вида:
+            ``{source: текст, language: язык текста}``.
     """
 
     def __init__(self):
         self.blocks = list()
 
-    def add(self, text: str):
+    def add(self, text: str, lang: str, new: bool = True):
         """
         Добавление текста к воспроизводимой фразе.
 
-        :param text: ``str``: добавляемый текст.
+        :param text: ``str``: добавляемый текст;
+        :param lang: ``str``: код языка текста;
+        :param new: ``bool`` выделяется ли новый блок под добавляемый текст.
 
         :return:
         """
 
         blocks = text.split('\n')
-        self.join_blocks(blocks)
 
-    def join_blocks(self, blocks: list):
-        """
-        Добавление текстового блока к воспроизводимому тексту.
+        if new:
+            self.blocks.append(list())
 
-        :param blocks: ``list``: добавляемый текст.
-
-        :return:
-        """
-
-        self.blocks.append(list())
         for block in blocks:
             # Empty block
             if not block:
                 continue
 
-            self.blocks[len(self.blocks) - 1].append(block)
+            self.blocks[len(self.blocks) - 1].append({
+                "source": block,
+                "language": lang
+            })
 
     def get_normal_text(self):
         """
-        Получение нормального текстового представления экземпляра ``PlayableText``.
+        Получение текстового представления экземпляра ``PlayableText`` в читабельном виде,
+        но не предназначенном для воспроизведения.
 
         :return: Воспроизводимый текст.
         """
@@ -128,7 +147,7 @@ class PlayableText:
         output_text = ""
         for query in self.blocks:
             for block in query:
-                output_text += (block + '\n')
+                output_text += (block["source"] + '\n')
             output_text += '\n'
 
         return output_text
@@ -137,7 +156,7 @@ class PlayableText:
         """
         Метод "выпрямления" списка блоков (преобразование из двумерного списка в одномерный).
 
-        :return: Полученный одномерный список фраз.
+        :return: Полученный одномерный список фраз, представляющих собой тело (сам текст) и код языка воспроизведения.
         """
 
         output_blocks = list()

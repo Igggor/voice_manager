@@ -4,6 +4,7 @@ from Units import Response
 from GlobalContext import GlobalContext
 
 import requests
+from googletrans import Translator
 
 
 class FunctionsCore(metaclass=SingletonMetaclass):
@@ -19,6 +20,7 @@ class FunctionsCore(metaclass=SingletonMetaclass):
         * ``weather_celsium`` - отображается ли температура в градусах цельсия
           (если ``False``, то отображается в фаренгейтах);
         * ``weather_mmHg`` - отображается ли давление в мм. рт. ст. (если ``False``, то отображается в гПа).
+        * ``TRANSLATOR`` - объект класса ``Translator (от Google Translate API)``.
 
     **Публичные методы класса:**
         * ``update_settings()`` - метод обновления полей класса в соответствии с ``GlobalContext``;
@@ -51,9 +53,16 @@ class FunctionsCore(metaclass=SingletonMetaclass):
             text="Извините, информация о погоде в заданном городе не найдена. Уточните запрос.",
             error=True
         )
+        self.translation_request_error = Response(
+            text=("Извините, при запросе перевода текста произошла непредвиденная ошибка. \n"
+                 "Повторите запрос позднее."),
+            error=True
+        )
 
         self.weather_celsium = None
         self.weather_mmHg = None
+
+        self.TRANSLATOR = Translator()
 
     def update_settings(self):
         """
@@ -108,7 +117,7 @@ class FunctionsCore(metaclass=SingletonMetaclass):
         В случае, если город не передан, будет использован город по умолчанию.
 
         Опциональные параметры:
-            * ``city``: город, для которого необходимо определить погоду. Если не задан, будет определена
+            * ``main``: город, для которого необходимо определить погоду. Если не задан, будет определена
             погода для города по умолчанию.
 
         :return: Актуальная погода запрошенном месте, в том числе температура, влажность, давление, ветер.
@@ -182,3 +191,27 @@ class FunctionsCore(metaclass=SingletonMetaclass):
             )
         except requests.exceptions.RequestException:
             return self.weather_request_error
+
+    def translate_text(self, **kwargs):
+        """
+        Осуществляет перевод текста.
+
+        Обязательные параметры:
+            * ``main``: текст для перевода;
+            * ``language``: код языка, на который будет переведён текст (генерируется автоматически).
+
+        :return: Текст, переведённый на заданный язык.
+                 В случае непредвиденной ошибки возвращает строку с соответствующим предупреждением.
+        """
+
+        text = kwargs["main"]
+        destination = kwargs["language"]
+
+        try:
+            return Response(
+                text="Переведённый текст.",
+                info=self.TRANSLATOR.translate(text=text, src="ru", dest=destination).text,
+                extend_lang=destination
+            )
+        except ValueError:
+            return self.translation_request_error

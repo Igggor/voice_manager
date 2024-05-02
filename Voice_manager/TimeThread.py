@@ -90,6 +90,14 @@ class TimeWorker(metaclass=SingletonMetaclass):
         )
 
     def start_stopwatch(self, **kwargs):
+        """
+        Метод старта секундомера.
+
+        Начинает отсчёт времени (только в случае, если он и так не идёт) и возвращает фразу-отклик.
+
+        :return:
+        """
+
         if self.stopwatch_initial_time is not None:
             return self.double_stopwatch_error
 
@@ -97,6 +105,15 @@ class TimeWorker(metaclass=SingletonMetaclass):
         return self.stopwatch_creation_success
 
     def stop_stopwatch(self, **kwargs):
+        """
+        Метод остановки секундомера.
+
+        Останавливает отсчёт времени (только в том случае, если он идёт) и возвращает фразу-отклик, включающую
+        в себя отмеренное время.
+
+        :return:
+        """
+
         if self.stopwatch_initial_time is None:
             return self.empty_stopwatch_error
 
@@ -112,7 +129,8 @@ class TimeWorker(metaclass=SingletonMetaclass):
 
         return response
 
-    def get_time_now(self, **kwargs):
+    @staticmethod
+    def get_time_now(**kwargs):
         """
         Функция для получения актуального времени, с точностью до минут.
 

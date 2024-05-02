@@ -1,5 +1,5 @@
 from Units import Command
-from Local import get_base, get_month
+from Local import get_base, get_month, get_language_key
 
 
 def remove_whitespaces(text: str):
@@ -190,7 +190,7 @@ def parse_info(command: Command):
                     skip = True
                     break
 
-            if skip:
+            if skip or key == -1:
                 continue
 
             operational[key]["source"].append(word)
@@ -208,6 +208,46 @@ def parse_info(command: Command):
     if command.key == "delete-notification":
         command.additive["main"] = command.additive["main"].replace("порядковый", "")
         command.additive["main"] = command.additive["main"].replace("номер", "")
+
+    if command.key == "translate":
+        words = command.additive["main"].split()
+
+        text = list()
+        language = list()
+
+        key = -1
+        operational = [
+            {
+                "keys": ["текст"],
+                "source": text
+            },
+            {
+                "keys": ["язык"],
+                "source": language
+            }
+        ]
+
+        for word in words:
+            if key == 0:
+                text.append(word)
+                continue
+
+            skip = False
+            for index in range(len(operational)):
+                if word in operational[index]["keys"]:
+                    key = index
+                    skip = True
+                    break
+
+            if skip or key == -1:
+                continue
+
+            operational[key]["source"].append(word)
+
+        command.additive = {
+            "main": ' '.join(text),
+            "language": get_language_key(' '.join(language))
+        }
 
     command.additive["main"] = remove_whitespaces(command.additive["main"])
     return command

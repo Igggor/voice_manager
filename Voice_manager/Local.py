@@ -1,4 +1,4 @@
-from Constants import D_WORDS, MONTH_KEYS
+from Constants import D_WORDS, MONTH_KEYS, LANGUAGES
 
 from text_to_num import alpha2digit
 
@@ -66,6 +66,22 @@ def get_month(key: str):
     for index in range(len(MONTH_KEYS)):
         if MONTH_KEYS[index] == key:
             return index + 1
+
+    return None
+
+
+def get_language_key(language: str):
+    """
+    Получает ключ (код) языка по его названию.
+
+    :param language: ``str``: название языка.
+
+    :return: Код языка или ``None``, если он не найден.
+    """
+
+    for key in LANGUAGES.keys():
+        if language in LANGUAGES[key]:
+            return key
 
     return None
 

@@ -95,7 +95,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         self.big_bye = Response(
             text="Всего доброго, буду рада быть полезной снова."
         )
-        self.big_bye.do_next = [self.logger.close, sys.exit]
+        self.big_bye.do_next = [self.logger.close, self.speech_translator.clear_buffer, sys.exit]
 
         self.update_all()
 
@@ -156,12 +156,6 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         """
 
         self.global_context.ON = False
-
-        try:
-            self.speech_translator.clear_buffer()
-        except OSError:
-            pass
-
         return self.big_bye
 
     def features(self, **kwargs):
@@ -226,14 +220,23 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
         recognition_fail = self.format_checker.check_recognition(selected_actions)
         if recognition_fail is not None:
-            output_text.add(recognition_fail.get_speech())
+            output_text.add(recognition_fail.text, lang=self.global_context.language_speak)
+            if recognition_fail.info:
+                output_text.add(text=recognition_fail.info, lang=recognition_fail.get_language(
+                    self.global_context.language_speak
+                ), new=False)
         else:
             if notification:
                 query = selected_actions[0]
                 response = query.function()
 
                 self.logger.write(query, response)
-                output_text.add(response.get_speech())
+
+                output_text.add(text=response.text, lang=self.global_context.language_speak)
+                if response.info:
+                    output_text.add(response.info, lang=response.get_language(
+                        self.global_context.language_speak
+                    ), new=False)
 
                 self.speech_translator.LOCKER.capture_control()
 
@@ -259,7 +262,12 @@ class VoiceHelper(metaclass=SingletonMetaclass):
                         response.called_by = query
 
                 self.logger.write(query, response)
-                output_text.add(response.get_speech())
+
+                output_text.add(response.text, lang=self.global_context.language_speak)
+                if response.info:
+                    output_text.add(text=response.info, lang=response.get_language(
+                        self.global_context.language_speak
+                    ), new=False)
 
                 if response.do_next is not None:
                     for action in response.do_next:

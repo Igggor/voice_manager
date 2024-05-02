@@ -64,14 +64,23 @@ class FormatChecker(metaclass=SingletonMetaclass):
         error.called_by = current_command
 
         # Checking arguments
-        if current_command.additive_required and current_command.additive["main"] is None:
+        if "main" in current_command.required_params and current_command.additive["main"] is None:
             error.info += "Недостаточно параметров к команде."
 
             return error
 
-        if current_command.subcommands_required and ("subcommands" not in current_command.additive.keys() or
-                                                     len(current_command.additive["subcommands"])) == 0:
+        if "subcommands" in current_command.required_params and current_command.additive["subcommands"] is None:
             error.info += "Необходимо указать команды для исполнения."
+
+            return error
+
+        if "time" in current_command.required_params and current_command.additive["time"] is None:
+            error.info += "Заданы неправильные параметры к команде: указано некорректное время."
+
+            return error
+
+        if "language" in current_command.required_params and current_command.additive["language"] is None:
+            error.info += "Указан неправильный язык."
 
             return error
 
@@ -82,11 +91,6 @@ class FormatChecker(metaclass=SingletonMetaclass):
             return error
 
         if current_command.type == "notification-adding":
-            if current_command.additive["time"] is None:
-                error.info += "Заданы неправильные параметры к команде: указано некорректное время."
-
-                return error
-
             hours, minutes, seconds = current_command.additive["time"].values()
             if current_command.key == "add-notification" and (hours < 0 or hours > 23):
                 error.info += ("Заданы неправильные параметры к команде: количество часов должно быть в пределах "

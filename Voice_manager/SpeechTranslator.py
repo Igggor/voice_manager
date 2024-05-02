@@ -215,18 +215,20 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
             print(f"Warning: something went wrong while recognizing voice: {error}")
             return None
 
-    def prepare_text(self, output_text: str, index: int):
+    @staticmethod
+    def prepare_text(output_text: str, lang: str, index: int):
         """
         С помощью ``gTTS-API`` переводит текст в речь и сохраняет её в виде файла ``.mp3``.
 
         :param output_text: ``str``: блок ответа голосового помощника;
+        :param lang: ``str``: код языка вопспроизведения;
         :param index: ``int``: индекс блока (фрагмента).
 
         :return:
         """
 
         try:
-            tts = gTTS(text=output_text, lang=self.language_speak, tld="com", timeout=10)
+            tts = gTTS(text=output_text, lang=lang, tld="com", timeout=10)
             tts.save(f"buffer/{index}.mp3")
         except OSError as error:
             print(f"Warning: something went wrong while saving file with index {index}: {error}")
@@ -244,7 +246,7 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         """
         Метод для синтезации текста в речь.
 
-        :param output: ``PlayableText``: экземляр класса ``PlayableText``, фактически - текст для синтезации в речь.
+        :param output: ``PlayableText``: текст для синтезации в речь.
 
         :return:
         """
@@ -274,7 +276,7 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         print(blocks)
 
         for i in range(len(blocks)):
-            self.prepare_text(output_text=blocks[i], index=i)
+            self.prepare_text(output_text=blocks[i]["source"], lang=blocks[i]["language"], index=i)
 
         for i in range(len(blocks)):
             if i > 0 and not self.LOCKER.is_controller(thread_id=threading.get_native_id()):
