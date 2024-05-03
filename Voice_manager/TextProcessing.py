@@ -6,6 +6,8 @@ from Scenarios import ScenarioInteractor
 from Metaclasses import SingletonMetaclass
 from Parser import parse_info
 from Local import replace_numbers
+from SpeechTranslator import SpeechTranslator
+from Translation import Translator
 
 
 class TextProcessor(metaclass=SingletonMetaclass):
@@ -40,6 +42,8 @@ class TextProcessor(metaclass=SingletonMetaclass):
         scenario_interactor = ScenarioInteractor()
         time_core = TimeWorker()
         functions_core = FunctionsCore()
+        speech_translator = SpeechTranslator()
+        translator = Translator()
 
         self.NAME = None
 
@@ -179,9 +183,23 @@ class TextProcessor(metaclass=SingletonMetaclass):
             "translate":
                 Command(
                     name="Перевод текста", description="Перевод заданного текста с русского языка на любой доступный",
-                    key="translate", function=functions_core.translate_text,
+                    key="translate", function=translator.translate_text,
                     triggers=["переведи текст", "переведи", "сделай перевод"], type="question",
                     required_params=["main", "language"], ignore_following=True
+                ),
+            "get-volume":
+                Command(
+                    name="Получение текущего системного уровня громкости", key="get-volume",
+                    function=speech_translator.get_volume, triggers=["текущий уровень громкости", "текущая громкость"],
+                    type="question"
+                ),
+            "set-volume":
+                Command(
+                    name="Изменение текущего системного уровня громкости", key="set-volume",
+                    function=speech_translator.set_volume,
+                    triggers=["измени уровень громкости", "установи уровень громкости",
+                              "измени громкость", "установи громкость"],
+                    type="system", required_params=["main"]
                 )
         }
 

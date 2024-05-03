@@ -6,6 +6,7 @@ from Notifications import NotificationsInteractor
 from GlobalContext import GlobalContext
 
 import datetime
+from copy import deepcopy
 
 
 class TimeWorker(metaclass=SingletonMetaclass):
@@ -122,9 +123,9 @@ class TimeWorker(metaclass=SingletonMetaclass):
 
         self.stopwatch_initial_time = None
 
-        response = self.stopwatch_finished
-
         seconds = int(delta.total_seconds())
+
+        response = deepcopy(self.stopwatch_finished)
         response.info = f" Отмеренное время: {seconds} {declension(seconds, 'секунда')}"
 
         return response
@@ -165,13 +166,17 @@ class TimeWorker(metaclass=SingletonMetaclass):
             index += 1
 
         corresponding_timers = list()
+        to_delete = list()
         index = 0
+
         while index < len(self.notifications_interactor.timers):
             if self.notifications_interactor.timers[index].check_corresponding():
                 corresponding_timers.append(self.notifications_interactor.timers[index])
-                self.notifications_interactor.delete_timer(index=index)
+                to_delete.append(index + 1)
 
             index += 1
+
+        self.notifications_interactor.delete_timers(indexes=to_delete)
 
         return None if len(corresponding_notes) + len(corresponding_timers) == 0 \
             else corresponding_notes + corresponding_timers

@@ -1,10 +1,12 @@
 from GlobalContext import GlobalContext
-from Units import PlayableText
+from Units import PlayableText, Response
 from Metaclasses import SingletonMetaclass
 
 import threading
 import os
 import speech_recognition
+import alsaaudio
+
 from gtts import gTTS
 
 
@@ -160,6 +162,7 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         :return:
         """
 
+        self.MIXER = alsaaudio.Mixer()
         self.MICROPHONE = speech_recognition.Microphone()
         self.RECOGNIZER = speech_recognition.Recognizer()
 
@@ -309,3 +312,37 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
             os.system("rm buffer/*")
         except OSError as error:
             print(f"Warning: something went wrong while removing files from buffer: {error}")
+
+    def get_volume(self, **kwargs):
+        """
+        Получает значение громкости системного звука.
+
+        :return: Целочисленное значение от 0 до 100 - громкость звука на данный момент.
+        """
+
+        volume = self.MIXER.getvolume()[0]
+        return Response(
+            text=f"Текущий уровень громкости: {volume}."
+        )
+
+    def set_volume(self, **kwargs):
+        """
+        Устанавливает значение громкости системного звука.
+
+        Обязательные аргументы:
+            * ``main``: целочисленный параметр от ``0`` до ``100``.
+
+        :return:
+        """
+
+        volume = int(kwargs["main"])
+
+        if volume == self.MIXER.getvolume()[0]:
+            return Response(
+                text=f"Уровень громкости уже равен {volume}, поэтому изменение не было выполнено."
+            )
+
+        self.MIXER.setvolume(volume)
+        return Response(
+            text=f"Уровень громкости успешно изменён. Теперь он составляет {volume} единиц."
+        )

@@ -5,6 +5,7 @@ from Constants import MONTH_KEYS
 from Local import declension
 
 from datetime import datetime, timedelta
+from copy import deepcopy
 
 
 class NotificationsInteractor(metaclass=SingletonMetaclass):
@@ -25,10 +26,17 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
         * ``notes_list_overflow_error`` - ``Response``-объект, возвращаемый при превышении ``notifications_limit``;
         * ``timers_list_overflow_error`` - ``Response``-объект, возвращаемый при превышении ``timers_limit``;
         * ``note_not_found_error`` - ``Response``-объект, возвращаемый при невозможности найти запрашиваемое
-          напоминание.
+          напоминание;
 
-    **Публичные методы класса:**
-        * ...
+    **Методы класса:**
+        * ``renumerate()`` - переприсваивает уведомлениям корректные ``id``;
+        * ``shrink()`` - путём удаления старых напоминаний/таймеров сжимает списки напоминаний и таймеров до лимита;
+        * ``update_settings()`` - метод обновления полей класса в соответствии с ``GlobalContext``;
+        * ``add_notification()`` - метод добавления нового напоминания;
+        * ``add_timer()`` - метод добавления нового таймера;
+        * ``delete_notification()`` - метод удаления напоминания по его ``id``;
+        * ``delete_timer()`` - метод удаления таймера по его ``id``;
+        * ``find_nearest_notification()`` - находит ближайшее к текущему моменту уведомление.
     """
 
     __instance = None
@@ -81,10 +89,10 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
         """
 
         for i in range(len(self.notifications)):
-            self.notifications[i].id = i
+            self.notifications[i].id = i + 1
 
         for i in range(len(self.timers)):
-            self.timers[i].id = i
+            self.timers[i].id = i + 1
 
     def shrink(self):
         """
@@ -95,6 +103,8 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
 
         while len(self.notifications) > self.notifications_limit:
             del self.notifications[0]
+        while len(self.timers) > self.timers_limit:
+            del self.timers[0]
 
         self.renumerate()
 
@@ -121,6 +131,8 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
                  f"Не забудьте указать номер удаляемого напоминания.",
             error=True
         )
+
+        self.shrink()
 
     def add_notification(self, **kwargs):
         """
@@ -165,14 +177,14 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
 
             day_key = "сегодня" if potential > moment else "завтра"
 
-            response = self.note_creation_success
+            response = deepcopy(self.note_creation_success)
             response.info = (f"Оно будет запущено {day_key} в {hour} {declension(hour, 'час')} "
                              f"{minute} {declension(minute, 'минута')} "
                              f"{second} {declension(second, 'секунда') }. "
                              f"Созданное уведомление имеет порядковый номер {current_id}.")
             return response
         else:
-            response = self.note_creation_success
+            response = deepcopy(self.note_creation_success)
             response.info = (f"Оно будет запущено {day} {MONTH_KEYS[month - 1]} "
                              f"в {hour} {declension(hour, 'час')} "
                              f"{minute} {declension(minute, 'минута')} "
@@ -215,7 +227,7 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
             timer=True
         ))
 
-        response = self.timer_creation_success
+        response = deepcopy(self.timer_creation_success)
         response.info = (f"Он завершится {moment.day} {MONTH_KEYS[moment.month - 1]} в "
                          f"{moment.hour} {declension(moment.hour, 'час')} "
                          f"{moment.minute} {declension(moment.minute, 'минута')} "
@@ -242,17 +254,24 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
         else:
             return self.note_not_found_error
 
-    def delete_timer(self, index: int):
+    def delete_timers(self, indexes: list):
         """
-        Метод удаления таймера. Не может быть вызван пользователем.
+        Метод удаления таймеров. Не может быть вызван пользователем.
 
-        Обязательные аргументы:
-            * ``id``: индекс таймера в списке таймеров.
+        :param indexes: ``list``: список из индексов тех таймеров, которые необходимо удалить.
 
-        :return: Удаляет уведомление и возвращает фразу-отклик.
+        :return:
         """
 
-        del self.timers[index]
+        # Благодаря той особенности списка таймеров, что поддерживается инвариант "индекс в массиве + 1 = id таймера",
+        # можно удалять используя не явный индекс в массиве, который при удалении будет меняться, а id таймера.
+        # После всех удалений для поддержания вышеописанного инварианта таймеры должны быть перенумерованы.
+
+        for index in indexes:
+            for i in range(len(self.timers)):
+                if self.timers[i].id == index:
+                    del self.timers[i]
+                    break
 
         self.renumerate()
 
@@ -301,5 +320,3 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
             return response
         except ValueError:
             return self.notes_list_empty_error
-
-

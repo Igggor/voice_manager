@@ -8,6 +8,7 @@ from Units import Response, PlayableText
 from Metaclasses import SingletonMetaclass
 from FormatChecking import FormatChecker
 from Functions import FunctionsCore
+from Translation import Translator
 
 from time import sleep
 
@@ -55,6 +56,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         """
 
         self.global_context = GlobalContext()
+
         self.time_core = TimeWorker()
         self.text_processor = TextProcessor(
             set_ON=self.set_ON,
@@ -69,6 +71,8 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         self.logger = Logger()
         self.format_checker = FormatChecker()
         self.functions_core = FunctionsCore()
+
+        self.translator = Translator()
 
         self.greeting = None
 
@@ -118,6 +122,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         self.scenario_interactor.update_settings()
         self.logger.update_settings()
         self.functions_core.update_settings()
+        self.translator.update_settings()
 
     def set_ON(self, **kwargs):
         """

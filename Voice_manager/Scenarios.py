@@ -2,6 +2,8 @@ from GlobalContext import GlobalContext
 from Units import Scenario, Response
 from Metaclasses import SingletonMetaclass
 
+from copy import deepcopy
+
 
 class ScenarioInteractor(metaclass=SingletonMetaclass):
     """
@@ -73,10 +75,12 @@ class ScenarioInteractor(metaclass=SingletonMetaclass):
             # Scenario with this name already exists
             return self.scenario_already_exists_error
 
-        self.scenarios[name] = Scenario(name, scenario)
+        self.scenarios[name] = Scenario(name=name, scenario=scenario)
+
         # success
-        response = self.scenario_creation_success
+        response = deepcopy(self.scenario_creation_success)
         response.info = f"{name}."
+
         return response
 
     def delete_scenario(self, **kwargs):

@@ -27,7 +27,9 @@ class GlobalContext(metaclass=SingletonMetaclass):
         self.language_speak = "ru"
         self.speak_speed = 1.0
 
-        self.weather_celsium = True
+        self.translation_timeout = 4.0
+
+        self.weather_celsius = True
         self.weather_mmHg = True
 
         self.logs_limit = 250
