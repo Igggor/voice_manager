@@ -2,7 +2,9 @@
 
 <form onsubmit="sendSignupForm();return false" class="form" id="signupForm">
     <p>Заполните форму ниже</p>
-    <input type="text" name="username" id="username" class="field" placeholder="Username" required="required">
+    <input type="text" name="name" id="name" class="field" placeholder="Name" required="required">
+    <input type="text" name="surname" id="surname" class="field" placeholder="Surname">
+    <input type="email" name="email" id="email" class="field" placeholder="Email" required="required">
     <input type="password" name="password" id="password" class="field" placeholder="Пароль" required="required">
     <input type="password" name="passwordSecond" id="passwordSecond" class="field" placeholder="Повторите пароль" required="required">
     <p class="err" id="signupErr1" style="display: none">Пароли не совпадают</p>

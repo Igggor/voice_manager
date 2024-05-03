@@ -36,11 +36,28 @@ const Users = sequelize.define(
         role: {
             type: DataTypes.STRING,
             allowNull: false,
+            defaultValue: 'user',
         },
     },
     {
         timestamps: false,
     }
+)
+
+const Sessions = sequelize.define(
+    'Sessions',
+    {
+        id: {
+            type: DataTypes.STRING,
+            primaryKey: true,
+            allowNull: false,
+        },
+        user_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        }
+    },
+    {timestamps: false}
 )
 
 const Questions = sequelize.define(
@@ -143,8 +160,9 @@ const Scenarios = sequelize.define(
 )
 
 Users.sync({ alter: true })
-Devices.sync({ alter: true })
-Questions.sync({ alter: true })
-Scenarios.sync({ alter: true })
+// Devices.sync({ alter: true })
+// Questions.sync({ alter: true })
+// Scenarios.sync({ alter: true })
+// Sessions.sync({ alter: true })
 
-module.exports = {'Users': Users, 'Devices': Devices, 'Questions': Questions, 'Scenarios': Scenarios}
+module.exports = {'Users': Users, 'Devices': Devices, 'Questions': Questions, 'Scenarios': Scenarios, 'Sessions': Sessions}

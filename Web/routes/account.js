@@ -1,8 +1,8 @@
 let express = require('express')
 let router = express.Router()
-// const {where} = require("sequelize")
-// const seq = require('../dbmodels')
-// const {joinSQLFragments} = require("sequelize/lib/utils/join-sql-fragments");
+let crypto = require('crypto')
+const {where} = require("sequelize")
+const seq = require('../dbmodels')
 
 function generateRandomString(length) {
   let result = ''
@@ -14,28 +14,50 @@ function generateRandomString(length) {
   return result
 }
 
-router.get('/', (req, res, next) => {
-  console.log('Cookie: ', req.cookies.sessionId)
-  if (req.cookies.sessionId === 'qwerty123') {
+function generateCrypto() {
+  return crypto.randomBytes(32).toString('base64');
+}
+
+router.get('/', async (req, res, next) => {
+  if (await seq.Sessions.findByPk(req.cookies.sessionId) != null) {
     next()
   }
   else {
     res.redirect('/account/login')
   }
-}, (req, res) => {
+}, async (req, res) => {
   let h = req.headers
-  res.render('account', {page: 'account', title: "Аккаунт"})
+  const userData = (await seq.Users.findByPk((await seq.Sessions.findByPk(req.cookies.sessionId)).user_id)).dataValues
+  res.render('account', {page: 'account', title: "Аккаунт", isAccount: true, userData})
+})
+
+router.post('/', async (req, res, next) => {
+  if (req.body.operationType === 'exit') {
+    await seq.Sessions.destroy({
+      where: {
+        id: req.cookies.sessionId
+      }
+    })
+    res.clearCookie('sessionId')
+    res.end()
+  }
 })
 
 router.get('/login', (req, res) => {
   res.render('login', {page: 'login', title: "Вход", isSignInUp: true})
 })
-router.post('/login', (req, res) => {
-  console.log(req.body)
-  if(req.body.operationType === 'login' && req.body.password === '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4') {
-    let sessionIdString = generateRandomString(128)
 
-    res.send({ correct : true, sessionId : sessionIdString })
+router.post('/login', async (req, res) => {
+  console.log(req.body)
+  const user = (await seq.Users.findAll({where: { email: req.body.email }}))[0]
+  if(user !== undefined && req.body.password === user.password) {
+    let sessionIdString = generateCrypto()
+    while (await seq.Sessions.findByPk(sessionIdString) !== null) {
+      sessionIdString = generateCrypto()
+    }
+    await seq.Sessions.create({id: sessionIdString, user_id: user.id})
+    res.cookie('sessionId', sessionIdString, { httpOnly: true })
+    res.send({ correct : true })
   }
   else {
     res.send({ correct : false })
@@ -48,11 +70,17 @@ router.get('/signup', (req, res) => {
 
 router.post('/signup', async function (req, res) {
   console.log(req.body)
-  // const [user, created] = await seq.Users.findOrCreate({
-  //   where: {username: req.body.username},
-  //   defaults: {password: req.body.password}
-  // })
+  const [user, created] = await seq.Users.findOrCreate({
+    where: {email: req.body.userData.email},
+    defaults: req.body.userData
+  })
   if (created) {
+    let sessionIdString = generateCrypto()
+    while (await seq.Sessions.findByPk(sessionIdString) !== null) {
+      sessionIdString = generateCrypto()
+    }
+    await seq.Sessions.create({id: sessionIdString, user_id: user.id})
+    res.cookie('sessionId', sessionIdString, { httpOnly: true })
     res.sendStatus(200)
   }
   else {

@@ -10,7 +10,7 @@ async function cryptText(message, algo) {
 }
 
 async function sendLoginForm() {
-    fetch('login', {
+    fetch('/account/login', {
         method: 'POST',
         body: JSON.stringify({
             password: await cryptText(document.querySelector('#password').value),
@@ -21,8 +21,6 @@ async function sendLoginForm() {
     }).then(r => r.json()
         .then(data => {
             if (data.correct) {
-                // Cookies.set('sessionId', data.sessionId, { expires: 30}) // worked
-                Cookies.set('sessionId', 'qwerty123', { expires: 30}) // test
                 window.location.replace('/account')
 
             } else {
@@ -36,12 +34,16 @@ async function sendSignupForm() {
     document.querySelector('#signupErr2').style.display = 'none'
 
     if (document.querySelector('#password').value === document.querySelector('#passwordSecond').value) {
-        fetch('signup', {
+        fetch('/account/signup', {
             method: 'POST',
             body: JSON.stringify({
                 operationType: 'signup',
-                username: document.querySelector('#username').value,
-                password: await cryptText(document.querySelector('#password').value)
+                userData: {
+                    email: document.querySelector('#email').value,
+                    password: await cryptText(document.querySelector('#password').value),
+                    name: document.querySelector('#name').value,
+                    surname: document.querySelector('#surname').value,
+                }
             }),
             headers: {'Content-Type': 'application/json'}
         }).then(r => {
