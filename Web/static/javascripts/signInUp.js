@@ -15,7 +15,7 @@ async function sendLoginForm() {
         body: JSON.stringify({
             password: await cryptText(document.querySelector('#password').value),
             operationType: 'login',
-            email: document.querySelector('#username').value
+            email: document.querySelector('#email').value
         }),
         headers: {'Content-Type': 'application/json'}
     }).then(r => r.json()

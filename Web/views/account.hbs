@@ -1,3 +1,11 @@
-<h1>{{userData.name}}</h1>
-<h2>{{userData.surname}}</h2>
-<button onclick="exitFromAccount()" class="exitBtn">Выход</button>
+<div class="accounts-container">
+    <img class="user-avatar" src="/static/userdata/avatar/logo.png" alt="">
+    <div class="user-container">
+        <p class="user-names">{{userData.name}} {{userData.surname}}</p>
+        <p class="user-email">{{userData.email}}</p>
+    </div>
+    <div class="accounts-btns">
+        <button class="edit-btn">Редактировать</button>
+        <button onclick="exitFromAccount()" class="exit-btn">Выход</button>
+    </div>
+</div>
