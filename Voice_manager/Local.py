@@ -86,16 +86,17 @@ def get_language_key(language: str):
     return None
 
 
-def replace_numbers(text: str):
+def replace_numbers(text: str, language: str):
     """
     Заменяет все слова, выражающие числа, числовыми занчениями.
 
     Например, ``"двадцать пять штук" → "25 штук"``.
 
-    :param text: ``str``: исходный текст.
+    :param text: ``str``: исходный текст;
+    :param language: ``str``: код языка.
 
     :return: Изменённая строка.
     """
 
-    text = alpha2digit(text=text, lang="ru")
+    text = alpha2digit(text=text, lang=language)
     return text

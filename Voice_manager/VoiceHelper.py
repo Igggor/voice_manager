@@ -207,6 +207,50 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
                 asyncio.run(self.execute(selected_actions=[executable], notification=True))
 
+    def add_to_output(self, output_text: PlayableText, response: Response, source_language: str = "ru",
+                      new: bool = True):
+        """
+        Добавляет к исходящему тексту новый элемент.
+
+        :param output_text: ``PlayableText``: экземпляр класса проигрываемого текста;
+        :param response: ``Response``: добавляемый объект;
+        :param source_language: ``str``: код языка добавляемого текста;
+        :param new: ``bool``: выделяется ли в ``output_text`` новый блок под добавляемый текст. Если указано ``False``,
+          то подразумевается, что в ``output_text`` добавляется не ``text``, а ``info``.
+
+        :return: Ничего не возвращает, но изменяет ``output_text``, добавляя в него новый элемент.
+        """
+
+        # Ядро приложения работает на русском языке, а пользователь, возможно, хочет услышать текст на другом языке.
+        # Поэтому текст необходимо переводить (притом не всегда, ведь есть ещё фразы от переводчика), от этого произошло
+        # значительное усложнение конструкции.
+        if new:
+            output_text.add(
+                text=self.translator.translate_text_static(
+                    text=response.text,
+                    source_language=source_language,
+                    language=self.global_context.language_speak
+                ),
+
+                lang=self.global_context.language_speak
+            )
+        else:
+            output_text.add(
+                text=self.translator.translate_text_static(
+                    text=response.info,
+                    source_language=source_language,
+                    language=response.get_language(
+                        self.global_context.language_speak
+                    )
+                ),
+
+                lang=response.get_language(
+                    self.global_context.language_speak
+                ),
+
+                new=False
+            )
+
     # В перспективе здесь должно быть собрано несколько функций, в том числе запись логов.
     async def execute(self, selected_actions: list, notification: bool = False):
         """
@@ -225,11 +269,9 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
         recognition_fail = self.format_checker.check_recognition(selected_actions)
         if recognition_fail is not None:
-            output_text.add(recognition_fail.text, lang=self.global_context.language_speak)
+            self.add_to_output(output_text=output_text, response=recognition_fail)
             if recognition_fail.info:
-                output_text.add(text=recognition_fail.info, lang=recognition_fail.get_language(
-                    self.global_context.language_speak
-                ), new=False)
+                self.add_to_output(output_text=output_text, response=recognition_fail, new=False)
         else:
             if notification:
                 query = selected_actions[0]
@@ -237,11 +279,9 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
                 self.logger.write(query, response)
 
-                output_text.add(text=response.text, lang=self.global_context.language_speak)
+                self.add_to_output(output_text=output_text, response=response)
                 if response.info:
-                    output_text.add(response.info, lang=response.get_language(
-                        self.global_context.language_speak
-                    ), new=False)
+                    self.add_to_output(output_text=output_text, response=response, new=False)
 
                 self.speech_translator.LOCKER.capture_control()
 
@@ -268,11 +308,9 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
                 self.logger.write(query, response)
 
-                output_text.add(response.text, lang=self.global_context.language_speak)
+                self.add_to_output(output_text=output_text, response=response)
                 if response.info:
-                    output_text.add(text=response.info, lang=response.get_language(
-                        self.global_context.language_speak
-                    ), new=False)
+                    self.add_to_output(output_text=output_text, response=response, new=False)
 
                 if response.do_next is not None:
                     for action in response.do_next:
@@ -320,6 +358,12 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         """
 
         recognized_query = self.speech_translator.listen_command()
+
+        # Ядро приложения работает на русском языке, поэтому все команды должны быть переведены на него.
+        if self.global_context.language_listen != "ru":
+            recognized_query = self.translator.translate_text_static(
+                text=recognized_query, source_language=self.global_context.language_listen, language="ru"
+            )
 
         if recognized_query is None:
             return

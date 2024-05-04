@@ -33,9 +33,31 @@ class Translator(metaclass=SingletonMetaclass):
             self.translation_timeout = global_context.translation_timeout
             self.TRANSLATOR = GoogleTranslator(timeout=Timeout(self.translation_timeout))
 
-    def translate_text(self, **kwargs):
+    def translate_text_static(self, **kwargs):
         """
         Осуществляет перевод текста.
+
+        Обязательные параметры:
+            * ``text``: текст для перевода;
+            * ``language``: код языка, на который будет переведён текст (генерируется автоматически).
+        Опциональные аргументы:
+            * ``source_language``: код языка, с которого осуществляется перевод.
+
+        :return: Текст, переведённый на заданный язык. Возвращает **строку**.
+        """
+
+        text = kwargs["text"]
+        source_language = "auto" if "source_language" not in kwargs.keys() else kwargs["source_language"]
+        destination = kwargs["language"]
+
+        if source_language == destination:
+            return text
+
+        return self.TRANSLATOR.translate(text=text, src=source_language, dest=destination).text
+
+    def translate_text(self, **kwargs):
+        """
+        Осуществляет перевод текста c русского на иностранный.
 
         Обязательные параметры:
             * ``main``: текст для перевода;
@@ -43,6 +65,7 @@ class Translator(metaclass=SingletonMetaclass):
 
         :return: Текст, переведённый на заданный язык.
                  В случае непредвиденной ошибки возвращает строку с соответствующим предупреждением.
+                 Возвращает **объект класса Response**.
         """
 
         text = kwargs["main"]
@@ -51,7 +74,7 @@ class Translator(metaclass=SingletonMetaclass):
         try:
             return Response(
                 text="Переведённый текст.",
-                info=self.TRANSLATOR.translate(text=text, src="ru", dest=destination).text,
+                info=self.translate_text_static(text=text, language=destination),
                 extend_lang=destination
             )
         except (ValueError, httpcore.NetworkError, httpcore.TimeoutException):

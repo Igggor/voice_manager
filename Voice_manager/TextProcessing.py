@@ -9,6 +9,8 @@ from Local import replace_numbers
 from SpeechTranslator import SpeechTranslator
 from Translation import Translator
 
+from string import punctuation
+
 
 class TextProcessor(metaclass=SingletonMetaclass):
     """
@@ -46,6 +48,8 @@ class TextProcessor(metaclass=SingletonMetaclass):
         translator = Translator()
 
         self.NAME = None
+        self.language_listen = None
+        self.punctuation_sieve = str.maketrans("", "", punctuation)
 
         # В РАЗРАБОТКЕ, все функции помощника должны быть здесь.
         # Каждая функция возвращает структуру Response.
@@ -211,7 +215,9 @@ class TextProcessor(metaclass=SingletonMetaclass):
         """
 
         global_context = GlobalContext()
+
         self.NAME = [global_context.NAME.lower()]
+        self.language_listen = global_context.language_listen
 
     # В РАЗРАБОТКЕ.
     def clean_alias(self, command: str):
@@ -304,7 +310,9 @@ class TextProcessor(metaclass=SingletonMetaclass):
                  Иначе будет возвращен список из распознанных команд.
         """
 
-        command = replace_numbers(text=command)
+        command = command.translate(self.punctuation_sieve)
+        command = replace_numbers(text=command, language=self.language_listen)
+        command = command.lower()
 
         selected_actions = list()
 

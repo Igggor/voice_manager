@@ -162,7 +162,7 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         :return:
         """
 
-        self.MIXER = alsaaudio.Mixer()
+        self.MIXER = None
         self.MICROPHONE = speech_recognition.Microphone()
         self.RECOGNIZER = speech_recognition.Recognizer()
 
@@ -194,6 +194,8 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         self.listening_timeout = global_context.microphone_timeout
         self.speak_speed = global_context.speak_speed
 
+        self.make_mixer_diagnostics()
+
     def listen_command(self):
         """
         Метод распознавания текста из речи.
@@ -202,6 +204,7 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
             или, в случае произвольной ошибки, ``None``.
         """
 
+        return "среда текущий уровень громкости"
         if not self.LOCKER.available(thread_id=threading.get_native_id()):
             return None
 
@@ -320,9 +323,10 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         :return: Целочисленное значение от 0 до 100 - громкость звука на данный момент.
         """
 
-        volume = self.MIXER.getvolume()[0]
+        volume = self.MIXER.getvolume(units=alsaaudio.VOLUME_UNITS_PERCENTAGE)[0]
+
         return Response(
-            text=f"Текущий уровень громкости: {volume}."
+            text=f"Текущий уровень громкости: {volume}%."
         )
 
     def set_volume(self, **kwargs):
@@ -337,12 +341,30 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
 
         volume = int(kwargs["main"])
 
-        if volume == self.MIXER.getvolume()[0]:
+        if volume == self.MIXER.getvolume(units=alsaaudio.VOLUME_UNITS_PERCENTAGE)[0]:
             return Response(
-                text=f"Уровень громкости уже равен {volume}, поэтому изменение не было выполнено."
+                text=f"Уровень громкости уже равен {volume}%, поэтому изменение не было выполнено."
             )
 
         self.MIXER.setvolume(volume)
         return Response(
-            text=f"Уровень громкости успешно изменён. Теперь он составляет {volume} единиц."
+            text=f"Уровень громкости успешно изменён. Теперь он составляет {volume}%."
         )
+
+    def make_mixer_diagnostics(self):
+        """
+        Инициализирует ``Mixer`` и пытается автоматически исправить распространённые ошибки.
+
+        :return:
+        """
+
+        try:
+            self.MIXER = alsaaudio.Mixer()
+        except alsaaudio.ALSAAudioError as error:
+            print(f"Warning: something went wrong while initializing Mixer: {error}")
+
+            # Trying to fix...
+            self.MIXER = alsaaudio.Mixer(alsaaudio.mixers()[0])
+        finally:
+            if self.MIXER.getvolume(units=alsaaudio.VOLUME_UNITS_PERCENTAGE)[0] > 100:
+                self.MIXER.setvolume(100)
