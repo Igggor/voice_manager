@@ -204,7 +204,6 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
             или, в случае произвольной ошибки, ``None``.
         """
 
-        return "среда текущий уровень громкости"
         if not self.LOCKER.available(thread_id=threading.get_native_id()):
             return None
 
