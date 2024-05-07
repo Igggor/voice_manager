@@ -29,6 +29,7 @@ router.post('/:table', async (req, res, next) => {
     return 0
   }
   let data = {}
+  delete req.query.key
   try {
     data = await seq[req.params.table].create(req.body.params)
   }
@@ -45,6 +46,7 @@ router.put('/:table', async (req, res, next) => {
     return 0
   }
   let data = {}
+  delete req.query.key
   try {
     data = await seq[req.params.table].update(req.body.changes,{
       where: req.body.params
@@ -63,6 +65,7 @@ router.delete('/:table', async (req, res, next) => {
     return 0
   }
   let data = {}
+  delete req.query.key
     try {
       data = await seq[req.params.table].destroy({
         where: req.query
