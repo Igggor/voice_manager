@@ -5,7 +5,7 @@ const seq = require('../dbmodels')
 
 router.get('/:table', async (req, res, next) => {
   console.log(req.query)
-  if (req.query.key !== process.env.API_KEY) {
+  if (process.env.API_KEY === undefined || req.query.key !== process.env.API_KEY) {
     res.json({error: 'Error API Key'})
     return 0
   }
@@ -24,7 +24,7 @@ router.get('/:table', async (req, res, next) => {
 
 router.post('/:table', async (req, res, next) => {
   console.log(req.body)
-  if (req.query.key !== process.env.API_KEY) {
+  if (process.env.API_KEY === undefined || req.query.key !== process.env.API_KEY) {
     res.json({error: 'Error API Key'})
     return 0
   }
@@ -40,7 +40,7 @@ router.post('/:table', async (req, res, next) => {
 
 router.put('/:table', async (req, res, next) => {
   console.log(req.body)
-  if (req.query.key !== process.env.API_KEY) {
+  if (process.env.API_KEY === undefined || req.query.key !== process.env.API_KEY) {
     res.json({error: 'Error API Key'})
     return 0
   }
@@ -58,7 +58,7 @@ router.put('/:table', async (req, res, next) => {
 
 router.delete('/:table', async (req, res, next) => {
   console.log(req.query)
-  if (req.query.key !== process.env.API_KEY) {
+  if (process.env.API_KEY === undefined || req.query.key !== process.env.API_KEY) {
     res.json({error: 'Error API Key'})
     return 0
   }
