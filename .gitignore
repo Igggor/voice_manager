@@ -2,3 +2,4 @@
 .idea
 /Web/node_modules
 /Web/db.sqlite
+/Web/.env

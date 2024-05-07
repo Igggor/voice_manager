@@ -5,7 +5,12 @@ const seq = require('../dbmodels')
 
 router.get('/:table', async (req, res, next) => {
   console.log(req.query)
+  if (req.query.key !== process.env.API_KEY) {
+    res.json({error: 'Error API Key'})
+    return 0
+  }
   let data = {}
+  delete req.query.key
   try {
     data = await seq[req.params.table].findAll({
       where: req.query
@@ -19,6 +24,10 @@ router.get('/:table', async (req, res, next) => {
 
 router.post('/:table', async (req, res, next) => {
   console.log(req.body)
+  if (req.query.key !== process.env.API_KEY) {
+    res.json({error: 'Error API Key'})
+    return 0
+  }
   let data = {}
   try {
     data = await seq[req.params.table].create(req.body.params)
@@ -31,6 +40,10 @@ router.post('/:table', async (req, res, next) => {
 
 router.put('/:table', async (req, res, next) => {
   console.log(req.body)
+  if (req.query.key !== process.env.API_KEY) {
+    res.json({error: 'Error API Key'})
+    return 0
+  }
   let data = {}
   try {
     data = await seq[req.params.table].update(req.body.changes,{
@@ -45,6 +58,10 @@ router.put('/:table', async (req, res, next) => {
 
 router.delete('/:table', async (req, res, next) => {
   console.log(req.query)
+  if (req.query.key !== process.env.API_KEY) {
+    res.json({error: 'Error API Key'})
+    return 0
+  }
   let data = {}
     try {
       data = await seq[req.params.table].destroy({
