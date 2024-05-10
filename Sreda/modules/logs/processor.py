@@ -1,6 +1,11 @@
-from GlobalContext import GlobalContext
-from Units import Command, Response
-from Metaclasses import SingletonMetaclass
+from Sreda.settings import GlobalContext
+
+from Sreda.modules.text.units import Command, Response
+from Sreda.modules.logs.units import Log
+
+from Sreda.static.metaclasses import SingletonMetaclass
+
+from datetime import datetime
 
 
 class Logger(metaclass=SingletonMetaclass):
@@ -29,7 +34,7 @@ class Logger(metaclass=SingletonMetaclass):
         self.logs_limit = None
         self.logs = None
 
-    def update_settings(self):
+    def update_settings(self) -> None:
         """
         Метод обновления настроек логгера.
 
@@ -41,27 +46,28 @@ class Logger(metaclass=SingletonMetaclass):
         self.logs_limit = global_context.logs_limit
         self.logs = global_context.LOGS
 
-    def write(self, query: Command, response: Response):
-        """
-        Логирование пары вида ``[ запрос, ответ ]``.
+        self._shrink()
 
-        :param query: ``Command``: распознанный запрос;
-        :param response: ``Response``: ответ на запрос;
+    def _shrink(self) -> None:
+        """
+        Удаляет старые логи до того момента, пока количество логов превышает лимит.
 
         :return:
         """
-
-        self.logs.append([query, response])
 
         while len(self.logs) > self.logs_limit:
             del self.logs[0]
 
-    def close(self):
+    def write(self, query: Command, response: Response) -> None:
         """
-        Метод глобального сохранения логов. Вызывается при закрытии приложения.
+        Логирование пары вида ``[ запрос, ответ ]``.
+
+        :param query: ``Command``: распознанный запрос;
+        :param response: ``Response``: ответ на запрос.
 
         :return:
         """
 
-        global_context = GlobalContext()
-        global_context.LOGS = self.logs
+        self.logs.append(Log(command=query, response=response, time=datetime.now()))
+
+        self._shrink()

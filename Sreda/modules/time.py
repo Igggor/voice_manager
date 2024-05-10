@@ -1,12 +1,15 @@
-from Units import Response
-from Local import declension
-from Constants import MONTH_KEYS
-from Metaclasses import SingletonMetaclass
-from Notifications import NotificationsInteractor
-from GlobalContext import GlobalContext
+from Sreda.settings import GlobalContext
 
-import datetime
+from Sreda.modules.text.units import Response
+from Sreda.modules.notifications.processor import NotificationsInteractor
+from Sreda.modules.notifications.units import Notification
+
+from Sreda.static.local import declension
+from Sreda.static.constants import MONTH_KEYS
+from Sreda.static.metaclasses import SingletonMetaclass
+
 from copy import deepcopy
+import datetime
 
 
 class TimeWorker(metaclass=SingletonMetaclass):
@@ -50,7 +53,7 @@ class TimeWorker(metaclass=SingletonMetaclass):
             text="Секундомер успешно завершён."
         )
 
-    def update_settings(self):
+    def update_settings(self) -> None:
         """
         Метод обновления настроек.
 
@@ -73,7 +76,7 @@ class TimeWorker(metaclass=SingletonMetaclass):
         )
 
     @staticmethod
-    def get_date(**kwargs):
+    def get_date(**kwargs) -> Response:
         """
         Функция для получения актуальной даты.
 
@@ -90,7 +93,7 @@ class TimeWorker(metaclass=SingletonMetaclass):
             text=f"Сегодня { day } { MONTH_KEYS[month - 1] } { year } года."
         )
 
-    def start_stopwatch(self, **kwargs):
+    def start_stopwatch(self, **kwargs) -> Response:
         """
         Метод старта секундомера.
 
@@ -105,7 +108,7 @@ class TimeWorker(metaclass=SingletonMetaclass):
         self.stopwatch_initial_time = datetime.datetime.now()
         return self.stopwatch_creation_success
 
-    def stop_stopwatch(self, **kwargs):
+    def stop_stopwatch(self, **kwargs) -> Response:
         """
         Метод остановки секундомера.
 
@@ -131,7 +134,7 @@ class TimeWorker(metaclass=SingletonMetaclass):
         return response
 
     @staticmethod
-    def get_time_now(**kwargs):
+    def get_time_now(**kwargs) -> Response:
         """
         Функция для получения актуального времени, с точностью до минут.
 
@@ -148,11 +151,11 @@ class TimeWorker(metaclass=SingletonMetaclass):
                  f"{ minutes } { declension(minutes, 'минута') }."
         )
 
-    def check_notifications(self):
+    def check_notifications(self) -> list[Notification] | None:
         """
         Периодичная функция проверки на готовность уведомлений.
 
-        :return: Найденное уведомление, которое нужно воспроизвести (класс ``Notification``), или ``None``.
+        :return: Найденные уведомления и таймеры, которое нужно воспроизвести (класс ``Notification``), или ``None``.
         """
 
         print("[Log: time_thread]: notifications detecting...")

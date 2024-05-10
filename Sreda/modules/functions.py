@@ -1,7 +1,9 @@
-from Local import declension
-from Metaclasses import SingletonMetaclass
-from Units import Response
-from GlobalContext import GlobalContext
+from Sreda.settings import GlobalContext, Environment
+
+from Sreda.modules.text.units import Response
+
+from Sreda.static.local import declension
+from Sreda.static.metaclasses import SingletonMetaclass
 
 import requests
 
@@ -55,7 +57,7 @@ class FunctionsCore(metaclass=SingletonMetaclass):
         self.weather_celsius = None
         self.weather_mmHg = None
 
-    def update_settings(self):
+    def update_settings(self) -> None:
         """
         Метод обновления настроек.
 
@@ -68,7 +70,7 @@ class FunctionsCore(metaclass=SingletonMetaclass):
         self.weather_celsius = global_context.weather_celsius
         self.weather_mmHg = global_context.weather_mmHg
 
-    def get_currency_course(self, **kwargs):
+    def get_currency_course(self, **kwargs) -> Response:
         """
         Функция для получения актуального курса валют, а именно доллара и евро.
 
@@ -102,7 +104,7 @@ class FunctionsCore(metaclass=SingletonMetaclass):
         except requests.exceptions.RequestException:
             return self.course_request_error
 
-    def get_weather_now(self, **kwargs):
+    def get_weather_now(self, **kwargs) -> Response:
         """
         Функция для получения текущей погоды. В качестве параметра принимает название города (опционально).
         В случае, если город не передан, будет использован город по умолчанию.
@@ -115,7 +117,7 @@ class FunctionsCore(metaclass=SingletonMetaclass):
                  В случае непредвиденной ошибки возвращает строку с соответствующим предупреждением.
         """
 
-        open_weather_token = "e37d54207830a94eee9d3babc8b0d27f"
+        open_weather_token = Environment.OPEN_WEATHER_API_KEY
 
         city = self.city if kwargs["main"] is None else kwargs["main"]
 

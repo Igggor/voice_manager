@@ -1,8 +1,11 @@
-from Metaclasses import SingletonMetaclass
-from GlobalContext import GlobalContext
-from Units import Notification, Response
-from Constants import MONTH_KEYS
-from Local import declension
+from Sreda.settings import GlobalContext
+
+from Sreda.modules.text.units import Response
+from Sreda.modules.notifications.units import Notification
+
+from Sreda.static.constants import MONTH_KEYS
+from Sreda.static.local import declension
+from Sreda.static.metaclasses import SingletonMetaclass
 
 from datetime import datetime, timedelta
 from copy import deepcopy
@@ -29,8 +32,6 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
           напоминание;
 
     **Методы класса:**
-        * ``renumerate()`` - переприсваивает уведомлениям корректные ``id``;
-        * ``shrink()`` - путём удаления старых напоминаний/таймеров сжимает списки напоминаний и таймеров до лимита;
         * ``update_settings()`` - метод обновления полей класса в соответствии с ``GlobalContext``;
         * ``add_notification()`` - метод добавления нового напоминания;
         * ``add_timer()`` - метод добавления нового таймера;
@@ -81,7 +82,7 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
             error=True
         )
 
-    def renumerate(self):
+    def _renumerate(self) -> None:
         """
         Переприсваивает уведомлениям корректные ``id``.
 
@@ -94,7 +95,7 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
         for i in range(len(self.timers)):
             self.timers[i].id = i + 1
 
-    def shrink(self):
+    def _shrink(self) -> None:
         """
         Удаляет старые уведомления до того момента, пока количество уведомлений превышает лимит.
 
@@ -106,9 +107,9 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
         while len(self.timers) > self.timers_limit:
             del self.timers[0]
 
-        self.renumerate()
+        self._renumerate()
 
-    def update_settings(self):
+    def update_settings(self) -> None:
         """
         Метод обновления настроек.
 
@@ -132,14 +133,14 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
             error=True
         )
 
-        self.shrink()
+        self._shrink()
 
-    def add_notification(self, **kwargs):
+    def add_notification(self, **kwargs) -> Response:
         """
         Метод добавления нового уведомления.
 
         Обязательные агрументы:
-            * ``text``: текст уведомления;
+            * ``main``: текст уведомления;
             * ``hour``: час;
             * ``minute``: минута;
             * ``second``: секунда.
@@ -192,12 +193,12 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
                              f"Созданное уведомление имеет порядковый номер {current_id}.")
             return response
 
-    def add_timer(self, **kwargs):
+    def add_timer(self, **kwargs) -> Response:
         """
         Метод добавления нового таймера.
 
         Обязательные агрументы:
-            * ``text``: текст таймера;
+            * ``main``: текст таймера;
             * ``hour``: длительность в часах;
             * ``minute``: длительность в минутах;
             * ``second``: длительность в секундах.
@@ -234,12 +235,12 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
                          f"{moment.second} {declension(moment.second, 'секунда')}.")
         return response
 
-    def delete_notification(self, **kwargs):
+    def delete_notification(self, **kwargs) -> Response:
         """
         Метод удаления уведомления.
 
         Обязательные аргументы:
-            * ``id``: порядковый номер уведомления.
+            * ``main``: порядковый номер уведомления.
 
         :return: Удаляет уведомление и возвращает фразу-отклик.
         """
@@ -248,13 +249,13 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
         if note_id < len(self.notifications):
             del self.notifications[note_id]
 
-            self.renumerate()
+            self._renumerate()
 
             return self.note_deletion_success
         else:
             return self.note_not_found_error
 
-    def delete_timers(self, indexes: list):
+    def delete_timers(self, indexes: list[int]) -> None:
         """
         Метод удаления таймеров. Не может быть вызван пользователем.
 
@@ -263,19 +264,15 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
         :return:
         """
 
-        # Благодаря той особенности списка таймеров, что поддерживается инвариант "индекс в массиве + 1 = id таймера",
-        # можно удалять используя не явный индекс в массиве, который при удалении будет меняться, а id таймера.
-        # После всех удалений для поддержания вышеописанного инварианта таймеры должны быть перенумерованы.
+        new_timers = list()
+        for i in range(len(self.timers)):
+            if i not in indexes:
+                new_timers.append(self.timers[i])
 
-        for index in indexes:
-            for i in range(len(self.timers)):
-                if self.timers[i].id == index:
-                    del self.timers[i]
-                    break
+        self.timers = new_timers
+        self._renumerate()
 
-        self.renumerate()
-
-    def find_nearest_notification(self, **kwargs):
+    def find_nearest_notification(self, **_) -> Response:
         """
         Поиск ближайшего напоминания к текущему моменту.
 
@@ -284,7 +281,7 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
 
         current_time = datetime.now()
 
-        def distance(note: Notification):
+        def distance(note: Notification) -> int:
             """
             Функция нахождения расстояния между моментами времени в секундах.
 
@@ -292,7 +289,7 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
             от текущего момента (в секундах).
 
             :return: Целочисленное значение - расстояние от текущего момента
-                до следующего воспроизведения данного уведомления.
+                до следующего воспроизведения данного уведомления в секундах.
             """
 
             if note.month is None or note.day is None:
@@ -309,7 +306,7 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
                     moment += timedelta(days=365)
 
             delta = (moment - datetime.now()).total_seconds()
-            return delta
+            return int(delta)
 
         try:
             x = min(self.notifications, key=distance)

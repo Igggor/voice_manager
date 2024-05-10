@@ -5,3 +5,6 @@ gTTS==2.5.1
 text2num==2.5.1
 googletrans==4.0.0rc1
 httpcore>=0.9.1
+pyalsaaudio==0.10.0
+python-dotenv==1.0.1
+sounddevice==0.4.6

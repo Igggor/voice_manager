@@ -1,9 +1,9 @@
-from Constants import D_WORDS, MONTH_KEYS, LANGUAGES
+from Sreda.static.constants import D_WORDS, MONTH_KEYS, LANGUAGES, MONTHS
 
 from text_to_num import alpha2digit
 
 
-def base_declension(number: int):
+def base_declension(number: int) -> str:
     """
     Базовая функция для склонения слов русского языка.
 
@@ -23,7 +23,7 @@ def base_declension(number: int):
         return "K"
 
 
-def declension(number: int, string: str):
+def declension(number: int, string: str) -> str:
     """
     Представление сочетания числительного и слова в нужном формате.
 
@@ -38,7 +38,7 @@ def declension(number: int, string: str):
     return D_WORDS[string][key]
 
 
-def get_base(text: str):
+def get_base(text: str) -> str | None:
     """
     Находит исходное слово по склонённому (обратная функция для ``declension``).
 
@@ -54,23 +54,31 @@ def get_base(text: str):
     return None
 
 
-def get_month(key: str):
+def get_month(key: str, i: bool = False) -> int | None:
     """
     Возвращает порядковый номер месяцы по его названию.
 
-    :param key: ``str``: название месяца ("января", "февраля" и т.д).
+    :param key: ``str``: название месяца ("января", "февраля" и т.д);
+    :param i: ``bool``: если ``True``, то поиск осуществляется в списке месяцев в именительном падеже.
 
     :return: Порядковый номер месяца или ``None``, если передан некорректный аргумент.
     """
 
-    for index in range(len(MONTH_KEYS)):
-        if MONTH_KEYS[index] == key:
-            return index + 1
+    if i:
+        for index in range(len(MONTHS)):
+            if MONTHS[index] == key:
+                return index + 1
 
-    return None
+        return None
+    else:
+        for index in range(len(MONTH_KEYS)):
+            if MONTH_KEYS[index] == key:
+                return index + 1
+
+        return None
 
 
-def get_language_key(language: str):
+def get_language_key(language: str) -> str | None:
     """
     Получает ключ (код) языка по его названию.
 
@@ -86,7 +94,7 @@ def get_language_key(language: str):
     return None
 
 
-def replace_numbers(text: str, language: str):
+def replace_numbers(text: str, language: str) -> str:
     """
     Заменяет все слова, выражающие числа, числовыми занчениями.
 
@@ -98,5 +106,5 @@ def replace_numbers(text: str, language: str):
     :return: Изменённая строка.
     """
 
-    text = alpha2digit(text=text, lang=language)
+    text = alpha2digit(text=text, lang=language, relaxed=True)
     return text

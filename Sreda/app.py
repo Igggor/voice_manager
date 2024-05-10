@@ -1,17 +1,20 @@
-from GlobalContext import GlobalContext
-from TimeThread import TimeWorker
-from Logger import Logger
-from TextProcessing import TextProcessor
-from SpeechTranslator import SpeechTranslator
-from Scenarios import ScenarioInteractor
-from Units import Response, PlayableText
-from Metaclasses import SingletonMetaclass
-from FormatChecking import FormatChecker
-from Functions import FunctionsCore
-from Translation import Translator
+from Sreda.settings import GlobalContext, load_environment, Environment
+
+from Sreda.modules.time import TimeWorker
+from Sreda.modules.logs.processor import Logger
+from Sreda.modules.text.processor import TextProcessor
+from Sreda.modules.text.units import Response
+from Sreda.modules.speech.processor import SpeechTranslator
+from Sreda.modules.speech.units import PlayableText
+from Sreda.modules.scenarios.processor import ScenarioInteractor
+from Sreda.modules.format import check_format, check_recognition
+from Sreda.modules.functions import FunctionsCore
+from Sreda.modules.translation.processor import Translator
+from Sreda.modules.calendar.processor import TODOInteractor
+
+from Sreda.static.metaclasses import SingletonMetaclass
 
 from time import sleep
-
 import threading
 import sys
 import asyncio
@@ -35,8 +38,6 @@ class VoiceHelper(metaclass=SingletonMetaclass):
           Вызывается при изменении настроек приложения.
         * ``ON(), OFF(), EXIT()`` - функции,
           предназначенные для **запроса** включения, выключения частичного и полного соответственно;
-        * ``listen_command()`` - функция прослушивания информации, сочетающая в себе несколько задач,
-          в том числе само прослушивание и распознавание;
         * ``work()`` - головная функция, объединяющая в себя всю работу голосового помощника.
     """
 
@@ -55,9 +56,16 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         Инициализируются все составные части приложения (классы).
         """
 
+        load_environment()
+        if Environment.BUILD:
+            print("Warning: BUILD-mode enabled. If you are trying to emulate the real work of this app, "
+                  "you should set <BUILD> = False.")
+
         self.global_context = GlobalContext()
 
         self.time_core = TimeWorker()
+        self.translator = Translator()
+
         self.text_processor = TextProcessor(
             set_ON=self.set_ON,
             features=self.features,
@@ -69,13 +77,25 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         self.speech_translator = SpeechTranslator()
         self.scenario_interactor = ScenarioInteractor()
         self.logger = Logger()
-        self.format_checker = FormatChecker()
         self.functions_core = FunctionsCore()
-
-        self.translator = Translator()
+        self.calendar = TODOInteractor()
 
         self.greeting = None
 
+        self.hello = [
+            Response(
+                text="Привет!"
+            ),
+            Response(
+                text="Доброго времени суток."
+            ),
+            Response(
+                text="Рада приветствовать вас."
+            ),
+            Response(
+                text="Рада вас слышать."
+            )
+        ]
         self.features = Response(
             text=("Сейчас я мало что умею, да и понимаю человека с трудом. "
                   "Но обещаю, буквально через месяц я смогу очень многое!")
@@ -97,15 +117,19 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         )
 
         self.big_bye = Response(
-            text="Всего доброго, буду рада быть полезной снова."
+            text="Всего доброго, буду рада быть полезной снова.",
+            do_next=[self.speech_translator.clear_buffer, sys.exit]
         )
-        self.big_bye.do_next = [self.logger.close, self.speech_translator.clear_buffer, sys.exit]
 
         self.update_all()
 
-    def update_all(self):
+        if Environment.BUILD:
+            print("Everything is up-to-date. You can set <BUILD> = False and restart the app.")
+            exit(0)
+
+    def update_all(self) -> None:
         """
-        Рекурсивное обновление настроек всех частей приложения. Вызывается при изменении настроек приложения.
+        Рекурсивное обновление настроек всех частей приложения. Вызывается при изменении настроек приложения на сервере.
 
         :return:
         """
@@ -117,14 +141,15 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         )
 
         self.time_core.update_settings()
+        self.translator.update_settings()
         self.text_processor.update_settings()
         self.speech_translator.update_settings()
         self.scenario_interactor.update_settings()
         self.logger.update_settings()
         self.functions_core.update_settings()
-        self.translator.update_settings()
+        self.calendar.update_settings()
 
-    def set_ON(self, **kwargs):
+    def set_ON(self, **_) -> Response:
         """
         Включение голосового помощника.
 
@@ -132,28 +157,23 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         """
 
         if self.global_context.ON:
-            return Response(
-                text="Привет!"
-            )
+            return self.hello[random.randint(0, len(self.hello) - 1)]
 
         self.global_context.ON = True
         return self.greeting
 
-    def set_OFF(self, **kwargs):
+    def set_OFF(self, **_) -> Response:
         """
         Частичное выключение голосового помощника (спящий режим).
 
         :return:
         """
 
-        if not self.global_context.ON:
-            return None
-
         self.global_context.ON = False
         return self.small_bye
 
     # Важно! В перспективе здесь не только выход, но, возможно, какое-то сохранение в БД или что-то подобное.
-    def exit(self, **kwargs):
+    def exit(self, **_) -> Response:
         """
         Полное выключение голосового помощника.
 
@@ -163,7 +183,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         self.global_context.ON = False
         return self.big_bye
 
-    def features(self, **kwargs):
+    def features(self, **_) -> Response:
         """
         Запрос о возможностях помощника.
 
@@ -172,7 +192,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
         return self.features
 
-    def thanks(self, **kwargs):
+    def thanks(self, **_) -> Response:
         """
         Ответ на благодарность.
 
@@ -181,7 +201,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
         return self.thanks[random.randint(0, len(self.thanks) - 1)]
 
-    def periodic_task(self, function, sleeping_time: float):
+    def _periodic_task(self, function, sleeping_time: float) -> None:
         """
         Статический вспомогательный метод, реализующий работу периодических асинхронных функций.
 
@@ -207,8 +227,8 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
                 asyncio.run(self.execute(selected_actions=[executable], notification=True))
 
-    def add_to_output(self, output_text: PlayableText, response: Response, source_language: str = "ru",
-                      new: bool = True):
+    def _add_to_output(self, output_text: PlayableText, response: Response, source_language: str = "ru",
+                       new: bool = True) -> None:
         """
         Добавляет к исходящему тексту новый элемент.
 
@@ -229,7 +249,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
                 text=self.translator.translate_text_static(
                     text=response.text,
                     source_language=source_language,
-                    language=self.global_context.language_speak
+                    destination_language=self.global_context.language_speak
                 ),
 
                 lang=self.global_context.language_speak
@@ -239,20 +259,20 @@ class VoiceHelper(metaclass=SingletonMetaclass):
                 text=self.translator.translate_text_static(
                     text=response.info,
                     source_language=source_language,
-                    language=response.get_language(
-                        self.global_context.language_speak
+                    destination_language=response.get_language(
+                        _undefined=self.global_context.language_speak
                     )
                 ),
 
                 lang=response.get_language(
-                    self.global_context.language_speak
+                    _undefined=self.global_context.language_speak
                 ),
 
                 new=False
             )
 
     # В перспективе здесь должно быть собрано несколько функций, в том числе запись логов.
-    async def execute(self, selected_actions: list, notification: bool = False):
+    async def execute(self, selected_actions: list, notification: bool = False) -> None:
         """
         Объединение несколько функций и методов. Выполнение работы от записи логов до
         непосредственного воспроизведения текста.
@@ -267,11 +287,12 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
         output_text = PlayableText()
 
-        recognition_fail = self.format_checker.check_recognition(selected_actions)
+        recognition_fail = check_recognition(selected_actions)
+        do_next = list()
         if recognition_fail is not None:
-            self.add_to_output(output_text=output_text, response=recognition_fail)
+            self._add_to_output(output_text=output_text, response=recognition_fail)
             if recognition_fail.info:
-                self.add_to_output(output_text=output_text, response=recognition_fail, new=False)
+                self._add_to_output(output_text=output_text, response=recognition_fail, new=False)
         else:
             if notification:
                 query = selected_actions[0]
@@ -279,9 +300,9 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
                 self.logger.write(query, response)
 
-                self.add_to_output(output_text=output_text, response=response)
+                self._add_to_output(output_text=output_text, response=response)
                 if response.info:
-                    self.add_to_output(output_text=output_text, response=response, new=False)
+                    self._add_to_output(output_text=output_text, response=response, new=False)
 
                 self.speech_translator.LOCKER.capture_control()
 
@@ -295,7 +316,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
                 query = selected_actions[i]
                 print("[Log: executing]: ", query.additive)
 
-                format_error = self.format_checker.check_format(query)
+                format_error = check_format(query)
                 if format_error is not None:
                     response = format_error
                 else:
@@ -308,21 +329,23 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
                 self.logger.write(query, response)
 
-                self.add_to_output(output_text=output_text, response=response)
+                self._add_to_output(output_text=output_text, response=response)
                 if response.info:
-                    self.add_to_output(output_text=output_text, response=response, new=False)
+                    self._add_to_output(output_text=output_text, response=response, new=False)
 
                 if response.do_next is not None:
-                    for action in response.do_next:
-                        action()
+                    do_next = response.do_next
 
         while not self.speech_translator.LOCKER.available(thread_id=threading.get_native_id()):
             await asyncio.sleep(0)
 
         self.speech_translator.speak(output_text)
 
+        for action in do_next:
+            action()
+
     # Следующие три функции - оболочки, чтобы можно было адекватно вызывать функции выключения, включения и т.д
-    def ON(self):
+    def ON(self) -> None:
         """
         Высокоуровневая функция включения голосового помощника.
 
@@ -331,7 +354,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
         asyncio.run(self.execute([self.text_processor.functions["on"]]))
 
-    def OFF(self):
+    def OFF(self) -> None:
         """
         Высокоуровневая функция перевода голосового помощника в спящий режим.
 
@@ -340,7 +363,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
         asyncio.run(self.execute([self.text_processor.functions["off"]]))
 
-    def EXIT(self):
+    def EXIT(self) -> None:
         """
         Высокоуровневая функция полного выключения голосового помощника.
 
@@ -349,7 +372,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
         asyncio.run(self.execute([self.text_processor.functions["full-off"]]))
 
-    def listen_command(self):
+    def _listen_command(self) -> None:
         """
         Объединение несколько функций и методов. Выполнение работы от приёма и расшифровки голоса до непосредственного
         выполнения требуемой функции.
@@ -362,7 +385,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         # Ядро приложения работает на русском языке, поэтому все команды должны быть переведены на него.
         if self.global_context.language_listen != "ru":
             recognized_query = self.translator.translate_text_static(
-                text=recognized_query, source_language=self.global_context.language_listen, language="ru"
+                text=recognized_query, source_language=self.global_context.language_listen, destination_language="ru"
             )
 
         if recognized_query is None:
@@ -375,7 +398,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
         asyncio.run(self.execute(selected_actions))
 
-    def work(self):
+    def work(self) -> None:
         """
         Основная функция, реализующая работу голосового помощника в целом.
 
@@ -383,7 +406,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         """
 
         time_thread = threading.Thread(
-            target=self.periodic_task,
+            target=self._periodic_task,
             args=(self.time_core.check_notifications, self.global_context.notifications_accuracy),
             daemon=True,
             name="Background-TIME"
@@ -391,4 +414,4 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
         time_thread.start()
         while self.global_context.ON:
-            self.listen_command()
+            self._listen_command()

@@ -1,15 +1,18 @@
-from GlobalContext import GlobalContext
-from Functions import FunctionsCore
-from TimeThread import TimeWorker
-from Units import Command
-from Scenarios import ScenarioInteractor
-from Metaclasses import SingletonMetaclass
-from Parser import parse_info
-from Local import replace_numbers
-from SpeechTranslator import SpeechTranslator
-from Translation import Translator
+from Sreda.settings import GlobalContext
 
-from string import punctuation
+from Sreda.modules.functions import FunctionsCore
+from Sreda.modules.time import TimeWorker
+from Sreda.modules.text.units import Command
+from Sreda.modules.scenarios.processor import ScenarioInteractor
+from Sreda.modules.parser import parse_info, canonize_text
+from Sreda.modules.speech.processor import SpeechTranslator
+from Sreda.modules.translation.processor import Translator
+from Sreda.modules.triggers.processor import build_all_triggers, ready_all
+from Sreda.modules.triggers.units import Trigger
+from Sreda.modules.calendar.processor import TODOInteractor
+
+from Sreda.static.metaclasses import SingletonMetaclass
+from Sreda.static.local import replace_numbers
 
 
 class TextProcessor(metaclass=SingletonMetaclass):
@@ -46,10 +49,10 @@ class TextProcessor(metaclass=SingletonMetaclass):
         functions_core = FunctionsCore()
         speech_translator = SpeechTranslator()
         translator = Translator()
+        TODO_interactor = TODOInteractor()
 
         self.NAME = None
         self.language_listen = None
-        self.punctuation_sieve = str.maketrans("", "", punctuation)
 
         # В РАЗРАБОТКЕ, все функции помощника должны быть здесь.
         # Каждая функция возвращает структуру Response.
@@ -63,82 +66,75 @@ class TextProcessor(metaclass=SingletonMetaclass):
                 Command(
                     name="Включение голосового помощника.",
                     description="Во включенном состоянии глосовой помощник прослушивает команды и исполняет их.",
-                    key="on", function=set_ON, triggers=["привет", "включись", "включение"], type="system"
+                    key="on", function=set_ON, type="system"
                 ),
             "features":
                 Command(
                     name="Возможности голосового помощника.",
-                    key="features", function=features, triggers=["что ты умеешь", "возможности"], type="question"
+                    key="features", function=features, type="question"
                 ),
             "thanks":
                 Command(
                     name="Рада стараться.",
-                    key="thanks", function=thanks, triggers=["спасибо", "благодарю"], type="question"
+                    key="thanks", function=thanks, type="question"
                 ),
             "full-off":
                 Command(
                     name="Полное выключение голосового помощника",
                     description="Выключение приложения",
-                    key="full-off", function=safe_exit,
-                    triggers=["отключись полностью", "отключить полностью", "полное отключение"], type="system"
+                    key="full-off", function=safe_exit, type="system"
                 ),
             "off":
                 Command(
                     name="Перевод голосового помощника в режим гибернации",
                     description="В режиме сна приложение не закрывается, однако не воспринимает голосовые команды",
-                    key="off", function=set_OFF, triggers=["отключись", "отключение"], type="system"
+                    key="off", function=set_OFF, type="system"
                 ),
             "time":
                 Command(
                     name="Получение текущего времени",
                     description="Голосовой помощник получает системное время и озвучивает его",
-                    key="time", function=time_core.get_time_now, triggers=["сколько времени", "текущее время"],
-                    type="question"
+                    key="time", function=time_core.get_time_now, type="question"
                 ),
             "date":
                 Command(
                     name="Получение текущей даты",
                     description="Голосовой помощник получает текущую дату и озвучивает её",
-                    key="date", function=time_core.get_date,
-                    triggers=["какой сегодня день", "сегодняшняя дата", "текущая дата"], type="question"
+                    key="date", function=time_core.get_date, type="question"
                 ),
             "course":
                 Command(
                     name="Получение текущего курса валют",
                     description="Голосовой помощник получает курс доллара и евро к рублю Центрального Банка России "
                                 "(по состоянию на данный момент) и озвучивает его",
-                    key="course", function=functions_core.get_currency_course, triggers=["курс валют"], type="question"
+                    key="course", function=functions_core.get_currency_course, type="question"
                 ),
             "weather-now":
                 Command(
                     name="Получение текущей погоды",
                     description="Голосовой помощник получает текущую погоду с заданными параметрами и озвучивает её",
-                    key="weather-now", function=functions_core.get_weather_now,
-                    triggers=["какая сейчас погода", "текущая погода", "погода"], type="question"
+                    key="weather-now", function=functions_core.get_weather_now, type="question"
                 ),
             "create-scenario":
                 Command(
                     name="Создание сценария",
                     description="Создание группы команд с заданным именем, выполняющихся поочередно",
-                    key="create-scenario", function=scenario_interactor.add_scenario,
-                    triggers=["создай сценарий", "добавь сценарий", "добавление сценария"], type="scenario",
-                    required_params=["main", "subcommands"], ignore_following=True
+                    key="create-scenario", function=scenario_interactor.add_scenario, type="scenario",
+                    required_params=["main", "subcommands"]
                 ),
             "execute-scenario":
                 Command(
                     name="Исполнение сценария",
                     description="Исполнение заданной группы команд, "
                                 "в том порядке, в котором они были даны при создании",
-                    key="execute-scenario", function=scenario_interactor.execute,
-                    triggers=["запусти сценарий", "исполни сценарий", "исполнение сценария"], type="scenario",
+                    key="execute-scenario", function=scenario_interactor.execute, type="scenario",
                     required_params=["main"]
                 ),
             "delete-scenario":
                 Command(
                     name="Удаление сценария",
                     description="Удаление группы команд по заданному имени",
-                    key="delete-scenario", function=scenario_interactor.delete_scenario,
-                    triggers=["удали сценарий", "удаление сценария"], type="scenario",
+                    key="delete-scenario", function=scenario_interactor.delete_scenario, type="scenario",
                     required_params=["main"]
                 ),
             "add-notification":
@@ -146,7 +142,6 @@ class TextProcessor(metaclass=SingletonMetaclass):
                     name="Добавление напоминания",
                     description="Добавление напоминания с заданным текстом и временем запуска",
                     key="add-notification", function=time_core.notifications_interactor.add_notification,
-                    triggers=["добавь уведомление", "добавь напоминание", "создай уведомление", "создай напоминание"],
                     type="notification-adding", required_params=["time"], ignore_following=True
                 ),
             "add-timer":
@@ -155,7 +150,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
                     description="Добавление таймера на заданное количество времени. "
                                 "Отличие от уведомления - автоматическое удаление по зевершении",
                     key="add-timer", function=time_core.notifications_interactor.add_timer,
-                    triggers=["добавь таймер", "создай таймер"], type="notification-adding", required_params=["time"],
+                    type="notification-adding", required_params=["time"],
                     ignore_following=True
                 ),
             "delete-notification":
@@ -163,51 +158,71 @@ class TextProcessor(metaclass=SingletonMetaclass):
                     name="Удаление напоминания",
                     description="Удаление напоминания по заданному порядковому номеру",
                     key="delete-notification", function=time_core.notifications_interactor.delete_notification,
-                    triggers=["удали напоминание", "удали уведомление"], type="notification", required_params=["main"]
+                    type="notification", required_params=["main"]
                 ),
             "nearest-notification":
                 Command(
                     name="Поиск ближайшего к текущему моменту уведомления",
                     key="nearest-notification", function=time_core.notifications_interactor.find_nearest_notification,
-                    triggers=["ближайшее уведомление", "ближайшее напоминание"], type="notification"
+                    type="notification"
                 ),
             "create-stopwatch":
                 Command(
                     name="Запуск секундомера",
                     description="Важно, что запуск сразу нескольких секундомеров не поддерживается - "
                                 "в любой момент времени может быть запущен только один секундомер",
-                    key="create-stopwatch", function=time_core.start_stopwatch,
-                    triggers=["создай секундомер", "запусти секундомер", "поставь секундомер"], type="stopwatch"
+                    key="create-stopwatch", function=time_core.start_stopwatch, type="stopwatch"
                 ),
             "stop-stopwatch":
                 Command(
                     name="Остановка секундомера", key="stop-stopwatch", function=time_core.stop_stopwatch,
-                    triggers=["останови секундомер", "заверши секундомер"], type="stopwatch"
+                    type="stopwatch"
                 ),
             "translate":
                 Command(
                     name="Перевод текста", description="Перевод заданного текста с русского языка на любой доступный",
-                    key="translate", function=translator.translate_text,
-                    triggers=["переведи текст", "переведи", "сделай перевод"], type="question",
+                    key="translate", function=translator.translate_text, type="question",
                     required_params=["main", "language"], ignore_following=True
                 ),
             "get-volume":
                 Command(
                     name="Получение текущего системного уровня громкости", key="get-volume",
-                    function=speech_translator.get_volume, triggers=["текущий уровень громкости", "текущая громкость"],
-                    type="question"
+                    function=speech_translator.get_volume, type="question"
                 ),
             "set-volume":
                 Command(
                     name="Изменение текущего системного уровня громкости", key="set-volume",
-                    function=speech_translator.set_volume,
-                    triggers=["измени уровень громкости", "установи уровень громкости",
-                              "измени громкость", "установи громкость"],
-                    type="system", required_params=["main"]
+                    function=speech_translator.set_volume, type="system", required_params=["main"]
+                ),
+            "add-TODO":
+                Command(
+                    name="Добавление заметки на определённую дату",
+                    description="Внимание: необходимо указать и день, и месяц. "
+                                "Если вы зотите установить заметку просто на какой-то месяц, укажите в качестве дня 1.",
+                    key="add-TODO",
+                    function=TODO_interactor.add_TODO, type="TODO", required_params=["main", "date"],
+                    ignore_following=True
+                ),
+            "find-TODO":
+                Command(
+                    name="Поиск заметок", description="Можно указать конкретную дату или просто месяц без указания дня",
+                    key="find-TODO", function=TODO_interactor.find_TODO, type="TODO", required_params=["date"]
                 )
         }
 
-    def update_settings(self):
+        ready_flag = ready_all(keys=list(self.functions.keys()))
+
+        dictionary = build_all_triggers(translator=translator, keys=list(self.functions.keys()))
+        for key in dictionary.keys():
+            for trigger in dictionary[key]:
+                self.functions[key].triggers.append(Trigger(text=trigger["text"], lang=trigger["lang"]))
+
+        if not ready_flag:
+            print("Warning: building of triggers finished successfully, "
+                  "so you can set <BUILD> = False and restart the app.")
+            exit(0)
+
+    def update_settings(self) -> None:
         """
         Метод обновления настроек текстового процессора.
 
@@ -220,7 +235,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
         self.language_listen = global_context.language_listen
 
     # В РАЗРАБОТКЕ.
-    def clean_alias(self, command: str):
+    def _clean_alias(self, command: str) -> str | None:
         """
         Метод, удаляющий обращение к помощнику.
 
@@ -234,26 +249,33 @@ class TextProcessor(metaclass=SingletonMetaclass):
 
         return None if command == "" else command
 
-    def find_extend_info(self, command: str, prefix: str, ignore_following: bool):
+    def _find_extend_info(self, command: str, prefix: str, _ignore_following: bool, _main_required: bool) -> str | None:
         """
         Выделение доп. информации для конкретной команды, заданной параметром ``prefix``.
 
         :param command: ``str``: строка с распознанным текстом;
         :param prefix: ``str``: текст команды, для которой необходимо найти доп. информацию;
-        :param ignore_following: ``bool``: если ``True``, то игнорируются все последующие команды.
+        :param _ignore_following: ``bool``: если ``True``, то игнорируются все последующие команды;
+        :param _main_required: ``bool``: требуется ли какая-либо доп. информация.
 
         :return: Доп. информация к переданной команде / ``None``, если таковой нет.
         """
 
         command = command[len(prefix) + 1:]
 
-        if ignore_following:
+        if _ignore_following:
             return command
 
         for key, value in self.functions.items():
-            for v in value.triggers:
-                find_result = command.find(v)
+            for trigger in value.triggers:
+                if not trigger.compatible_langs(lang=self.language_listen):
+                    continue
+
+                find_result = command.find(trigger.text)
                 if find_result == -1:
+                    continue
+
+                if find_result == 0 and _main_required:
                     continue
 
                 # если find_result == 0, то пробела, который нужно удалить, перед ним нет, и вычитать единицу не нужно.
@@ -261,13 +283,13 @@ class TextProcessor(metaclass=SingletonMetaclass):
 
         return None if command == "" else command
 
-    def pick_additive(self, command: str, index: int):
+    def _pick_additive(self, command: str, index: int) -> tuple[Command, int] | None:
         """
         Выделение доп. информации для команды, заданной положением в строке.
 
         :param command: ``str``: строка с распознанным текстом;
         :param index: ``int``: индекс в строке (нумерация с нуля), с которого, предположительно, начинается команда,
-                           для которой нужно выделить доп. информацию.
+          для которой нужно выделить доп. информацию;
 
         :return: Если найдена команда, начинающаяся со слова с индексом ``index``, то будет возвращена
         искомая команда с дополнительной информацией, а также число ``shift``, определяющее количество слов в
@@ -276,27 +298,28 @@ class TextProcessor(metaclass=SingletonMetaclass):
 
         command = ' '.join(command.split()[index:])
         for key, value in self.functions.items():
-            for v in value.triggers:
-                if not command.startswith(v):
+            for trigger in value.triggers:
+                if not trigger.check_corresponding(text=command, language=self.language_listen):
                     continue
 
-                additive_info = self.find_extend_info(
-                    command=command, prefix=v, ignore_following=value.ignore_following
+                additive_info = self._find_extend_info(
+                    command=command, prefix=trigger.text, _ignore_following=value.ignore_following,
+                    _main_required="main" in self.functions[key].required_params
                 )
 
                 out = self.functions[key]
                 out.additive["main"] = additive_info
 
-                shift = len(v.split())
+                shift = len(trigger.text.split())
                 if additive_info is not None:
                     shift += len(additive_info.split())
 
-                return [out, shift]
+                return out, shift
 
         return None
 
     # В РАЗРАБОТКЕ.
-    def match_command(self, command: str, ignore_all: bool):
+    def match_command(self, command: str, ignore_all: bool) -> list[Command] | None:
         """
         Поиск команды среди доступных.
         Возвращает список распознанных команд.
@@ -310,9 +333,8 @@ class TextProcessor(metaclass=SingletonMetaclass):
                  Иначе будет возвращен список из распознанных команд.
         """
 
-        command = command.translate(self.punctuation_sieve)
+        command = canonize_text(text=command)
         command = replace_numbers(text=command, language=self.language_listen)
-        command = command.lower()
 
         selected_actions = list()
 
@@ -334,7 +356,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
         else:
             command = command[start_pos:]
 
-        command = self.clean_alias(command)
+        command = self._clean_alias(command)
         if ignore_all:
             if any(on in command for on in self.functions["on"].triggers):
                 selected_actions.append(self.functions["on"])
@@ -343,11 +365,14 @@ class TextProcessor(metaclass=SingletonMetaclass):
 
             return selected_actions
 
+        if command is None:
+            return list()
+
         command_size = len(command.split())
 
         it = 0
         while it < command_size:
-            picking_result = self.pick_additive(command, it)
+            picking_result = self._pick_additive(command=command, index=it)
             if picking_result is None:
                 it += 1
                 continue

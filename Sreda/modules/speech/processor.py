@@ -1,13 +1,19 @@
-from GlobalContext import GlobalContext
-from Units import PlayableText, Response
-from Metaclasses import SingletonMetaclass
+from Sreda.settings import GlobalContext, Environment
 
+from Sreda.modules.speech.units import PlayableText
+from Sreda.modules.text.units import Response
+
+from Sreda.static.metaclasses import SingletonMetaclass
+
+from gtts import gTTS
+import gtts.tts
 import threading
 import os
 import speech_recognition
 import alsaaudio
 
-from gtts import gTTS
+# Do not delete
+import sounddevice
 
 
 class StreamLocker:
@@ -21,7 +27,7 @@ class StreamLocker:
         self.controlling_thread_id = None
         self.collision = False
 
-    def free(self):
+    def free(self) -> bool:
         """
         Метод, проверяющий, является ли ввод-вывод в данный момент свободным,
         то есть не контролируемым ни одним из потоков.
@@ -31,7 +37,7 @@ class StreamLocker:
 
         return self.controlling_thread_id is None
 
-    def capture_control(self):
+    def capture_control(self) -> None:
         """
         Метод форсированной передачи контроля голосового ввода-вывода текущему потоку.
 
@@ -46,7 +52,7 @@ class StreamLocker:
 
         self.lock(force=True)
 
-    def lock(self, force: bool = False):
+    def lock(self, force: bool = False) -> bool:
         """
         Метод блокирования голосового ввода-вывода: передает контроль над вводом-выводом потоку, вызвавшему метод.
 
@@ -71,7 +77,7 @@ class StreamLocker:
 
         return False
 
-    def unlock(self, force: bool = False):
+    def unlock(self, force: bool = False) -> bool:
         """
         Разблокирует голосовой ввод-вывод.
 
@@ -98,7 +104,7 @@ class StreamLocker:
 
         return False
 
-    def get_controller(self):
+    def get_controller(self) -> int:
         """
         Метод, возвращающий ``id`` контролирующего потока.
 
@@ -107,7 +113,7 @@ class StreamLocker:
 
         return self.controlling_thread_id
 
-    def is_controller(self, thread_id: int):
+    def is_controller(self, thread_id: int) -> bool:
         """
         Метод, проверяющий, является ли поток c ``native_id = thread_id`` контролирующим.
 
@@ -118,7 +124,7 @@ class StreamLocker:
 
         return self.controlling_thread_id == thread_id
 
-    def available(self, thread_id: int):
+    def available(self, thread_id: int) -> bool:
         """
         Метод, проверяющий, может ли в данный момент поток c ``native_id = thread_id`` получить доступ к вводу-выводу.
 
@@ -129,7 +135,7 @@ class StreamLocker:
 
         return self.is_controller(thread_id=thread_id) or self.free()
 
-    def can_enter(self, thread_id: int):
+    def can_enter(self, thread_id: int) -> bool:
         """
         Метод, проверяющий, доступен ли перехват управления голосовым вводом-выводом потоку c ``native_id = thread_id``.
 
@@ -176,7 +182,9 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
 
         self.LOCKER = StreamLocker()
 
-    def update_settings(self):
+        self._init_buffer()
+
+    def update_settings(self) -> None:
         """
         Метод обновления настроек микрофона и распознавателя речи.
 
@@ -196,7 +204,7 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
 
         self.make_mixer_diagnostics()
 
-    def listen_command(self):
+    def listen_command(self) -> str | None:
         """
         Метод распознавания текста из речи.
 
@@ -204,6 +212,7 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
             или, в случае произвольной ошибки, ``None``.
         """
 
+        return input()
         if not self.LOCKER.available(thread_id=threading.get_native_id()):
             return None
 
@@ -221,7 +230,7 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
             return None
 
     @staticmethod
-    def prepare_text(output_text: str, lang: str, index: int):
+    def _prepare_text(output_text: str, lang: str, index: int) -> None:
         """
         С помощью ``gTTS-API`` переводит текст в речь и сохраняет её в виде файла ``.mp3``.
 
@@ -234,20 +243,20 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
 
         try:
             tts = gTTS(text=output_text, lang=lang, tld="com", timeout=10)
-            tts.save(f"buffer/{index}.mp3")
+            tts.save(f"storage/buffer/{index}.mp3")
         except OSError as error:
             print(f"Warning: something went wrong while saving file with index {index}: {error}")
-        except (RuntimeError, ValueError, AssertionError) as error:
+        except (RuntimeError, ValueError, AssertionError, gtts.tts.gTTSError) as error:
             print(f"Warning: something went wrong preparing text to playing: {error}")
 
     @staticmethod
-    def play_text(index: int, tempo: float):
+    def _play_text(index: int, tempo: float) -> None:
         try:
-            os.system(f"play buffer/{index}.mp3 tempo {tempo}")
+            os.system(f"play storage/buffer/{index}.mp3 tempo {tempo}")
         except OSError as error:
             print(f"Warning: something went wrong while playing file with index {index}: {error}")
 
-    def speak(self, output: PlayableText):
+    def speak(self, output: PlayableText) -> None:
         """
         Метод для синтезации текста в речь.
 
@@ -281,14 +290,14 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         print(blocks)
 
         for i in range(len(blocks)):
-            self.prepare_text(output_text=blocks[i]["source"], lang=blocks[i]["language"], index=i)
+            self._prepare_text(output_text=blocks[i]["source"], lang=blocks[i]["language"], index=i)
 
         for i in range(len(blocks)):
             if i > 0 and not self.LOCKER.is_controller(thread_id=threading.get_native_id()):
                 self.LOCKER.collision = False
                 return
 
-            self.play_text(index=i, tempo=resulting_tempo)
+            self._play_text(index=i, tempo=resulting_tempo)
 
         if not self.LOCKER.is_controller(thread_id=threading.get_native_id()):
             self.LOCKER.collision = False
@@ -301,7 +310,19 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
             print("Warning: stream was not unlocked. High probability of unexpected behavior")
 
     @staticmethod
-    def clear_buffer():
+    def _init_buffer() -> None:
+        """
+        Инициализирует (создаёт) рабочую папку для звуковых файлов.
+
+        :return:
+        """
+
+        buffer = os.path.join(os.path.dirname(Environment.__ROOT__), "storage/buffer")
+        if not os.path.exists(buffer):
+            os.system("mkdir storage/buffer")
+
+    @staticmethod
+    def clear_buffer() -> None:
         """
         Метод очистки буфера воспроизведения.
 
@@ -310,12 +331,11 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         :return:
         """
 
-        try:
-            os.system("rm buffer/*")
-        except OSError as error:
-            print(f"Warning: something went wrong while removing files from buffer: {error}")
+        buffer = os.path.join(os.path.dirname(Environment.__ROOT__), "storage/buffer/*")
+        if os.path.exists(buffer):
+            os.system("rm storage/buffer/*")
 
-    def get_volume(self, **kwargs):
+    def get_volume(self, **_) -> Response:
         """
         Получает значение громкости системного звука.
 
@@ -328,7 +348,7 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
             text=f"Текущий уровень громкости: {volume}%."
         )
 
-    def set_volume(self, **kwargs):
+    def set_volume(self, **kwargs) -> Response:
         """
         Устанавливает значение громкости системного звука.
 
@@ -350,7 +370,7 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
             text=f"Уровень громкости успешно изменён. Теперь он составляет {volume}%."
         )
 
-    def make_mixer_diagnostics(self):
+    def make_mixer_diagnostics(self) -> None:
         """
         Инициализирует ``Mixer`` и пытается автоматически исправить распространённые ошибки.
 

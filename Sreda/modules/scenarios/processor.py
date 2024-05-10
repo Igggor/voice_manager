@@ -1,6 +1,9 @@
-from GlobalContext import GlobalContext
-from Units import Scenario, Response
-from Metaclasses import SingletonMetaclass
+from Sreda.settings import GlobalContext
+
+from Sreda.modules.scenarios.units import Scenario
+from Sreda.modules.text.units import Response
+
+from Sreda.static.metaclasses import SingletonMetaclass
 
 from copy import deepcopy
 
@@ -20,6 +23,7 @@ class ScenarioInteractor(metaclass=SingletonMetaclass):
 
     def __init__(self):
         self.scenarios = None
+        self.scenarios_limit = None
 
         self.scenario_already_exists_error = None
         self.scenario_creation_success = None
@@ -33,8 +37,9 @@ class ScenarioInteractor(metaclass=SingletonMetaclass):
                   "Уточните команду и повторите попытку."),
             error=True
         )
+        self.scenarios_overflow_error = None
 
-    def update_settings(self):
+    def update_settings(self) -> None:
         """
         Метод обновления настроек интерактора сценариев.
 
@@ -44,6 +49,7 @@ class ScenarioInteractor(metaclass=SingletonMetaclass):
         global_context = GlobalContext()
 
         self.scenarios = global_context.SCENARIOS
+        self.scenarios_limit = global_context.scenarios_limit
 
         self.scenario_creation_success = Response(
             text=(f"Сценарий успешно создан. \n"
@@ -56,8 +62,26 @@ class ScenarioInteractor(metaclass=SingletonMetaclass):
                   f"Также Вы можете удалить старый сценарий, сказав: {global_context.NAME}, удали сценарий."),
             error=True
         )
+        self.scenarios_overflow_error = Response(
+            text=f"Достигнут лимит количества сценариев. "
+                 f"Вы можете увеличить его в настройках или удалить произвольный сценарий, сказав: "
+                 f"{global_context.NAME}, удали сценарий. Не забудьте указать имя удаляемого сценария.",
+            error=True
+        )
 
-    def add_scenario(self, **kwargs):
+        self._shrink()
+
+    def _shrink(self) -> None:
+        """
+        Удаляет старые сценарии до того момента, пока количество сценариев превышает лимит.
+
+        :return:
+        """
+
+        while len(self.scenarios) > self.scenarios_limit:
+            del self.scenarios[0]
+
+    def add_scenario(self, **kwargs) -> Response:
         """
         Метод добавления нового сценария.
 
@@ -71,19 +95,22 @@ class ScenarioInteractor(metaclass=SingletonMetaclass):
         name = kwargs["main"]
         scenario = kwargs["subcommands"]
 
+        if len(self.scenarios) + 1 > self.scenarios_limit:
+            return self.scenarios_overflow_error
+
         if name in self.scenarios.keys():
             # Scenario with this name already exists
             return self.scenario_already_exists_error
 
-        self.scenarios[name] = Scenario(name=name, scenario=scenario)
+        self.scenarios[name] = Scenario(name=name, functions=scenario)
 
         # success
         response = deepcopy(self.scenario_creation_success)
-        response.info = f"{name}."
+        response.text += f"{name}."
 
         return response
 
-    def delete_scenario(self, **kwargs):
+    def delete_scenario(self, **kwargs) -> Response:
         """
         Метод удаления сценария.
 
@@ -101,7 +128,7 @@ class ScenarioInteractor(metaclass=SingletonMetaclass):
         del self.scenarios[name]
         return self.scenario_deletion_success
 
-    def execute(self, **kwargs):
+    def execute(self, **kwargs) -> Response:
         """
         Выполнение сценария по заданному в парметрах имени.
 
