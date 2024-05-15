@@ -111,8 +111,8 @@ const Devices = sequelize.define(
             type: DataTypes.TEXT('tiny'),
             defaultValue: 'Main',
         },
-        status: {
-            type: DataTypes.INTEGER,
+        type: {
+            type: DataTypes.STRING,
             allowNull: false,
         },
         settings: {
@@ -160,9 +160,9 @@ const Scenarios = sequelize.define(
 )
 
 Users.sync({ alter: true })
-// Devices.sync({ alter: true })
-// Questions.sync({ alter: true })
-// Scenarios.sync({ alter: true })
-// Sessions.sync({ alter: true })
+Devices.sync({ alter: true })
+Questions.sync({ alter: true })
+Scenarios.sync({ alter: true })
+Sessions.sync({ alter: true })
 
 module.exports = {'Users': Users, 'Devices': Devices, 'Questions': Questions, 'Scenarios': Scenarios, 'Sessions': Sessions}
