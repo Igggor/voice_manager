@@ -38,12 +38,14 @@
     <div class="logs interactive-cards">
         <h2>История действий</h2>
         <div class="log-list-container">
-            <p>10:05 server start</p>
-            <p>10:05 server start</p>
-            <p>10:05 Lorem ipsum dolor sit amet, consectetur adipisicing elit. At culpa deserunt dolorum exercitationem impedit, itaque saepe similique vel! Aliquid amet doloribus fugit laborum laudantium maiores provident tempore ullam? Non, vel.</p>
-            <p>10:05 Lorem ipsum dolor sit amet, consectetur adipisicing elit. At culpa deserunt dolorum exercitationem impedit, itaque saepe similique vel! Aliquid amet doloribus fugit laborum laudantium maiores provident tempore ullam? Non, vel.</p>
-            <p>10:05 server start work without error</p>
+            {{#each logList}}
+                <p><i>{{this.createdAt}} - </i><span class="{{#if this.error}}error{{/if}}">{{this.text}}</span></p>
+            {{/each}}
         </div>
     </div>
 <!--    <img class="ai-animation" src="/static/images/animation/assistant-ezgif.com-cut.gif" alt="">-->
 </div>
+<script>
+    let logContainer = document.querySelector('.log-list-container')
+    logContainer.scrollTo(0, logContainer.scrollHeight)
+</script>

@@ -159,10 +159,42 @@ const Scenarios = sequelize.define(
     }
 )
 
+const Logs = sequelize.define(
+    'Logs',
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false,
+        },
+        raspberry_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        text: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
+        type: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        error: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        }
+    },
+    {
+        updatedAt: false,
+    }
+)
+
 Users.sync({ alter: true })
 Devices.sync({ alter: true })
 Questions.sync({ alter: true })
 Scenarios.sync({ alter: true })
 Sessions.sync({ alter: true })
+Logs.sync({ alter: true })
 
-module.exports = {'Users': Users, 'Devices': Devices, 'Questions': Questions, 'Scenarios': Scenarios, 'Sessions': Sessions}
+module.exports = {'Users': Users, 'Devices': Devices, 'Questions': Questions, 'Scenarios': Scenarios, 'Sessions': Sessions, 'Logs': Logs}
