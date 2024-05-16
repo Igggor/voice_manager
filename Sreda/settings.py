@@ -34,7 +34,7 @@ class GlobalContext(metaclass=SingletonMetaclass):
 
         # 'en', 'es', 'fr', 'pt', 'de', 'ru' ONLY.
         # SOME FUNCTIONS IN OTHER LANGUAGES ARE NOT AVAILABLE
-        self.language_listen = "en"
+        self.language_listen = "ru"
 
         # AVAILABLE EVERYTHING (FROM CONSTANTS.LANGUAGES)
         self.language_speak = "ru"
