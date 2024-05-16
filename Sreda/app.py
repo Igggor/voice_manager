@@ -1,4 +1,4 @@
-from Sreda.settings import GlobalContext, load_environment, Environment
+from Sreda.settings import GlobalContext, load_environment, check_model
 
 from Sreda.modules.time import TimeWorker
 from Sreda.modules.logs.processor import Logger
@@ -11,6 +11,7 @@ from Sreda.modules.format import check_format, check_recognition
 from Sreda.modules.functions import FunctionsCore
 from Sreda.modules.translation.processor import Translator
 from Sreda.modules.calendar.processor import TODOInteractor
+from Sreda.modules.storaging.processor import load_storage
 
 from Sreda.static.metaclasses import SingletonMetaclass
 
@@ -57,9 +58,8 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         """
 
         load_environment()
-        if Environment.BUILD:
-            print("Warning: BUILD-mode enabled. If you are trying to emulate the real work of this app, "
-                  "you should set <BUILD> = False.")
+        load_storage()
+        check_model()
 
         self.global_context = GlobalContext()
 
@@ -123,10 +123,6 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
         self.update_all()
 
-        if Environment.BUILD:
-            print("Everything is up-to-date. You can set <BUILD> = False and restart the app.")
-            exit(0)
-
     def update_all(self) -> None:
         """
         Рекурсивное обновление настроек всех частей приложения. Вызывается при изменении настроек приложения на сервере.
@@ -135,9 +131,9 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         """
 
         self.greeting = Response(
-            text=(f"Приветствую, я твой универсальный голосовой помощник {self.global_context.NAME}.\n"
+            text=(f"Приветствую, я твой универсальный голосовой помощник {self.global_context.NAME[0]}.\n"
                   f"Ты можешь узнать о моих возможностях на сайте или просто спросив меня: "
-                  f"{self.global_context.NAME}, что ты умеешь?")
+                  f"{self.global_context.NAME[0]}, что ты умеешь?")
         )
 
         self.time_core.update_settings()
@@ -383,10 +379,6 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         recognized_query = self.speech_translator.listen_command()
 
         # Ядро приложения работает на русском языке, поэтому все команды должны быть переведены на него.
-        if self.global_context.language_listen != "ru":
-            recognized_query = self.translator.translate_text_static(
-                text=recognized_query, source_language=self.global_context.language_listen, destination_language="ru"
-            )
 
         if recognized_query is None:
             return

@@ -14,12 +14,13 @@ class Command:
             * ``name``: имя команды;
             * ``function``: исполняемая функция;
             * ``type``: тип команды;
-            * ``key``: ключ команды
+            * ``key``: ключ команды.
         Опциональные аргументы:
             * ``description``: описание команды [по умолчанию = ``None``];
             * ``triggers``: ключевые слова для вызова команды [по умолчанию - пустой список];
             * ``required_params``: список из необходимых параметров для данной команды [по умолчанию - пустой список];
             * ``ignore_following``: игнорируются ли последующие команды после данной [по умолчанию = ``False``].
+            * ``numeric_required``: требуется ли работа с числами [по умолчанию = ``False``].
 
         :return:
         """
@@ -33,6 +34,7 @@ class Command:
 
         self.required_params = list() if "required_params" not in kwargs.keys() else kwargs["required_params"]
         self.ignore_following = False if "ignore_following" not in kwargs.keys() else kwargs["ignore_following"]
+        self.numeric_required = False if "numeric_required" not in kwargs.keys() else kwargs["numeric_required"]
 
         self.additive = {
             "main": None

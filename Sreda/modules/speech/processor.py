@@ -4,6 +4,7 @@ from Sreda.modules.speech.units import PlayableText
 from Sreda.modules.text.units import Response
 
 from Sreda.static.metaclasses import SingletonMetaclass
+from Sreda.static.local import get_language_fullname_by_code
 
 from gtts import gTTS
 import gtts.tts
@@ -212,7 +213,6 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
             или, в случае произвольной ошибки, ``None``.
         """
 
-        return input()
         if not self.LOCKER.available(thread_id=threading.get_native_id()):
             return None
 
@@ -221,10 +221,14 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
                 self.RECOGNIZER.adjust_for_ambient_noise(source=source, duration=self.microphone_duration)
                 audio = self.RECOGNIZER.listen(source=source, timeout=self.listening_timeout,
                                                phrase_time_limit=self.phrase_limit)
-                query = self.RECOGNIZER.recognize_vosk(audio_data=audio, language=self.language_listen)
+                print("[Log: listen command]: recognizing started.")
+                query = self.RECOGNIZER.recognize_whisper(
+                    audio_data=audio, model=Environment.MODEL,
+                    language=get_language_fullname_by_code(key=self.language_listen, lang="en")
+                )
 
-            print("[Log: listen command]:", query[14:len(query) - 3])
-            return query[14:len(query) - 3]
+            print("[Log: listen command]:", query)
+            return query
         except (speech_recognition.UnknownValueError, speech_recognition.WaitTimeoutError) as error:
             print(f"Warning: something went wrong while recognizing voice: {error}")
             return None
@@ -317,9 +321,9 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         :return:
         """
 
-        buffer = os.path.join(os.path.dirname(Environment.__ROOT__), "storage/buffer")
+        buffer = os.path.join(Environment.__ROOT__, "storage/buffer")
         if not os.path.exists(buffer):
-            os.system("mkdir storage/buffer")
+            os.system(f"mkdir {buffer}")
 
     @staticmethod
     def clear_buffer() -> None:
@@ -331,9 +335,9 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         :return:
         """
 
-        buffer = os.path.join(os.path.dirname(Environment.__ROOT__), "storage/buffer/*")
+        buffer = os.path.join(Environment.__ROOT__, "storage/buffer")
         if os.path.exists(buffer):
-            os.system("rm storage/buffer/*")
+            os.system(f"rm {buffer}/*")
 
     def get_volume(self, **_) -> Response:
         """

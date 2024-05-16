@@ -1,5 +1,7 @@
 from Sreda.modules.text.units import Command, Response
 
+from Sreda.static.constants import FULL_SUPPORTED_LANGUAGES
+
 import datetime
 
 
@@ -113,8 +115,8 @@ def check_format(current_command: Command) -> Response | None:
 
             return error
 
-    if "date" in current_command.additive.keys() and "today" in current_command.additive["date"].keys() and \
-            "time" in current_command.additive.keys():
+    if "date" in current_command.additive.keys() and current_command.additive["date"] is not None \
+            and "today" in current_command.additive["date"].keys() and "time" in current_command.additive.keys():
         hours, minutes, seconds = current_command.additive["time"].values()
 
         moment = datetime.datetime.now()
@@ -126,5 +128,27 @@ def check_format(current_command: Command) -> Response | None:
             error.info = "Задано некорректное время, указывающее на прошлое."
 
             return error
+
+    return None
+
+
+def command_available(current_command: Command, language: str) -> Response | None:
+    """
+    Проверка на то, что команда доступна на данном языке.
+
+    :param current_command: ``Command``: проверяемая команда;
+    :param language: ``str``: код языка.
+
+    :return: Обнаруженная ошибка, упакованная в ``Response``, или ``None``.
+    """
+
+    error = Response(
+        text="Похоже, эта команда не поддерживается на заданном языке распознавания. Приношу свои извинения.",
+        called_by=current_command,
+        error=True
+    )
+
+    if current_command.numeric_required and language not in FULL_SUPPORTED_LANGUAGES:
+        return error
 
     return None

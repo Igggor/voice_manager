@@ -2,7 +2,7 @@ import datetime
 
 from Sreda.modules.text.units import Command
 
-from Sreda.static.local import get_base, get_month, get_language_key
+from Sreda.static.local import get_month, get_language_key, get_word
 
 from string import punctuation
 
@@ -50,11 +50,12 @@ def canonize_text(text: str) -> str:
     return text
 
 
-def _parse_time(text: str) -> dict[str, int] | None:
+def _parse_time(text: str, lang: str) -> dict[str, int] | None:
     """
     Выделяет из строки время.
 
-    :param text: ``str``: строка, из которой необходимо выделить время.
+    :param text: ``str``: строка, из которой необходимо выделить время;
+    :param lang: ``str``: язык.
 
     :return: Словарь с полями ``hours``, ``minutes``, ``seconds`` в случае,
         если в строке успешно найдены данные времени. В противном случае будет возвращено ``None``.
@@ -73,7 +74,7 @@ def _parse_time(text: str) -> dict[str, int] | None:
     if not len(units):
         return None
 
-    if units[0] == "на":
+    if units[0] == get_word(text="на", lang=lang):
         del units[0]
 
     for i in range(len(units)):
@@ -87,25 +88,24 @@ def _parse_time(text: str) -> dict[str, int] | None:
             if next_unit.isdigit():
                 return None
 
-            key = get_base(next_unit)
-            if key is None:
-                return None
-
-            if key == "час":
+            if next_unit == get_word(text="час", lang=lang) or next_unit == get_word(text="часов", lang=lang) or \
+                    next_unit == get_word(text="часа", lang=lang):
                 if hours_filled:
                     return None
 
                 hours = int(unit)
                 hours_filled = True
                 continue
-            if key == "минута":
+            elif next_unit == get_word(text="минута", lang=lang) or next_unit == get_word(text="минут", lang=lang) or \
+                    next_unit == get_word(text="минуты", lang=lang):
                 if minutes_filled:
                     return None
 
                 minutes = int(unit)
                 minutes_filled = True
                 continue
-            if key == "секунда":
+            elif next_unit == get_word(text="секунда", lang=lang) or next_unit == get_word(text="секунд", lang=lang) \
+                    or next_unit == get_word(text="секунды", lang=lang):
                 if seconds_filled:
                     return None
 
@@ -130,11 +130,12 @@ def _parse_time(text: str) -> dict[str, int] | None:
     return response
 
 
-def _parse_date(text: str, light: bool = False) -> dict[str, int] | None:
+def _parse_date(text: str, lang: str, light: bool = False) -> dict[str, int] | None:
     """
     Выделяет из строки дату.
 
-    :param text: ``str``: строка, из которой необходимо выделить дату.
+    :param text: ``str``: строка, из которой необходимо выделить дату;
+    :param lang: ``str``: язык.
 
     :return: Словарь с полями ``month``, ``day`` в случае,
         если в строке успешно найдена дата. В противном случае будет возвращено ``None``.
@@ -145,12 +146,12 @@ def _parse_date(text: str, light: bool = False) -> dict[str, int] | None:
     if not len(units):
         return None
 
-    if units[0] == "на":
+    if units[0] == get_word(text="на", lang=lang):
         del units[0]
 
     if len(units) == 1:
         today = datetime.datetime.today()
-        if units[0] == "сегодня":
+        if units[0] == get_word(text="сегодня", lang=lang):
             response = {
                 "today": True,
                 "day": today.day,
@@ -158,7 +159,7 @@ def _parse_date(text: str, light: bool = False) -> dict[str, int] | None:
             }
 
             return response
-        if units[0] == "завтра":
+        if units[0] == get_word(text="завтра", lang=lang):
             tomorrow = today + datetime.timedelta(days=1)
             response = {
                 "day": tomorrow.day,
@@ -179,7 +180,7 @@ def _parse_date(text: str, light: bool = False) -> dict[str, int] | None:
 
             next_unit = units[i + 1]
 
-            base = get_month(next_unit)
+            base = get_month(next_unit, lang=lang)
             if base is None:
                 continue
 
@@ -197,7 +198,7 @@ def _parse_date(text: str, light: bool = False) -> dict[str, int] | None:
         if len(units) != 1:
             return None
 
-        month = get_month(units[0], i=True)
+        month = get_month(units[0], i=True, lang=lang)
         if month is not None:
             response = {
                 "day": None,
@@ -209,11 +210,12 @@ def _parse_date(text: str, light: bool = False) -> dict[str, int] | None:
     return None
 
 
-def _parse_notification_creation(command: Command) -> None:
+def _parse_notification_creation(command: Command, lang: str) -> None:
     """
     Обрабатывает команду добавления напоминания / таймера.
 
-    :param command: ``Command``: обрабатываемая команда. **Изменяется внутри функции**.
+    :param command: ``Command``: обрабатываемая команда. **Изменяется внутри функции**;
+    :param lang: ``str``: язык.
 
     :return:
     """
@@ -231,15 +233,15 @@ def _parse_notification_creation(command: Command) -> None:
     key = -1
     operational = [
         {
-            "keys": ["текст"],
+            "keys": [get_word(text="текст", lang=lang)],
             "source": text
         },
         {
-            "keys": ["дата"],
+            "keys": [get_word(text="дата", lang=lang)],
             "source": date
         },
         {
-            "keys": ["время"],
+            "keys": [get_word(text="время", lang=lang)],
             "source": time
         }
     ]
@@ -261,8 +263,8 @@ def _parse_notification_creation(command: Command) -> None:
 
         operational[key]["source"].append(word)
 
-    time_response = _parse_time(' '.join(time))
-    date_response = _parse_date(' '.join(date))
+    time_response = _parse_time(' '.join(time), lang=lang)
+    date_response = _parse_date(' '.join(date), lang=lang)
     text_response = None if len(text) == 0 else ' '.join(text)
 
     command.additive["main"] = text_response
@@ -272,7 +274,7 @@ def _parse_notification_creation(command: Command) -> None:
         command.additive["date"] = date_response
 
 
-def _parse_translation(command: Command) -> None:
+def _parse_translation(command: Command, lang: str) -> None:
     """
     Обрабатывает команду перевода текста.
 
@@ -289,11 +291,11 @@ def _parse_translation(command: Command) -> None:
     key = 1
     operational = [
         {
-            "keys": ["текст"],
+            "keys": [get_word(text="текст", lang=lang)],
             "source": text
         },
         {
-            "keys": ["язык"],
+            "keys": [get_word(text="язык", lang=lang)],
             "source": language
         }
     ]
@@ -315,20 +317,21 @@ def _parse_translation(command: Command) -> None:
 
         operational[key]["source"].append(word)
 
-    if len(language) and language[0] == "на":
+    if len(language) and language[0] == get_word(text="на", lang=lang):
         del language[0]
 
     command.additive = {
         "main": ' '.join(text),
-        "language": get_language_key(' '.join(language))
+        "language": get_language_key(' '.join(language), lang=lang)
     }
 
 
-def _parse_TODO_creation(command: Command) -> None:
+def _parse_TODO_creation(command: Command, lang: str) -> None:
     """
     Обрабатывает команду добавления заметки.
 
-    :param command: ``Command``: обрабатываемая команда. **Изменяется внутри функции**.
+    :param command: ``Command``: обрабатываемая команда. **Изменяется внутри функции**;
+    :param lang: ``str``: язык.
 
     :return:
     """
@@ -345,11 +348,11 @@ def _parse_TODO_creation(command: Command) -> None:
     key = 1
     operational = [
         {
-            "keys": ["текст"],
+            "keys": [get_word(text="текст", lang=lang)],
             "source": text
         },
         {
-            "keys": ["дата"],
+            "keys": [get_word(text="дата", lang=lang)],
             "source": date
         }
     ]
@@ -371,18 +374,19 @@ def _parse_TODO_creation(command: Command) -> None:
 
         operational[key]["source"].append(word)
 
-    date_response = _parse_date(' '.join(date))
+    date_response = _parse_date(' '.join(date), lang=lang)
     text_response = None if len(text) == 0 else ' '.join(text)
 
     command.additive["main"] = text_response
     command.additive["date"] = date_response
 
 
-def _parse_TODO_find(command: Command):
+def _parse_TODO_find(command: Command, lang: str):
     """
         Обрабатывает команду добавления заметки.
 
-        :param command: ``Command``: обрабатываемая команда. **Изменяется внутри функции**.
+        :param command: ``Command``: обрабатываемая команда. **Изменяется внутри функции**;
+        :param lang: ``str``: язык.
 
         :return:
         """
@@ -391,16 +395,17 @@ def _parse_TODO_find(command: Command):
     if additive is None:
         return
 
-    date_response = _parse_date(additive, light=True)
+    date_response = _parse_date(additive, lang=lang, light=True)
 
     command.additive["date"] = date_response
 
 
-def parse_info(command: Command) -> Command:
+def parse_info(command: Command, lang: str) -> Command:
     """
     Обрабатывает ``additive`` (дополнительную информацию) переданной команды.
 
-    :param command: ``Command``: обрабатываемая команда.
+    :param command: ``Command``: обрабатываемая команда;
+    :param lang: ``str``: язык.
 
     :return: Возвращает экземпляр класса ``Command`` - обработанную команду.
     """
@@ -411,22 +416,22 @@ def parse_info(command: Command) -> Command:
     print("[Log: parse]: " + command.additive["main"])
 
     if command.type == "notification-adding":
-        _parse_notification_creation(command=command)
+        _parse_notification_creation(command=command, lang=lang)
 
     if command.key == "delete-notification":
-        command.additive["main"] = command.additive["main"].replace("порядковый", "")
-        command.additive["main"] = command.additive["main"].replace("номер", "")
+        command.additive["main"] = command.additive["main"].replace(get_word(text="порядковый", lang=lang), "")
+        command.additive["main"] = command.additive["main"].replace(get_word(text="номер", lang=lang), "")
 
     if command.key == "translate":
-        _parse_translation(command=command)
+        _parse_translation(command=command, lang=lang)
 
     if command.key == "add-TODO":
-        _parse_TODO_creation(command=command)
+        _parse_TODO_creation(command=command, lang=lang)
 
     if command.key == "find-TODO":
-        command.additive["main"] = command.additive["main"].replace("дата", "")
+        command.additive["main"] = command.additive["main"].replace(get_word(text="дата", lang=lang), "")
 
-        _parse_TODO_find(command=command)
+        _parse_TODO_find(command=command, lang=lang)
 
     command.additive["main"] = remove_whitespaces(command.additive["main"])
     return command

@@ -1,3 +1,5 @@
+from Sreda.modules.storaging.units import Storage
+
 from Sreda.static.constants import D_WORDS, MONTH_KEYS, LANGUAGES, MONTHS
 
 from text_to_num import alpha2digit
@@ -38,31 +40,22 @@ def declension(number: int, string: str) -> str:
     return D_WORDS[string][key]
 
 
-def get_base(text: str) -> str | None:
-    """
-    Находит исходное слово по склонённому (обратная функция для ``declension``).
-
-    :param text: ``str``: слово, для которого необходимо найти исходное (в именительном падеже).
-
-    :return: Исходное слово или, если оно не найдено, ``None``.
-    """
-
-    for base in D_WORDS.keys():
-        if any(text == sub for sub in D_WORDS[base].values()):
-            return base
-
-    return None
-
-
-def get_month(key: str, i: bool = False) -> int | None:
+def get_month(key: str, lang: str, i: bool = False) -> int | None:
     """
     Возвращает порядковый номер месяцы по его названию.
 
     :param key: ``str``: название месяца ("января", "февраля" и т.д);
+    :param lang: ``str``: язык;
     :param i: ``bool``: если ``True``, то поиск осуществляется в списке месяцев в именительном падеже.
 
     :return: Порядковый номер месяца или ``None``, если передан некорректный аргумент.
     """
+
+    if lang != "ru":
+        key = get_word(text=key, lang=lang)
+
+    if key is None:
+        return None
 
     if i:
         for index in range(len(MONTHS)):
@@ -78,20 +71,62 @@ def get_month(key: str, i: bool = False) -> int | None:
         return None
 
 
-def get_language_key(language: str) -> str | None:
+def get_language_key(language: str, lang: str) -> str | None:
     """
     Получает ключ (код) языка по его названию.
 
-    :param language: ``str``: название языка.
+    :param language: ``str``: название языка;
+    :param lang: ``str``: язык, на котором передано название.
 
     :return: Код языка или ``None``, если он не найден.
     """
 
+    if lang != "ru":
+        language = get_word(text=language, lang=lang)
+
+    if language is None:
+        return None
+
     for key in LANGUAGES.keys():
-        if language in LANGUAGES[key]:
+        if language == LANGUAGES[key]["ru"]:
             return key
 
     return None
+
+
+def get_word(text: str, lang: str) -> str:
+    """
+    Находит вариант переданного слова на русском языке.
+
+    :param text: ``str``: исходное слово;
+    :param lang: ``str``: язык, на котором должно быть возвращено слово.
+
+    :return: Найденный вариант слова на иностранном языке.
+    """
+
+    if text not in Storage.WORDS.keys():
+        raise LookupError(f"Cannot find <{text}> word in AUXILIARY_WORDS. Add this word to constants.AUXILIARY_WORDS "
+                          f"and run 'setup.py'.")
+
+    for index in range(len(Storage.WORDS[text])):
+        if Storage.WORDS[text][index].lang == lang:
+            return Storage.WORDS[text][index].text
+
+
+def get_language_fullname_by_code(key: str, lang: str = "ru") -> str | None:
+    """
+    Получает полное название языка по его коду.
+
+    :param key: ``str``: название языка;
+    :param lang: ``str``: язык ответа: ``en`` или ``ru``.
+
+    :return: Полное название языка или ``None``, если языка с заданным кодом не найдено.
+    """
+
+    if key not in LANGUAGES.keys():
+        return None
+
+    return LANGUAGES[key][lang]
 
 
 def replace_numbers(text: str, language: str) -> str:

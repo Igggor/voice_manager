@@ -7,12 +7,13 @@ from Sreda.modules.scenarios.processor import ScenarioInteractor
 from Sreda.modules.parser import parse_info, canonize_text
 from Sreda.modules.speech.processor import SpeechTranslator
 from Sreda.modules.translation.processor import Translator
-from Sreda.modules.triggers.processor import build_all_triggers, ready_all
-from Sreda.modules.triggers.units import Trigger
+from Sreda.modules.storaging.processor import load_all_triggers, ready_all, ready_all_words
+from Sreda.modules.storaging.units import Storage
 from Sreda.modules.calendar.processor import TODOInteractor
 
 from Sreda.static.metaclasses import SingletonMetaclass
 from Sreda.static.local import replace_numbers
+from Sreda.static.constants import AUXILIARY_WORDS
 
 
 class TextProcessor(metaclass=SingletonMetaclass):
@@ -51,7 +52,6 @@ class TextProcessor(metaclass=SingletonMetaclass):
         translator = Translator()
         TODO_interactor = TODOInteractor()
 
-        self.NAME = None
         self.language_listen = None
 
         # В РАЗРАБОТКЕ, все функции помощника должны быть здесь.
@@ -142,7 +142,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
                     name="Добавление напоминания",
                     description="Добавление напоминания с заданным текстом и временем запуска",
                     key="add-notification", function=time_core.notifications_interactor.add_notification,
-                    type="notification-adding", required_params=["time"], ignore_following=True
+                    type="notification-adding", required_params=["time"], ignore_following=True, numeric_required=True
                 ),
             "add-timer":
                 Command(
@@ -151,14 +151,14 @@ class TextProcessor(metaclass=SingletonMetaclass):
                                 "Отличие от уведомления - автоматическое удаление по зевершении",
                     key="add-timer", function=time_core.notifications_interactor.add_timer,
                     type="notification-adding", required_params=["time"],
-                    ignore_following=True
+                    ignore_following=True, numeric_required=True
                 ),
             "delete-notification":
                 Command(
                     name="Удаление напоминания",
                     description="Удаление напоминания по заданному порядковому номеру",
                     key="delete-notification", function=time_core.notifications_interactor.delete_notification,
-                    type="notification", required_params=["main"]
+                    type="notification", required_params=["main"], numeric_required=True
                 ),
             "nearest-notification":
                 Command(
@@ -192,7 +192,8 @@ class TextProcessor(metaclass=SingletonMetaclass):
             "set-volume":
                 Command(
                     name="Изменение текущего системного уровня громкости", key="set-volume",
-                    function=speech_translator.set_volume, type="system", required_params=["main"]
+                    function=speech_translator.set_volume, type="system", required_params=["main"],
+                    numeric_required=True
                 ),
             "add-TODO":
                 Command(
@@ -201,26 +202,29 @@ class TextProcessor(metaclass=SingletonMetaclass):
                                 "Если вы зотите установить заметку просто на какой-то месяц, укажите в качестве дня 1.",
                     key="add-TODO",
                     function=TODO_interactor.add_TODO, type="TODO", required_params=["main", "date"],
-                    ignore_following=True
+                    ignore_following=True, numeric_required=True
                 ),
             "find-TODO":
                 Command(
                     name="Поиск заметок", description="Можно указать конкретную дату или просто месяц без указания дня",
-                    key="find-TODO", function=TODO_interactor.find_TODO, type="TODO", required_params=["date"]
+                    key="find-TODO", function=TODO_interactor.find_TODO, type="TODO", required_params=["date"],
+                    numeric_required=True
                 )
         }
 
-        ready_flag = ready_all(keys=list(self.functions.keys()))
+        if not ready_all(keys=list(self.functions.keys()) + ["__alias__"]):
+            raise ImportError("Triggers/alias are not ready. At first you should add alias/triggers for new commands "
+                              "and run setup-script 'setup.py'. Make sure that keys in TextProcessor.functions and "
+                              "keys in constants.DEFAULT_TRIGGERS are the same.")
+        if not ready_all_words(words=AUXILIARY_WORDS):
+            raise ImportError("Auxiliary words are not ready. At first you should run setup-script 'setup.py'.")
 
-        dictionary = build_all_triggers(translator=translator, keys=list(self.functions.keys()))
-        for key in dictionary.keys():
-            for trigger in dictionary[key]:
-                self.functions[key].triggers.append(Trigger(text=trigger["text"], lang=trigger["lang"]))
+        triggers = Storage.TRIGGERS
+        for key in self.functions.keys():
+            for trigger in triggers[key]:
+                self.functions[key].triggers.append(trigger)
 
-        if not ready_flag:
-            print("Warning: building of triggers finished successfully, "
-                  "so you can set <BUILD> = False and restart the app.")
-            exit(0)
+        self.NAMES = triggers["__alias__"]
 
     def update_settings(self) -> None:
         """
@@ -231,7 +235,9 @@ class TextProcessor(metaclass=SingletonMetaclass):
 
         global_context = GlobalContext()
 
-        self.NAME = [global_context.NAME.lower()]
+        triggers = load_all_triggers()
+        self.NAMES = triggers["__alias__"]
+
         self.language_listen = global_context.language_listen
 
     # В РАЗРАБОТКЕ.
@@ -244,8 +250,11 @@ class TextProcessor(metaclass=SingletonMetaclass):
         :return: Строка с полученной командой.
         """
 
-        for item in self.NAME:
-            command = command.replace(item, "", 1).strip()
+        for trigger in self.NAMES:
+            if not trigger.compatible_langs(lang=self.language_listen):
+                continue
+
+            command = command.replace(trigger.text, "", 1).strip()
 
         return None if command == "" else command
 
@@ -340,8 +349,11 @@ class TextProcessor(metaclass=SingletonMetaclass):
 
         # Поиск первого обращения к голосовому помощнику и срез информации ДО него.
         start_pos = None
-        for alias in self.NAME:
-            index = command.find(alias)
+        for alias in self.NAMES:
+            if not alias.compatible_langs(lang=self.language_listen):
+                continue
+
+            index = command.find(alias.text)
 
             if index == -1:
                 continue
@@ -381,7 +393,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
             it += picking_result[1]
 
         for i in range(len(selected_actions)):
-            selected_actions[i] = parse_info(selected_actions[i])
+            selected_actions[i] = parse_info(selected_actions[i], lang=self.language_listen)
 
         for i in range(len(selected_actions)):
             current_command = selected_actions[i]
