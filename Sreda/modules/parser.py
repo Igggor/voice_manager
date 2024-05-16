@@ -1,10 +1,10 @@
-import datetime
+from Sreda.modules.text.units import Command, Response
+from Sreda.modules.format import is_language_fully_supported
 
-from Sreda.modules.text.units import Command
-
-from Sreda.static.local import get_month, get_language_key, get_word
+from Sreda.static.local import get_month, get_language_key, get_word, replace_numbers
 
 from string import punctuation
+import datetime
 
 
 def remove_whitespaces(text: str) -> str | None:
@@ -46,6 +46,7 @@ def canonize_text(text: str) -> str:
     text = text.lower()
     text = remove_whitespaces(text=text)
     text = text.translate(punctuation_sieve)
+    text = text.replace('\u200b', '')
 
     return text
 
@@ -409,6 +410,12 @@ def parse_info(command: Command, lang: str) -> Command:
 
     :return: Возвращает экземпляр класса ``Command`` - обработанную команду.
     """
+
+    if command.numeric_required:
+        if is_language_fully_supported(language=lang):
+            command.additive["main"] = replace_numbers(text=command.additive["main"], language=lang)
+        else:
+            return command
 
     if command.additive["main"] is None:
         return command

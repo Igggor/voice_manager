@@ -12,6 +12,7 @@ from Sreda.modules.functions import FunctionsCore
 from Sreda.modules.translation.processor import Translator
 from Sreda.modules.calendar.processor import TODOInteractor
 from Sreda.modules.storaging.processor import load_storage
+from Sreda.modules.parser import canonize_text
 
 from Sreda.static.metaclasses import SingletonMetaclass
 
@@ -242,23 +243,23 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         # значительное усложнение конструкции.
         if new:
             output_text.add(
-                text=self.translator.translate_text_static(
+                text=canonize_text(self.translator.translate_text_static(
                     text=response.text,
                     source_language=source_language,
                     destination_language=self.global_context.language_speak
-                ),
+                )),
 
                 lang=self.global_context.language_speak
             )
         else:
             output_text.add(
-                text=self.translator.translate_text_static(
+                text=canonize_text(self.translator.translate_text_static(
                     text=response.info,
                     source_language=source_language,
                     destination_language=response.get_language(
                         _undefined=self.global_context.language_speak
                     )
-                ),
+                )),
 
                 lang=response.get_language(
                     _undefined=self.global_context.language_speak
@@ -312,7 +313,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
                 query = selected_actions[i]
                 print("[Log: executing]: ", query.additive)
 
-                format_error = check_format(query)
+                format_error = check_format(current_command=query, language=self.global_context.language_listen)
                 if format_error is not None:
                     response = format_error
                 else:

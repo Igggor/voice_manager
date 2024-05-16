@@ -23,14 +23,19 @@ def check_recognition(selected_actions: list[Command]) -> Response | None:
     return None
 
 
-def check_format(current_command: Command) -> Response | None:
+def check_format(current_command: Command, language: str) -> Response | None:
     """
     Проверка формата расшифрованной команды.
 
-    :param current_command: ``Command``: проверяемая команда.
+    :param current_command: ``Command``: проверяемая команда;
+    :param language: ``str``: код языка распознавания.
 
     :return: Обнаруженная ошибка формата, упакованная в ``Response``, или ``None``.
     """
+
+    command_forbidden = check_command_available(current_command=current_command, language=language)
+    if command_forbidden is not None:
+        return command_forbidden
 
     # Checking forbidden scenario working
     error = Response(
@@ -132,7 +137,19 @@ def check_format(current_command: Command) -> Response | None:
     return None
 
 
-def command_available(current_command: Command, language: str) -> Response | None:
+def is_language_fully_supported(language: str) -> bool:
+    """
+    Является ли язык полностью поддерживаемым.
+
+    :param language: ``str``: код проверяемого языка.
+
+    :return: ``True`` или ``False``.
+    """
+
+    return language in FULL_SUPPORTED_LANGUAGES
+
+
+def check_command_available(current_command: Command, language: str) -> Response | None:
     """
     Проверка на то, что команда доступна на данном языке.
 
@@ -148,7 +165,7 @@ def command_available(current_command: Command, language: str) -> Response | Non
         error=True
     )
 
-    if current_command.numeric_required and language not in FULL_SUPPORTED_LANGUAGES:
+    if current_command.numeric_required and not is_language_fully_supported(language=language):
         return error
 
     return None

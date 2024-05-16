@@ -12,7 +12,6 @@ from Sreda.modules.storaging.units import Storage
 from Sreda.modules.calendar.processor import TODOInteractor
 
 from Sreda.static.metaclasses import SingletonMetaclass
-from Sreda.static.local import replace_numbers
 from Sreda.static.constants import AUXILIARY_WORDS
 
 
@@ -343,7 +342,6 @@ class TextProcessor(metaclass=SingletonMetaclass):
         """
 
         command = canonize_text(text=command)
-        command = replace_numbers(text=command, language=self.language_listen)
 
         selected_actions = list()
 
