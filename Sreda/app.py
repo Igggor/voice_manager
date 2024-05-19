@@ -1,4 +1,5 @@
-from Sreda.settings import GlobalContext, load_environment, check_model
+from Sreda.settings import GlobalContext
+from Sreda.environment import load_environment, check_model
 
 from Sreda.modules.time import TimeWorker
 from Sreda.modules.logs.processor import Logger
@@ -11,8 +12,9 @@ from Sreda.modules.format import check_format, check_recognition
 from Sreda.modules.functions import FunctionsCore
 from Sreda.modules.translation.processor import Translator
 from Sreda.modules.calendar.processor import TODOInteractor
-from Sreda.modules.storaging.processor import load_storage
-from Sreda.modules.parser import canonize_text
+from Sreda.modules.collecting.processor import load_storage
+from Sreda.modules.parser import remove_whitespaces
+from Sreda.modules.api.processor import APIProcessor
 
 from Sreda.static.metaclasses import SingletonMetaclass
 
@@ -65,6 +67,8 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         self.global_context = GlobalContext()
 
         self.time_core = TimeWorker()
+        self.api_core = APIProcessor()
+
         self.translator = Translator()
 
         self.text_processor = TextProcessor(
@@ -72,7 +76,8 @@ class VoiceHelper(metaclass=SingletonMetaclass):
             features=self.features,
             thanks=self.thanks,
             set_OFF=self.set_OFF,
-            exit=self.exit
+            exit=self.exit,
+            update_settings=self.update_all
         )
 
         self.speech_translator = SpeechTranslator()
@@ -122,9 +127,9 @@ class VoiceHelper(metaclass=SingletonMetaclass):
             do_next=[self.speech_translator.clear_buffer, sys.exit]
         )
 
-        self.update_all()
+        self._update_all_static()
 
-    def update_all(self) -> None:
+    def _update_all_static(self) -> None:
         """
         Рекурсивное обновление настроек всех частей приложения. Вызывается при изменении настроек приложения на сервере.
 
@@ -132,9 +137,9 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         """
 
         self.greeting = Response(
-            text=(f"Приветствую, я твой универсальный голосовой помощник {self.global_context.NAME[0]}.\n"
+            text=(f"Приветствую, я твой универсальный голосовой помощник {self.global_context.NAME}.\n"
                   f"Ты можешь узнать о моих возможностях на сайте или просто спросив меня: "
-                  f"{self.global_context.NAME[0]}, что ты умеешь?")
+                  f"{self.global_context.NAME}, что ты умеешь?")
         )
 
         self.time_core.update_settings()
@@ -145,6 +150,22 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         self.logger.update_settings()
         self.functions_core.update_settings()
         self.calendar.update_settings()
+
+    def update_all(self, **_):
+        """
+        Рекурсивное обновление настроек всех частей приложения.
+        Вызывается пользователем после внесения изменений на стороне ``web``-приложения.
+
+        :return:
+        """
+
+        self.api_core.load_settings()
+        self._update_all_static()
+
+        response = Response(
+            text="Все настройки успешно обновлены."
+        )
+        return response
 
     def set_ON(self, **_) -> Response:
         """
@@ -198,9 +219,10 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
         return self.thanks[random.randint(0, len(self.thanks) - 1)]
 
-    def _periodic_task(self, function, sleeping_time: float) -> None:
+    def _periodic_time(self, function, sleeping_time: float) -> None:
         """
-        Статический вспомогательный метод, реализующий работу периодических асинхронных функций.
+        Статический вспомогательный метод, реализующий работу периодической асинхронной функции
+        проверки готовности уведомлений.
 
         :param function: исполняемая периодическая функция;
         :param sleeping_time: ``float``: период исполнения функции.
@@ -243,7 +265,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         # значительное усложнение конструкции.
         if new:
             output_text.add(
-                text=canonize_text(self.translator.translate_text_static(
+                text=remove_whitespaces(self.translator.translate_text_static(
                     text=response.text,
                     source_language=source_language,
                     destination_language=self.global_context.language_speak
@@ -253,7 +275,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
             )
         else:
             output_text.add(
-                text=canonize_text(self.translator.translate_text_static(
+                text=remove_whitespaces(self.translator.translate_text_static(
                     text=response.info,
                     source_language=source_language,
                     destination_language=response.get_language(
@@ -296,6 +318,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
                 response = query.function()
 
                 self.logger.write(query, response)
+                self.api_core.post_log(log=self.logger.logs[-1])
 
                 self._add_to_output(output_text=output_text, response=response)
                 if response.info:
@@ -325,6 +348,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
                         response.called_by = query
 
                 self.logger.write(query, response)
+                self.api_core.post_log(log=self.logger.logs[-1])
 
                 self._add_to_output(output_text=output_text, response=response)
                 if response.info:
@@ -399,12 +423,13 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         """
 
         time_thread = threading.Thread(
-            target=self._periodic_task,
+            target=self._periodic_time,
             args=(self.time_core.check_notifications, self.global_context.notifications_accuracy),
             daemon=True,
             name="Background-TIME"
         )
 
         time_thread.start()
-        while self.global_context.ON:
+
+        while True:
             self._listen_command()

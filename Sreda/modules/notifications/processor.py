@@ -245,7 +245,7 @@ class NotificationsInteractor(metaclass=SingletonMetaclass):
         :return: Удаляет уведомление и возвращает фразу-отклик.
         """
 
-        note_id = int(kwargs["main"])
+        note_id = int(kwargs["main"]) - 1
         if note_id < len(self.notifications):
             del self.notifications[note_id]
 

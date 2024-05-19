@@ -1,7 +1,8 @@
-from Sreda.settings import GlobalContext, Environment, load_environment
+from Sreda.settings import GlobalContext
+from Sreda.environment import Environment, load_environment
 
-from Sreda.modules.storaging.processor import (build_all_triggers, ready_all, build_all_words,
-                                               ready_all_words, build_alias)
+from Sreda.modules.collecting.processor import (build_all_triggers, ready_all, build_all_words,
+                                                ready_all_words, build_alias)
 from Sreda.modules.translation.processor import Translator
 
 from Sreda.static.constants import DEFAULT_TRIGGERS, AUXILIARY_WORDS, LANGUAGES, MONTH_KEYS, MONTHS

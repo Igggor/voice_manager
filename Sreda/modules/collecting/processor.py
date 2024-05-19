@@ -1,6 +1,6 @@
 from Sreda.modules.translation.processor import Translator
 from Sreda.modules.parser import canonize_text
-from Sreda.modules.storaging.units import Trigger, TriggerJSON, Storage
+from Sreda.modules.collecting.units import Trigger, TriggerJSON, Storage
 
 from Sreda.static.constants import DEFAULT_TRIGGERS, LANGUAGES
 

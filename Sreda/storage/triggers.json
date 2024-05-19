@@ -10307,6 +10307,456 @@
                 "text": "醒来"
             }
         ],
+        "run-device": [
+            {
+                "lang": "ru",
+                "text": "запусти устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "запуск устройства"
+            },
+            {
+                "lang": "ru",
+                "text": "включи устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "включение устройства"
+            },
+            {
+                "lang": "ar",
+                "text": "إطلاق الجهاز"
+            },
+            {
+                "lang": "de",
+                "text": "das gerät einschalten"
+            },
+            {
+                "lang": "fi",
+                "text": "käynnistää laite"
+            },
+            {
+                "lang": "fr",
+                "text": "activer lappareil"
+            },
+            {
+                "lang": "ja",
+                "text": "デバイスをオンにします"
+            },
+            {
+                "lang": "ko",
+                "text": "장치를 켭니다"
+            },
+            {
+                "lang": "sv",
+                "text": "starta enheten"
+            },
+            {
+                "lang": "sv",
+                "text": "slå på enheten"
+            },
+            {
+                "lang": "th",
+                "text": "เปิดอุปกรณ์"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "启动设备"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "打开设备"
+            },
+            {
+                "lang": "ar",
+                "text": "قم بتشغيل الجهاز"
+            },
+            {
+                "lang": "ar",
+                "text": "تشغيل الجهاز"
+            },
+            {
+                "lang": "bg",
+                "text": "стартирайте устройството"
+            },
+            {
+                "lang": "bg",
+                "text": "стартиране на устройството"
+            },
+            {
+                "lang": "bg",
+                "text": "включете устройството"
+            },
+            {
+                "lang": "bg",
+                "text": "включване на устройството"
+            },
+            {
+                "lang": "cs",
+                "text": "spusťte zařízení"
+            },
+            {
+                "lang": "cs",
+                "text": "spuštění zařízení"
+            },
+            {
+                "lang": "cs",
+                "text": "zapněte zařízení"
+            },
+            {
+                "lang": "cs",
+                "text": "zapnutí zařízení"
+            },
+            {
+                "lang": "da",
+                "text": "start enheden"
+            },
+            {
+                "lang": "da",
+                "text": "lancering af enheden"
+            },
+            {
+                "lang": "da",
+                "text": "tænd for enheden"
+            },
+            {
+                "lang": "da",
+                "text": "tænder på enheden"
+            },
+            {
+                "lang": "de",
+                "text": "starten sie das gerät"
+            },
+            {
+                "lang": "de",
+                "text": "starten des geräts"
+            },
+            {
+                "lang": "el",
+                "text": "εκκινήστε τη συσκευή"
+            },
+            {
+                "lang": "el",
+                "text": "εκκίνηση της συσκευής"
+            },
+            {
+                "lang": "el",
+                "text": "ενεργοποιήστε τη συσκευή"
+            },
+            {
+                "lang": "el",
+                "text": "ενεργοποίηση της συσκευής"
+            },
+            {
+                "lang": "en",
+                "text": "launch the device"
+            },
+            {
+                "lang": "en",
+                "text": "launching the device"
+            },
+            {
+                "lang": "en",
+                "text": "turn on the device"
+            },
+            {
+                "lang": "en",
+                "text": "turning on the device"
+            },
+            {
+                "lang": "es",
+                "text": "iniciar el dispositivo"
+            },
+            {
+                "lang": "es",
+                "text": "lanzamiento del dispositivo"
+            },
+            {
+                "lang": "es",
+                "text": "encienda el dispositivo"
+            },
+            {
+                "lang": "es",
+                "text": "encender el dispositivo"
+            },
+            {
+                "lang": "et",
+                "text": "käivitage seade"
+            },
+            {
+                "lang": "et",
+                "text": "seadme käivitamine"
+            },
+            {
+                "lang": "et",
+                "text": "lülitage seade sisse"
+            },
+            {
+                "lang": "et",
+                "text": "seadme sisselülitamine"
+            },
+            {
+                "lang": "fi",
+                "text": "laitteen käynnistäminen"
+            },
+            {
+                "lang": "fi",
+                "text": "laitteen kytkeminen päälle"
+            },
+            {
+                "lang": "fr",
+                "text": "lancez lappareil"
+            },
+            {
+                "lang": "fr",
+                "text": "lancement de lappareil"
+            },
+            {
+                "lang": "hi",
+                "text": "डिवाइस लॉन्च करें"
+            },
+            {
+                "lang": "hi",
+                "text": "डिवाइस लॉन्च करना"
+            },
+            {
+                "lang": "hi",
+                "text": "डिवाइस चालू करें"
+            },
+            {
+                "lang": "hi",
+                "text": "डिवाइस को चालू करना"
+            },
+            {
+                "lang": "hu",
+                "text": "indítsa el az eszközt"
+            },
+            {
+                "lang": "hu",
+                "text": "az eszköz elindítása"
+            },
+            {
+                "lang": "hu",
+                "text": "kapcsolja be az eszközt"
+            },
+            {
+                "lang": "hu",
+                "text": "az eszköz bekapcsolása"
+            },
+            {
+                "lang": "id",
+                "text": "luncurkan perangkat"
+            },
+            {
+                "lang": "id",
+                "text": "meluncurkan perangkat"
+            },
+            {
+                "lang": "id",
+                "text": "nyalakan perangkat"
+            },
+            {
+                "lang": "id",
+                "text": "menyalakan perangkat"
+            },
+            {
+                "lang": "it",
+                "text": "avvia il dispositivo"
+            },
+            {
+                "lang": "it",
+                "text": "avvio del dispositivo"
+            },
+            {
+                "lang": "it",
+                "text": "accendi il dispositivo"
+            },
+            {
+                "lang": "it",
+                "text": "accendere il dispositivo"
+            },
+            {
+                "lang": "ja",
+                "text": "デバイスを起動します"
+            },
+            {
+                "lang": "ja",
+                "text": "デバイスの起動"
+            },
+            {
+                "lang": "ko",
+                "text": "장치를 시작하십시오"
+            },
+            {
+                "lang": "ko",
+                "text": "장치를 시작합니다"
+            },
+            {
+                "lang": "lv",
+                "text": "palaidiet ierīci"
+            },
+            {
+                "lang": "lv",
+                "text": "ierīces palaišana"
+            },
+            {
+                "lang": "lv",
+                "text": "ieslēdziet ierīci"
+            },
+            {
+                "lang": "lv",
+                "text": "ierīces ieslēgšana"
+            },
+            {
+                "lang": "nl",
+                "text": "start het apparaat"
+            },
+            {
+                "lang": "nl",
+                "text": "het apparaat starten"
+            },
+            {
+                "lang": "nl",
+                "text": "schakel het apparaat in"
+            },
+            {
+                "lang": "nl",
+                "text": "het apparaat inschakelen"
+            },
+            {
+                "lang": "pl",
+                "text": "uruchom urządzenie"
+            },
+            {
+                "lang": "pl",
+                "text": "uruchamianie urządzenia"
+            },
+            {
+                "lang": "pl",
+                "text": "włącz urządzenie"
+            },
+            {
+                "lang": "pl",
+                "text": "włączanie urządzenia"
+            },
+            {
+                "lang": "pt",
+                "text": "inicie o dispositivo"
+            },
+            {
+                "lang": "pt",
+                "text": "iniciando o dispositivo"
+            },
+            {
+                "lang": "pt",
+                "text": "ligue o dispositivo"
+            },
+            {
+                "lang": "pt",
+                "text": "ligando o dispositivo"
+            },
+            {
+                "lang": "ro",
+                "text": "lansați dispozitivul"
+            },
+            {
+                "lang": "ro",
+                "text": "lansarea dispozitivului"
+            },
+            {
+                "lang": "ro",
+                "text": "porniți dispozitivul"
+            },
+            {
+                "lang": "ro",
+                "text": "pornirea dispozitivului"
+            },
+            {
+                "lang": "ru",
+                "text": "запусти устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "запуск устройства"
+            },
+            {
+                "lang": "ru",
+                "text": "включи устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "включение устройства"
+            },
+            {
+                "lang": "sk",
+                "text": "spustite zariadenie"
+            },
+            {
+                "lang": "sk",
+                "text": "spustenie zariadenia"
+            },
+            {
+                "lang": "sk",
+                "text": "zapnúť zariadenie"
+            },
+            {
+                "lang": "sk",
+                "text": "zapnutie zariadenia"
+            },
+            {
+                "lang": "sr",
+                "text": "покрените уређај"
+            },
+            {
+                "lang": "sr",
+                "text": "покретање уређаја"
+            },
+            {
+                "lang": "sr",
+                "text": "укључите уређај"
+            },
+            {
+                "lang": "sr",
+                "text": "укључивање уређаја"
+            },
+            {
+                "lang": "th",
+                "text": "การเปิดตัวอุปกรณ์"
+            },
+            {
+                "lang": "tr",
+                "text": "cihazı başlatın"
+            },
+            {
+                "lang": "tr",
+                "text": "cihazı başlatma"
+            },
+            {
+                "lang": "tr",
+                "text": "cihazı aç"
+            },
+            {
+                "lang": "tr",
+                "text": "cihazı açmak"
+            },
+            {
+                "lang": "uk",
+                "text": "запустіть пристрій"
+            },
+            {
+                "lang": "uk",
+                "text": "запуск пристрою"
+            },
+            {
+                "lang": "uk",
+                "text": "увімкніть пристрій"
+            },
+            {
+                "lang": "uk",
+                "text": "увімкнення пристрою"
+            }
+        ],
         "set-volume": [
             {
                 "lang": "ru",
@@ -11013,6 +11463,472 @@
                 "text": "音量变化"
             }
         ],
+        "stop-device": [
+            {
+                "lang": "ru",
+                "text": "останови устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "выключи устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "отключи устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "выключение устройства"
+            },
+            {
+                "lang": "ru",
+                "text": "отключение устройства"
+            },
+            {
+                "lang": "ar",
+                "text": "إيقاف تشغيل الجهاز"
+            },
+            {
+                "lang": "bg",
+                "text": "изключете устройството"
+            },
+            {
+                "lang": "bg",
+                "text": "изключване на устройството"
+            },
+            {
+                "lang": "cs",
+                "text": "vypnutí zařízení"
+            },
+            {
+                "lang": "da",
+                "text": "slukker for enheden"
+            },
+            {
+                "lang": "de",
+                "text": "ausschalten des geräts"
+            },
+            {
+                "lang": "el",
+                "text": "απενεργοποίηση της συσκευής"
+            },
+            {
+                "lang": "en",
+                "text": "turning off the device"
+            },
+            {
+                "lang": "es",
+                "text": "apagar el dispositivo"
+            },
+            {
+                "lang": "et",
+                "text": "seadme väljalülitamine"
+            },
+            {
+                "lang": "fi",
+                "text": "laitteen sammuttaminen"
+            },
+            {
+                "lang": "fr",
+                "text": "éteindre lappareil"
+            },
+            {
+                "lang": "hi",
+                "text": "डिवाइस को बंद करना"
+            },
+            {
+                "lang": "hu",
+                "text": "az eszköz kikapcsolása"
+            },
+            {
+                "lang": "id",
+                "text": "mematikan perangkat"
+            },
+            {
+                "lang": "it",
+                "text": "spegnere il dispositivo"
+            },
+            {
+                "lang": "ja",
+                "text": "デバイスの電源を切る"
+            },
+            {
+                "lang": "ko",
+                "text": "장치를 끕니다"
+            },
+            {
+                "lang": "lv",
+                "text": "ierīces izslēgšana"
+            },
+            {
+                "lang": "nl",
+                "text": "het apparaat uitschakelen"
+            },
+            {
+                "lang": "pl",
+                "text": "wyłączenie urządzenia"
+            },
+            {
+                "lang": "pt",
+                "text": "desligando o dispositivo"
+            },
+            {
+                "lang": "ro",
+                "text": "opriți dispozitivul"
+            },
+            {
+                "lang": "ro",
+                "text": "oprirea dispozitivului"
+            },
+            {
+                "lang": "sk",
+                "text": "vypnutie zariadenia"
+            },
+            {
+                "lang": "sr",
+                "text": "искључите уређај"
+            },
+            {
+                "lang": "sr",
+                "text": "искључивање уређаја"
+            },
+            {
+                "lang": "sv",
+                "text": "stäng av enheten"
+            },
+            {
+                "lang": "th",
+                "text": "ปิดอุปกรณ์"
+            },
+            {
+                "lang": "tr",
+                "text": "cihazı kapat"
+            },
+            {
+                "lang": "uk",
+                "text": "вимкнення пристрою"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "关闭设备"
+            },
+            {
+                "lang": "ar",
+                "text": "أوقف الجهاز"
+            },
+            {
+                "lang": "ar",
+                "text": "قم بإيقاف تشغيل الجهاز"
+            },
+            {
+                "lang": "ar",
+                "text": "افصل الجهاز"
+            },
+            {
+                "lang": "bg",
+                "text": "спрете устройството"
+            },
+            {
+                "lang": "cs",
+                "text": "zastavte zařízení"
+            },
+            {
+                "lang": "cs",
+                "text": "vypněte zařízení"
+            },
+            {
+                "lang": "cs",
+                "text": "odpojte zařízení"
+            },
+            {
+                "lang": "da",
+                "text": "stop enheden"
+            },
+            {
+                "lang": "da",
+                "text": "sluk for enheden"
+            },
+            {
+                "lang": "da",
+                "text": "frakobl enheden"
+            },
+            {
+                "lang": "de",
+                "text": "stoppen sie das gerät"
+            },
+            {
+                "lang": "de",
+                "text": "schalten sie das gerät aus"
+            },
+            {
+                "lang": "de",
+                "text": "trennen sie das gerät"
+            },
+            {
+                "lang": "el",
+                "text": "σταματήστε τη συσκευή"
+            },
+            {
+                "lang": "el",
+                "text": "απενεργοποιήστε τη συσκευή"
+            },
+            {
+                "lang": "el",
+                "text": "αποσυνδέστε τη συσκευή"
+            },
+            {
+                "lang": "en",
+                "text": "stop the device"
+            },
+            {
+                "lang": "en",
+                "text": "turn off the device"
+            },
+            {
+                "lang": "en",
+                "text": "disconnect the device"
+            },
+            {
+                "lang": "es",
+                "text": "detener el dispositivo"
+            },
+            {
+                "lang": "es",
+                "text": "desconectar el dispositivo"
+            },
+            {
+                "lang": "et",
+                "text": "peatage seade"
+            },
+            {
+                "lang": "et",
+                "text": "lülitage seade välja"
+            },
+            {
+                "lang": "et",
+                "text": "ühendage seade lahti"
+            },
+            {
+                "lang": "fi",
+                "text": "pysäytä laite"
+            },
+            {
+                "lang": "fi",
+                "text": "sammuta laite"
+            },
+            {
+                "lang": "fi",
+                "text": "irrota laite"
+            },
+            {
+                "lang": "fr",
+                "text": "arrêter lappareil"
+            },
+            {
+                "lang": "fr",
+                "text": "débrancher lappareil"
+            },
+            {
+                "lang": "hi",
+                "text": "डिवाइस को रोकें"
+            },
+            {
+                "lang": "hi",
+                "text": "डिवाइस बंद करें"
+            },
+            {
+                "lang": "hi",
+                "text": "डिवाइस को डिस्कनेक्ट करें"
+            },
+            {
+                "lang": "hu",
+                "text": "állítsa le az eszközt"
+            },
+            {
+                "lang": "hu",
+                "text": "kapcsolja ki az eszközt"
+            },
+            {
+                "lang": "hu",
+                "text": "válasszuk le az eszközt"
+            },
+            {
+                "lang": "id",
+                "text": "hentikan perangkat"
+            },
+            {
+                "lang": "id",
+                "text": "matikan perangkat"
+            },
+            {
+                "lang": "id",
+                "text": "putuskan sambungan perangkat"
+            },
+            {
+                "lang": "it",
+                "text": "fermare il dispositivo"
+            },
+            {
+                "lang": "it",
+                "text": "spegni il dispositivo"
+            },
+            {
+                "lang": "it",
+                "text": "scollegare il dispositivo"
+            },
+            {
+                "lang": "ja",
+                "text": "デバイスを停止します"
+            },
+            {
+                "lang": "ja",
+                "text": "デバイスをオフにします"
+            },
+            {
+                "lang": "ja",
+                "text": "デバイスを外します"
+            },
+            {
+                "lang": "ko",
+                "text": "장치를 중지하십시오"
+            },
+            {
+                "lang": "ko",
+                "text": "장치를 분리하십시오"
+            },
+            {
+                "lang": "lv",
+                "text": "pārtrauciet ierīci"
+            },
+            {
+                "lang": "lv",
+                "text": "izslēdziet ierīci"
+            },
+            {
+                "lang": "lv",
+                "text": "atvienojiet ierīci"
+            },
+            {
+                "lang": "nl",
+                "text": "stop het apparaat"
+            },
+            {
+                "lang": "nl",
+                "text": "schakel het apparaat uit"
+            },
+            {
+                "lang": "nl",
+                "text": "koppel het apparaat los"
+            },
+            {
+                "lang": "pl",
+                "text": "zatrzymaj urządzenie"
+            },
+            {
+                "lang": "pl",
+                "text": "wyłącz urządzenie"
+            },
+            {
+                "lang": "pl",
+                "text": "odłącz urządzenie"
+            },
+            {
+                "lang": "pt",
+                "text": "pare o dispositivo"
+            },
+            {
+                "lang": "pt",
+                "text": "desligue o dispositivo"
+            },
+            {
+                "lang": "pt",
+                "text": "desconecte o dispositivo"
+            },
+            {
+                "lang": "ro",
+                "text": "deconectați dispozitivul"
+            },
+            {
+                "lang": "ru",
+                "text": "останови устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "выключи устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "отключи устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "выключение устройства"
+            },
+            {
+                "lang": "ru",
+                "text": "отключение устройства"
+            },
+            {
+                "lang": "sk",
+                "text": "zastavte zariadenie"
+            },
+            {
+                "lang": "sk",
+                "text": "vypnite zariadenie"
+            },
+            {
+                "lang": "sk",
+                "text": "odpojte zariadenie"
+            },
+            {
+                "lang": "sr",
+                "text": "зауставити уређај"
+            },
+            {
+                "lang": "sv",
+                "text": "stoppa enheten"
+            },
+            {
+                "lang": "sv",
+                "text": "koppla bort enheten"
+            },
+            {
+                "lang": "th",
+                "text": "หยุดอุปกรณ์"
+            },
+            {
+                "lang": "th",
+                "text": "ตัดการเชื่อมต่ออุปกรณ์"
+            },
+            {
+                "lang": "tr",
+                "text": "cihazı durdurun"
+            },
+            {
+                "lang": "tr",
+                "text": "cihazın bağlantısını kesin"
+            },
+            {
+                "lang": "uk",
+                "text": "зупиніть пристрій"
+            },
+            {
+                "lang": "uk",
+                "text": "вимкніть пристрій"
+            },
+            {
+                "lang": "uk",
+                "text": "відєднайте пристрій"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "停止设备"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "断开设备的连接"
+            }
+        ],
         "stop-stopwatch": [
             {
                 "lang": "ru",
@@ -11092,7 +12008,7 @@
             },
             {
                 "lang": "da",
-                "text": "slutningen af ​​stopuret"
+                "text": "slutningen af stopuret"
             },
             {
                 "lang": "de",
@@ -12641,6 +13557,1176 @@
                 "text": "文字翻译"
             }
         ],
+        "update-settings": [
+            {
+                "lang": "ru",
+                "text": "обнови настройки"
+            },
+            {
+                "lang": "ru",
+                "text": "обновить настройки"
+            },
+            {
+                "lang": "ru",
+                "text": "обновление настроек"
+            },
+            {
+                "lang": "ru",
+                "text": "обнови параметры"
+            },
+            {
+                "lang": "ru",
+                "text": "обновить параметры"
+            },
+            {
+                "lang": "ru",
+                "text": "обновление параметров"
+            },
+            {
+                "lang": "ru",
+                "text": "синхронизируй настройки"
+            },
+            {
+                "lang": "ru",
+                "text": "синхронизация настроек"
+            },
+            {
+                "lang": "ru",
+                "text": "синхронизация параметров"
+            },
+            {
+                "lang": "ru",
+                "text": "синхронизируй параметры"
+            },
+            {
+                "lang": "ar",
+                "text": "تحديث المعلمات"
+            },
+            {
+                "lang": "bg",
+                "text": "актуализирайте параметрите"
+            },
+            {
+                "lang": "et",
+                "text": "uuendage parameetreid"
+            },
+            {
+                "lang": "fi",
+                "text": "päivitä parametrit"
+            },
+            {
+                "lang": "fr",
+                "text": "utilisez les paramètres"
+            },
+            {
+                "lang": "fr",
+                "text": "mettre à jour les paramètres"
+            },
+            {
+                "lang": "fr",
+                "text": "synchroniser les paramètres"
+            },
+            {
+                "lang": "fr",
+                "text": "synchronisation des paramètres"
+            },
+            {
+                "lang": "hu",
+                "text": "frissítse a paramétereket"
+            },
+            {
+                "lang": "id",
+                "text": "perbarui parameter"
+            },
+            {
+                "lang": "it",
+                "text": "aggiorna i parametri"
+            },
+            {
+                "lang": "ja",
+                "text": "パラメーターを更新します"
+            },
+            {
+                "lang": "ko",
+                "text": "매개 변수를 업데이트하십시오"
+            },
+            {
+                "lang": "ro",
+                "text": "actualizați parametrii"
+            },
+            {
+                "lang": "sr",
+                "text": "ажурирајте параметре"
+            },
+            {
+                "lang": "th",
+                "text": "อัปเดตพารามิเตอร์"
+            },
+            {
+                "lang": "tr",
+                "text": "parametreleri güncelle"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "更新参数"
+            },
+            {
+                "lang": "ar",
+                "text": "استخدم الإعدادات"
+            },
+            {
+                "lang": "ar",
+                "text": "تحديث الإعدادات"
+            },
+            {
+                "lang": "ar",
+                "text": "مرجع الإعدادات"
+            },
+            {
+                "lang": "ar",
+                "text": "استخدم المعلمات"
+            },
+            {
+                "lang": "ar",
+                "text": "مزامنة الإعدادات"
+            },
+            {
+                "lang": "ar",
+                "text": "تزامن الإعدادات"
+            },
+            {
+                "lang": "ar",
+                "text": "تزامن المعلمات"
+            },
+            {
+                "lang": "ar",
+                "text": "مزامنة المعلمات"
+            },
+            {
+                "lang": "bg",
+                "text": "използвайте настройките"
+            },
+            {
+                "lang": "bg",
+                "text": "актуализирайте настройките"
+            },
+            {
+                "lang": "bg",
+                "text": "позоваване на настройките"
+            },
+            {
+                "lang": "bg",
+                "text": "използвайте параметрите"
+            },
+            {
+                "lang": "bg",
+                "text": "синхронизирайте настройките"
+            },
+            {
+                "lang": "bg",
+                "text": "синхронизация на настройките"
+            },
+            {
+                "lang": "bg",
+                "text": "синхронизация на параметрите"
+            },
+            {
+                "lang": "bg",
+                "text": "синхронизирайте параметрите"
+            },
+            {
+                "lang": "cs",
+                "text": "použijte nastavení"
+            },
+            {
+                "lang": "cs",
+                "text": "aktualizujte nastavení"
+            },
+            {
+                "lang": "cs",
+                "text": "odkaz na nastavení"
+            },
+            {
+                "lang": "cs",
+                "text": "použijte parametry"
+            },
+            {
+                "lang": "cs",
+                "text": "aktualizujte parametry"
+            },
+            {
+                "lang": "cs",
+                "text": "aktualizovat parametry"
+            },
+            {
+                "lang": "cs",
+                "text": "synchronizovat nastavení"
+            },
+            {
+                "lang": "cs",
+                "text": "synchronizace nastavení"
+            },
+            {
+                "lang": "cs",
+                "text": "synchronizace parametrů"
+            },
+            {
+                "lang": "cs",
+                "text": "synchronizujte parametry"
+            },
+            {
+                "lang": "da",
+                "text": "brug indstillingerne"
+            },
+            {
+                "lang": "da",
+                "text": "opdater indstillingerne"
+            },
+            {
+                "lang": "da",
+                "text": "reference til indstillinger"
+            },
+            {
+                "lang": "da",
+                "text": "brug parametrene"
+            },
+            {
+                "lang": "da",
+                "text": "opdater parametrene"
+            },
+            {
+                "lang": "da",
+                "text": "opdater parametre"
+            },
+            {
+                "lang": "da",
+                "text": "synkroniser indstillingerne"
+            },
+            {
+                "lang": "da",
+                "text": "synkronisering af indstillinger"
+            },
+            {
+                "lang": "da",
+                "text": "synkronisering af parametre"
+            },
+            {
+                "lang": "da",
+                "text": "synkroniser parametrene"
+            },
+            {
+                "lang": "de",
+                "text": "verwenden sie die einstellungen"
+            },
+            {
+                "lang": "de",
+                "text": "aktualisieren sie die einstellungen"
+            },
+            {
+                "lang": "de",
+                "text": "referenz der einstellungen"
+            },
+            {
+                "lang": "de",
+                "text": "verwenden sie die parameter"
+            },
+            {
+                "lang": "de",
+                "text": "aktualisieren sie die parameter"
+            },
+            {
+                "lang": "de",
+                "text": "parameter aktualisieren"
+            },
+            {
+                "lang": "de",
+                "text": "synchronisieren sie die einstellungen"
+            },
+            {
+                "lang": "de",
+                "text": "synchronisation von einstellungen"
+            },
+            {
+                "lang": "de",
+                "text": "synchronisation von parametern"
+            },
+            {
+                "lang": "de",
+                "text": "synchronisieren sie die parameter"
+            },
+            {
+                "lang": "el",
+                "text": "χρησιμοποιήστε τις ρυθμίσεις"
+            },
+            {
+                "lang": "el",
+                "text": "ενημερώστε τις ρυθμίσεις"
+            },
+            {
+                "lang": "el",
+                "text": "αναφορά των ρυθμίσεων"
+            },
+            {
+                "lang": "el",
+                "text": "χρησιμοποιήστε τις παραμέτρους"
+            },
+            {
+                "lang": "el",
+                "text": "ενημερώστε τις παραμέτρους"
+            },
+            {
+                "lang": "el",
+                "text": "ενημέρωση παραμέτρων"
+            },
+            {
+                "lang": "el",
+                "text": "συγχρονίστε τις ρυθμίσεις"
+            },
+            {
+                "lang": "el",
+                "text": "συγχρονισμός των ρυθμίσεων"
+            },
+            {
+                "lang": "el",
+                "text": "συγχρονισμός παραμέτρων"
+            },
+            {
+                "lang": "el",
+                "text": "συγχρονίστε τις παραμέτρους"
+            },
+            {
+                "lang": "en",
+                "text": "use the settings"
+            },
+            {
+                "lang": "en",
+                "text": "update the settings"
+            },
+            {
+                "lang": "en",
+                "text": "reference of settings"
+            },
+            {
+                "lang": "en",
+                "text": "use the parameters"
+            },
+            {
+                "lang": "en",
+                "text": "update the parameters"
+            },
+            {
+                "lang": "en",
+                "text": "update parameters"
+            },
+            {
+                "lang": "en",
+                "text": "synchronize the settings"
+            },
+            {
+                "lang": "en",
+                "text": "synchronization of settings"
+            },
+            {
+                "lang": "en",
+                "text": "synchronization of parameters"
+            },
+            {
+                "lang": "en",
+                "text": "synchronize the parameters"
+            },
+            {
+                "lang": "es",
+                "text": "use la configuración"
+            },
+            {
+                "lang": "es",
+                "text": "actualizar la configuración"
+            },
+            {
+                "lang": "es",
+                "text": "referencia de configuración"
+            },
+            {
+                "lang": "es",
+                "text": "use los parámetros"
+            },
+            {
+                "lang": "es",
+                "text": "actualizar los parámetros"
+            },
+            {
+                "lang": "es",
+                "text": "actualizar parámetros"
+            },
+            {
+                "lang": "es",
+                "text": "sincronizar la configuración"
+            },
+            {
+                "lang": "es",
+                "text": "sincronización de configuraciones"
+            },
+            {
+                "lang": "es",
+                "text": "sincronización de parámetros"
+            },
+            {
+                "lang": "es",
+                "text": "sincronizar los parámetros"
+            },
+            {
+                "lang": "et",
+                "text": "kasutage sätteid"
+            },
+            {
+                "lang": "et",
+                "text": "uuendage sätteid"
+            },
+            {
+                "lang": "et",
+                "text": "sätete viide"
+            },
+            {
+                "lang": "et",
+                "text": "kasutage parameetreid"
+            },
+            {
+                "lang": "et",
+                "text": "seaded sünkroonida"
+            },
+            {
+                "lang": "et",
+                "text": "seadete sünkroonimine"
+            },
+            {
+                "lang": "et",
+                "text": "parameetrite sünkroonimine"
+            },
+            {
+                "lang": "et",
+                "text": "sünkroonige parameetrid"
+            },
+            {
+                "lang": "fi",
+                "text": "käytä asetuksia"
+            },
+            {
+                "lang": "fi",
+                "text": "päivitä asetukset"
+            },
+            {
+                "lang": "fi",
+                "text": "asetusten viittaus"
+            },
+            {
+                "lang": "fi",
+                "text": "käyttää parametreja"
+            },
+            {
+                "lang": "fi",
+                "text": "synkronoi asetukset"
+            },
+            {
+                "lang": "fi",
+                "text": "asetusten synkronointi"
+            },
+            {
+                "lang": "fi",
+                "text": "parametrien synkronointi"
+            },
+            {
+                "lang": "fi",
+                "text": "synkronoida parametrit"
+            },
+            {
+                "lang": "fr",
+                "text": "référence des paramètres"
+            },
+            {
+                "lang": "fr",
+                "text": "mettez à jour les paramètres"
+            },
+            {
+                "lang": "hi",
+                "text": "सेटिंग्स का उपयोग करें"
+            },
+            {
+                "lang": "hi",
+                "text": "सेटिंग्स को अपडेट करें"
+            },
+            {
+                "lang": "hi",
+                "text": "सेटिंग्स का संदर्भ"
+            },
+            {
+                "lang": "hi",
+                "text": "मापदंडों का उपयोग करें"
+            },
+            {
+                "lang": "hi",
+                "text": "मापदंडों को अपडेट करें"
+            },
+            {
+                "lang": "hi",
+                "text": "अद्यतन पैरामीटर"
+            },
+            {
+                "lang": "hi",
+                "text": "सेटिंग्स को सिंक्रनाइज़ करें"
+            },
+            {
+                "lang": "hi",
+                "text": "सेटिंग्स का सिंक्रनाइज़ेशन"
+            },
+            {
+                "lang": "hi",
+                "text": "मापदंडों का सिंक्रनाइज़ेशन"
+            },
+            {
+                "lang": "hi",
+                "text": "मापदंडों को सिंक्रनाइज़ करें"
+            },
+            {
+                "lang": "hu",
+                "text": "használja a beállításokat"
+            },
+            {
+                "lang": "hu",
+                "text": "frissítse a beállításokat"
+            },
+            {
+                "lang": "hu",
+                "text": "a beállítások hivatkozása"
+            },
+            {
+                "lang": "hu",
+                "text": "használja a paramétereket"
+            },
+            {
+                "lang": "hu",
+                "text": "szinkronizálja a beállításokat"
+            },
+            {
+                "lang": "hu",
+                "text": "a beállítások szinkronizálása"
+            },
+            {
+                "lang": "hu",
+                "text": "paraméterek szinkronizálása"
+            },
+            {
+                "lang": "hu",
+                "text": "szinkronizálja a paramétereket"
+            },
+            {
+                "lang": "id",
+                "text": "gunakan pengaturannya"
+            },
+            {
+                "lang": "id",
+                "text": "perbarui pengaturan"
+            },
+            {
+                "lang": "id",
+                "text": "referensi pengaturan"
+            },
+            {
+                "lang": "id",
+                "text": "gunakan parameter"
+            },
+            {
+                "lang": "id",
+                "text": "menyinkronkan pengaturan"
+            },
+            {
+                "lang": "id",
+                "text": "sinkronisasi pengaturan"
+            },
+            {
+                "lang": "id",
+                "text": "sinkronisasi parameter"
+            },
+            {
+                "lang": "id",
+                "text": "menyinkronkan parameter"
+            },
+            {
+                "lang": "it",
+                "text": "utilizzare le impostazioni"
+            },
+            {
+                "lang": "it",
+                "text": "aggiorna le impostazioni"
+            },
+            {
+                "lang": "it",
+                "text": "riferimento delle impostazioni"
+            },
+            {
+                "lang": "it",
+                "text": "usa i parametri"
+            },
+            {
+                "lang": "it",
+                "text": "sincronizzare le impostazioni"
+            },
+            {
+                "lang": "it",
+                "text": "sincronizzazione delle impostazioni"
+            },
+            {
+                "lang": "it",
+                "text": "sincronizzazione dei parametri"
+            },
+            {
+                "lang": "it",
+                "text": "sincronizzare i parametri"
+            },
+            {
+                "lang": "ja",
+                "text": "設定を使用します"
+            },
+            {
+                "lang": "ja",
+                "text": "設定を更新します"
+            },
+            {
+                "lang": "ja",
+                "text": "設定の参照"
+            },
+            {
+                "lang": "ja",
+                "text": "パラメーターを使用します"
+            },
+            {
+                "lang": "ja",
+                "text": "設定を同期します"
+            },
+            {
+                "lang": "ja",
+                "text": "設定の同期"
+            },
+            {
+                "lang": "ja",
+                "text": "パラメーターの同期"
+            },
+            {
+                "lang": "ja",
+                "text": "パラメーターを同期します"
+            },
+            {
+                "lang": "ko",
+                "text": "설정을 사용하십시오"
+            },
+            {
+                "lang": "ko",
+                "text": "설정을 업데이트하십시오"
+            },
+            {
+                "lang": "ko",
+                "text": "설정 참조"
+            },
+            {
+                "lang": "ko",
+                "text": "매개 변수를 사용하십시오"
+            },
+            {
+                "lang": "ko",
+                "text": "설정을 동기화하십시오"
+            },
+            {
+                "lang": "ko",
+                "text": "설정 동기화"
+            },
+            {
+                "lang": "ko",
+                "text": "매개 변수의 동기화"
+            },
+            {
+                "lang": "ko",
+                "text": "매개 변수를 동기화합니다"
+            },
+            {
+                "lang": "lv",
+                "text": "izmantojiet iestatījumus"
+            },
+            {
+                "lang": "lv",
+                "text": "atjauniniet iestatījumus"
+            },
+            {
+                "lang": "lv",
+                "text": "iestatījumu atsauce"
+            },
+            {
+                "lang": "lv",
+                "text": "izmantojiet parametrus"
+            },
+            {
+                "lang": "lv",
+                "text": "atjauniniet parametrus"
+            },
+            {
+                "lang": "lv",
+                "text": "atjaunināt parametrus"
+            },
+            {
+                "lang": "lv",
+                "text": "sinhronizējiet iestatījumus"
+            },
+            {
+                "lang": "lv",
+                "text": "iestatījumu sinhronizācija"
+            },
+            {
+                "lang": "lv",
+                "text": "parametru sinhronizācija"
+            },
+            {
+                "lang": "lv",
+                "text": "sinhronizējiet parametrus"
+            },
+            {
+                "lang": "nl",
+                "text": "gebruik de instellingen"
+            },
+            {
+                "lang": "nl",
+                "text": "werk de instellingen bij"
+            },
+            {
+                "lang": "nl",
+                "text": "referentie van instellingen"
+            },
+            {
+                "lang": "nl",
+                "text": "gebruik de parameters"
+            },
+            {
+                "lang": "nl",
+                "text": "werk de parameters bij"
+            },
+            {
+                "lang": "nl",
+                "text": "update parameters"
+            },
+            {
+                "lang": "nl",
+                "text": "synchroniseer de instellingen"
+            },
+            {
+                "lang": "nl",
+                "text": "synchronisatie van instellingen"
+            },
+            {
+                "lang": "nl",
+                "text": "synchronisatie van parameters"
+            },
+            {
+                "lang": "nl",
+                "text": "synchroniseer de parameters"
+            },
+            {
+                "lang": "pl",
+                "text": "użyj ustawień"
+            },
+            {
+                "lang": "pl",
+                "text": "zaktualizuj ustawienia"
+            },
+            {
+                "lang": "pl",
+                "text": "odniesienie do ustawień"
+            },
+            {
+                "lang": "pl",
+                "text": "użyj parametrów"
+            },
+            {
+                "lang": "pl",
+                "text": "zaktualizuj parametry"
+            },
+            {
+                "lang": "pl",
+                "text": "aktualizacja parametrów"
+            },
+            {
+                "lang": "pl",
+                "text": "synchronizować ustawienia"
+            },
+            {
+                "lang": "pl",
+                "text": "synchronizacja ustawień"
+            },
+            {
+                "lang": "pl",
+                "text": "synchronizacja parametrów"
+            },
+            {
+                "lang": "pl",
+                "text": "synchronizować parametry"
+            },
+            {
+                "lang": "pt",
+                "text": "use as configurações"
+            },
+            {
+                "lang": "pt",
+                "text": "atualize as configurações"
+            },
+            {
+                "lang": "pt",
+                "text": "referência de configurações"
+            },
+            {
+                "lang": "pt",
+                "text": "use os parâmetros"
+            },
+            {
+                "lang": "pt",
+                "text": "atualize os parâmetros"
+            },
+            {
+                "lang": "pt",
+                "text": "atualizar parâmetros"
+            },
+            {
+                "lang": "pt",
+                "text": "sincronize as configurações"
+            },
+            {
+                "lang": "pt",
+                "text": "sincronização de configurações"
+            },
+            {
+                "lang": "pt",
+                "text": "sincronização de parâmetros"
+            },
+            {
+                "lang": "pt",
+                "text": "sincronize os parâmetros"
+            },
+            {
+                "lang": "ro",
+                "text": "folosiți setările"
+            },
+            {
+                "lang": "ro",
+                "text": "actualizați setările"
+            },
+            {
+                "lang": "ro",
+                "text": "referința setărilor"
+            },
+            {
+                "lang": "ro",
+                "text": "utilizați parametrii"
+            },
+            {
+                "lang": "ro",
+                "text": "sincronizați setările"
+            },
+            {
+                "lang": "ro",
+                "text": "sincronizarea setărilor"
+            },
+            {
+                "lang": "ro",
+                "text": "sincronizarea parametrilor"
+            },
+            {
+                "lang": "ro",
+                "text": "sincronizați parametrii"
+            },
+            {
+                "lang": "ru",
+                "text": "обнови настройки"
+            },
+            {
+                "lang": "ru",
+                "text": "обновить настройки"
+            },
+            {
+                "lang": "ru",
+                "text": "обновление настроек"
+            },
+            {
+                "lang": "ru",
+                "text": "обнови параметры"
+            },
+            {
+                "lang": "ru",
+                "text": "обновить параметры"
+            },
+            {
+                "lang": "ru",
+                "text": "обновление параметров"
+            },
+            {
+                "lang": "ru",
+                "text": "синхронизируй настройки"
+            },
+            {
+                "lang": "ru",
+                "text": "синхронизация настроек"
+            },
+            {
+                "lang": "ru",
+                "text": "синхронизация параметров"
+            },
+            {
+                "lang": "ru",
+                "text": "синхронизируй параметры"
+            },
+            {
+                "lang": "sk",
+                "text": "použite nastavenia"
+            },
+            {
+                "lang": "sk",
+                "text": "aktualizovať nastavenia"
+            },
+            {
+                "lang": "sk",
+                "text": "odkaz na nastavenia"
+            },
+            {
+                "lang": "sk",
+                "text": "použite parametre"
+            },
+            {
+                "lang": "sk",
+                "text": "aktualizovať parametre"
+            },
+            {
+                "lang": "sk",
+                "text": "aktualizácia parametrov"
+            },
+            {
+                "lang": "sk",
+                "text": "synchronizovať nastavenia"
+            },
+            {
+                "lang": "sk",
+                "text": "synchronizácia nastavení"
+            },
+            {
+                "lang": "sk",
+                "text": "synchronizácia parametrov"
+            },
+            {
+                "lang": "sk",
+                "text": "synchronizovať parametre"
+            },
+            {
+                "lang": "sr",
+                "text": "користите подешавања"
+            },
+            {
+                "lang": "sr",
+                "text": "ажурирајте подешавања"
+            },
+            {
+                "lang": "sr",
+                "text": "референца подешавања"
+            },
+            {
+                "lang": "sr",
+                "text": "користите параметре"
+            },
+            {
+                "lang": "sr",
+                "text": "синхронизујте подешавања"
+            },
+            {
+                "lang": "sr",
+                "text": "синхронизација подешавања"
+            },
+            {
+                "lang": "sr",
+                "text": "синхронизација параметара"
+            },
+            {
+                "lang": "sr",
+                "text": "синхронизујте параметре"
+            },
+            {
+                "lang": "sv",
+                "text": "använd inställningarna"
+            },
+            {
+                "lang": "sv",
+                "text": "uppdatera inställningarna"
+            },
+            {
+                "lang": "sv",
+                "text": "referens för inställningar"
+            },
+            {
+                "lang": "sv",
+                "text": "använd parametrarna"
+            },
+            {
+                "lang": "sv",
+                "text": "uppdatera parametrarna"
+            },
+            {
+                "lang": "sv",
+                "text": "uppdatera parametrar"
+            },
+            {
+                "lang": "sv",
+                "text": "synkronisera inställningarna"
+            },
+            {
+                "lang": "sv",
+                "text": "synkronisering av inställningar"
+            },
+            {
+                "lang": "sv",
+                "text": "synkronisering av parametrar"
+            },
+            {
+                "lang": "sv",
+                "text": "synkronisera parametrarna"
+            },
+            {
+                "lang": "th",
+                "text": "ใช้การตั้งค่า"
+            },
+            {
+                "lang": "th",
+                "text": "อัปเดตการตั้งค่า"
+            },
+            {
+                "lang": "th",
+                "text": "การอ้างอิงการตั้งค่า"
+            },
+            {
+                "lang": "th",
+                "text": "ใช้พารามิเตอร์"
+            },
+            {
+                "lang": "th",
+                "text": "ซิงโครไนซ์การตั้งค่า"
+            },
+            {
+                "lang": "th",
+                "text": "การซิงโครไนซ์ของการตั้งค่า"
+            },
+            {
+                "lang": "th",
+                "text": "การซิงโครไนซ์พารามิเตอร์"
+            },
+            {
+                "lang": "th",
+                "text": "ซิงโครไนซ์พารามิเตอร์"
+            },
+            {
+                "lang": "tr",
+                "text": "ayarları kullanın"
+            },
+            {
+                "lang": "tr",
+                "text": "ayarları güncelle"
+            },
+            {
+                "lang": "tr",
+                "text": "ayarların referansı"
+            },
+            {
+                "lang": "tr",
+                "text": "parametreleri kullanın"
+            },
+            {
+                "lang": "tr",
+                "text": "ayarları senkronize edin"
+            },
+            {
+                "lang": "tr",
+                "text": "ayarların senkronizasyonu"
+            },
+            {
+                "lang": "tr",
+                "text": "parametrelerin senkronizasyonu"
+            },
+            {
+                "lang": "tr",
+                "text": "parametreleri senkronize edin"
+            },
+            {
+                "lang": "uk",
+                "text": "використовуйте налаштування"
+            },
+            {
+                "lang": "uk",
+                "text": "оновіть налаштування"
+            },
+            {
+                "lang": "uk",
+                "text": "довідка налаштувань"
+            },
+            {
+                "lang": "uk",
+                "text": "використовуйте параметри"
+            },
+            {
+                "lang": "uk",
+                "text": "оновіть параметри"
+            },
+            {
+                "lang": "uk",
+                "text": "оновити параметри"
+            },
+            {
+                "lang": "uk",
+                "text": "синхронізувати налаштування"
+            },
+            {
+                "lang": "uk",
+                "text": "синхронізація налаштувань"
+            },
+            {
+                "lang": "uk",
+                "text": "синхронізація параметрів"
+            },
+            {
+                "lang": "uk",
+                "text": "синхронізувати параметри"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "使用设置"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "更新设置"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "设置的引用"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "使用参数"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "同步设置"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "设置的同步"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "参数的同步"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "同步参数"
+            }
+        ],
         "weather-now": [
             {
                 "lang": "ru",
@@ -12876,7 +14962,7 @@
             },
             {
                 "lang": "nl",
-                "text": "huidig ​​weer"
+                "text": "huidig weer"
             },
             {
                 "lang": "nl",

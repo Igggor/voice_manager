@@ -1,4 +1,5 @@
-from Sreda.settings import GlobalContext, Environment
+from Sreda.settings import GlobalContext
+from Sreda.environment import Environment
 
 from Sreda.modules.speech.units import PlayableText
 from Sreda.modules.text.units import Response

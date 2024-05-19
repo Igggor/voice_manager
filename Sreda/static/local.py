@@ -1,4 +1,4 @@
-from Sreda.modules.storaging.units import Storage
+from Sreda.modules.collecting.units import Storage
 
 from Sreda.static.constants import D_WORDS, MONTH_KEYS, LANGUAGES, MONTHS
 
