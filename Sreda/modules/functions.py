@@ -1,4 +1,5 @@
-from Sreda.settings import GlobalContext, Environment
+from Sreda.settings import GlobalContext
+from Sreda.environment import Environment
 
 from Sreda.modules.text.units import Response
 
@@ -53,9 +54,15 @@ class FunctionsCore(metaclass=SingletonMetaclass):
             text="Извините, информация о погоде в заданном городе не найдена. Уточните запрос.",
             error=True
         )
+        self.free_request_failed_error = Response(
+            text="Извините, по заданному запросу ничего не нашлось.",
+            error=True
+        )
 
         self.weather_celsius = None
         self.weather_mmHg = None
+
+        self.free_request_url = "https://yandex.ru"
 
     def update_settings(self) -> None:
         """
@@ -184,3 +191,15 @@ class FunctionsCore(metaclass=SingletonMetaclass):
             )
         except requests.exceptions.RequestException:
             return self.weather_request_error
+
+    def throw_in_Internet(self, **kwargs) -> Response:
+        """
+        Поиск в Интернете.
+
+        Обязательные аргументы:
+            * ``main`` - текст запроса.
+
+        :return: Найденный ответ или фраза об ошибке.
+        """
+
+        raise NotImplementedError

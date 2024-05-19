@@ -7,8 +7,8 @@ from Sreda.modules.scenarios.processor import ScenarioInteractor
 from Sreda.modules.parser import parse_info, canonize_text
 from Sreda.modules.speech.processor import SpeechTranslator
 from Sreda.modules.translation.processor import Translator
-from Sreda.modules.storaging.processor import load_all_triggers, ready_all, ready_all_words
-from Sreda.modules.storaging.units import Storage
+from Sreda.modules.collecting.processor import load_all_triggers, ready_all, ready_all_words
+from Sreda.modules.collecting.units import Storage
 from Sreda.modules.calendar.processor import TODOInteractor
 
 from Sreda.static.metaclasses import SingletonMetaclass
@@ -43,6 +43,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
         thanks = kwargs["thanks"]
         set_OFF = kwargs["set_OFF"]
         safe_exit = kwargs["exit"]
+        update_all = kwargs["update_settings"]
 
         scenario_interactor = ScenarioInteractor()
         time_core = TimeWorker()
@@ -63,13 +64,19 @@ class TextProcessor(metaclass=SingletonMetaclass):
 
             "on":
                 Command(
-                    name="Включение голосового помощника.",
+                    name="Включение голосового помощника",
                     description="Во включенном состоянии глосовой помощник прослушивает команды и исполняет их.",
                     key="on", function=set_ON, type="system"
                 ),
+            "update-settings":
+                Command(
+                    name="Обновление настроек помощника",
+                    description="Настройки будут синхронизированы с web-приложением", key="update-settings",
+                    function=update_all, type="system"
+                ),
             "features":
                 Command(
-                    name="Возможности голосового помощника.",
+                    name="Возможности голосового помощника",
                     key="features", function=features, type="question"
                 ),
             "thanks":
@@ -208,6 +215,15 @@ class TextProcessor(metaclass=SingletonMetaclass):
                     name="Поиск заметок", description="Можно указать конкретную дату или просто месяц без указания дня",
                     key="find-TODO", function=TODO_interactor.find_TODO, type="TODO", required_params=["date"],
                     numeric_required=True
+                ),
+            # TODO : implement functions and params here
+            "run-device":
+                Command(
+                    name="Запуск умного устройства", key="run-device", function=None, type="devices"
+                ),
+            "stop-device":
+                Command(
+                    name="Выключение умного устройства", key="stop-device", function=None, type="devices"
                 )
         }
 
@@ -368,7 +384,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
 
         command = self._clean_alias(command)
         if ignore_all:
-            if any(on in command for on in self.functions["on"].triggers):
+            if any(on.text in command for on in self.functions["on"].triggers):
                 selected_actions.append(self.functions["on"])
             else:
                 return None
