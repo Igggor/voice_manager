@@ -21,6 +21,7 @@ from Sreda.static.metaclasses import SingletonMetaclass
 from time import sleep
 import threading
 import sys
+import os
 import asyncio
 import random
 
@@ -59,6 +60,8 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
         Инициализируются все составные части приложения (классы).
         """
+
+        os.chdir(os.path.dirname(__file__))
 
         load_environment()
         load_storage()
@@ -124,7 +127,6 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
         self.big_bye = Response(
             text="Всего доброго, буду рада быть полезной снова.",
-            do_next=[self.speech_translator.clear_buffer, sys.exit]
         )
 
         self._update_all_static()
@@ -307,7 +309,8 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         output_text = PlayableText()
 
         recognition_fail = check_recognition(selected_actions)
-        do_next = list()
+        FULL_OFF_SIGNAL = False
+
         if recognition_fail is not None:
             self._add_to_output(output_text=output_text, response=recognition_fail)
             if recognition_fail.info:
@@ -318,7 +321,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
                 response = query.function()
 
                 self.logger.write(query, response)
-                self.api_core.post_log(log=self.logger.logs[-1])
+                # self.api_core.post_log(log=self.logger.logs[-1])
 
                 self._add_to_output(output_text=output_text, response=response)
                 if response.info:
@@ -334,6 +337,9 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
             for i in range(len(selected_actions)):
                 query = selected_actions[i]
+                if query.key == "full-off":
+                    FULL_OFF_SIGNAL = True
+
                 print("[Log: executing]: ", query.additive)
 
                 format_error = check_format(current_command=query, language=self.global_context.language_listen)
@@ -348,22 +354,20 @@ class VoiceHelper(metaclass=SingletonMetaclass):
                         response.called_by = query
 
                 self.logger.write(query, response)
-                self.api_core.post_log(log=self.logger.logs[-1])
+                # self.api_core.post_log(log=self.logger.logs[-1])
 
                 self._add_to_output(output_text=output_text, response=response)
                 if response.info:
                     self._add_to_output(output_text=output_text, response=response, new=False)
-
-                if response.do_next is not None:
-                    do_next = response.do_next
 
         while not self.speech_translator.LOCKER.available(thread_id=threading.get_native_id()):
             await asyncio.sleep(0)
 
         self.speech_translator.speak(output_text)
 
-        for action in do_next:
-            action()
+        if FULL_OFF_SIGNAL:
+            self.speech_translator.clear_buffer(full=True)
+            sys.exit(0)
 
     # Следующие три функции - оболочки, чтобы можно было адекватно вызывать функции выключения, включения и т.д
     def ON(self) -> None:
@@ -429,7 +433,13 @@ class VoiceHelper(metaclass=SingletonMetaclass):
             name="Background-TIME"
         )
 
+        # api_check_thread = threading.Thread(
+        #     target=self._periodic_check_api_connection,
+        #     args=...
+        # )
+
         time_thread.start()
+        # api_check_thread.start()
 
         while True:
             self._listen_command()

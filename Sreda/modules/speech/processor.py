@@ -327,18 +327,25 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
             os.system(f"mkdir {buffer}")
 
     @staticmethod
-    def clear_buffer() -> None:
+    def clear_buffer(full: bool = False) -> None:
         """
         Метод очистки буфера воспроизведения.
 
         Удаляет все временные файлы в папке ``buffer``.
 
+        :param full: ``bool``: если указано ``True``, удалит папку со всем содержимым.
+
         :return:
         """
 
         buffer = os.path.join(Environment.__ROOT__, "storage/buffer")
-        if os.path.exists(buffer):
-            os.system(f"rm {buffer}/*")
+        if os.path.exists(path=buffer):
+            for _obj in os.listdir(path=buffer):
+                os.remove(path=f"{buffer}/{_obj}")
+
+        if full:
+            if os.path.exists(buffer):
+                os.rmdir(path=buffer)
 
     def get_volume(self, **_) -> Response:
         """
