@@ -17,7 +17,7 @@ class APIProcessor(metaclass=SingletonMetaclass):
         return cls.__instance
 
     def __init__(self):
-        self.url = "http://test.igreeda.keenetic.pro/api"
+        self.url = "https://test.igreeda.keenetic.pro/API/Devices"
 
         self.KEY = Environment.NATIVE_API_KEY
         self.RETRY = 3
@@ -29,7 +29,7 @@ class APIProcessor(metaclass=SingletonMetaclass):
         :return: Результат запроса или ``None`` при неудаче.
         """
 
-        params = {"api_key": self.KEY}
+        params = {"key": self.KEY}
         params.update(kwargs)
 
         response = requests.get(
@@ -37,41 +37,58 @@ class APIProcessor(metaclass=SingletonMetaclass):
             params=params
         )
 
-        return response
+        return response.json()
 
-    def _post(self, **kwargs) -> requests.Response:
+    def get_device_status(self):
+        data = self._get(title="AnLamp")
+        return data[0]["settings"]["status"]
+
+    def _post(self, new_status: int = 0) -> requests.Response:
         """
         Метод POST-запроса.
 
         :return: Результат запроса или ``None``.
         """
+        getparams = {
+            "key": self.KEY,
+        }
+        body = {
+            "params": {
+                "user_id": 1,
+                "title": "AnLamp",
+                "status": new_status,
+                "type": "light",
+                "settings": {
+                    "status": new_status
+                }
+            },  # параметры сортировки
+        }
+        response = requests.post(url=self.url, json=body, params=getparams)
+        data = response.json()
+        return data
 
-        params = {"api_key": self.KEY}
-
-        response = requests.post(
-            url=self.url,
-            params=params,
-            json=kwargs
-        )
-
-        return response
-
-    def _put(self, **kwargs) -> requests.Response:
+    def _put(self, new_status: int = 0) -> requests.Response:
         """
         Метод PUT-запроса.
 
         :return: Результат запроса или ``None``.
         """
 
-        params = {"api_key": self.KEY}
+        params = {"key": self.KEY}
 
-        response = requests.put(
-            url=self.url,
-            params=params,
-            json=kwargs
-        )
+        body = {
+            "params": {"title": "AnLamp"},  # параметры сортировки
+            "changes": {'settings': {'status': new_status}}  # вносимые изменения
+        }
+        response = requests.put(url=self.url, json=body, params=params)
+        data = response.json()
+        return data
 
-        return response
+    def set_light_on(self):
+        self._put(new_status=1)
+
+    def set_light_off(self):
+        self._put(new_status=0)
 
     # TODO : implement here
     def load_settings(self):
