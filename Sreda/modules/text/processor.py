@@ -1,5 +1,6 @@
 from Sreda.settings import GlobalContext
 
+from Sreda.modules.api.processor import APIProcessor
 from Sreda.modules.functions import FunctionsCore
 from Sreda.modules.time import TimeWorker
 from Sreda.modules.text.units import Command
@@ -51,6 +52,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
         speech_translator = SpeechTranslator()
         translator = Translator()
         TODO_interactor = TODOInteractor()
+        api_actions = APIProcessor()
 
         self.language_listen = None
 
@@ -216,14 +218,14 @@ class TextProcessor(metaclass=SingletonMetaclass):
                     key="find-TODO", function=TODO_interactor.find_TODO, type="TODO", required_params=["date"],
                     numeric_required=True
                 ),
-            # TODO : implement functions and params here
+
             "run-device":
                 Command(
-                    name="Запуск умного устройства", key="run-device", function=None, type="devices"
+                    name="Запуск умного устройства", key="run-device", function=api_actions.set_light_on(), type="devices"
                 ),
             "stop-device":
                 Command(
-                    name="Выключение умного устройства", key="stop-device", function=None, type="devices"
+                    name="Выключение умного устройства", key="stop-device", function=api_actions.set_light_off(), type="devices"
                 )
         }
 

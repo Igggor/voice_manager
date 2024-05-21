@@ -82,10 +82,10 @@ class APIProcessor(metaclass=SingletonMetaclass):
         data = response.json()
         return data
 
-    def set_light_on(self):
+    def set_light_on(self, **_):
         self._put(new_status=1)
 
-    def set_light_off(self):
+    def set_light_off(self, **_):
         self._put(new_status=0)
 
     # TODO : implement here
