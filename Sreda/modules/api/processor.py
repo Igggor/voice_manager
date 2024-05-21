@@ -21,7 +21,6 @@ class APIProcessor(metaclass=SingletonMetaclass):
 
         self.KEY = Environment.NATIVE_API_KEY
         # self.KEY = "gmZyWupjOON8b6O4G217B59Pd3ZRUFbB"
-        print(self.KEY)
         self.RETRY = 3
 
     def _get(self, **kwargs) -> requests.Response:

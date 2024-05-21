@@ -1,14 +1,14 @@
-from dotenv import load_dotenv
+from dotenv import load_dotenv, dotenv_values
 import os
 
 
 class Environment:
     __ROOT__ = os.path.dirname(__file__)
-
-    MODEL = None
-    OPEN_WEATHER_API_KEY = None
-    NATIVE_API_KEY = None
-    DYNAMIC_BUILDING = None
+    conf = dotenv_values("storage/.env")
+    MODEL = conf["MODEL"]
+    OPEN_WEATHER_API_KEY = conf["WEATHER_API_KEY"]
+    NATIVE_API_KEY = conf["NATIVE_API_KEY"]
+    DYNAMIC_BUILDING = conf["DYNAMIC_BUILDING"]
 
 
 def load_environment() -> None:
