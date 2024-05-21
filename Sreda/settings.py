@@ -25,7 +25,7 @@ class GlobalContext(metaclass=SingletonMetaclass):
         self.recognizer_threshold = 0.5
         self.microphone_duration = 0.5
         self.microphone_timeout = 2
-        self.phrase_timeout = 25
+        self.phrase_timeout = 8
 
         # 'en', 'es', 'fr', 'pt', 'de', 'ru' ONLY.
         # SOME FUNCTIONS IN OTHER LANGUAGES ARE NOT AVAILABLE

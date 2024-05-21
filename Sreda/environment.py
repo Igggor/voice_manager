@@ -5,11 +5,15 @@ import sys
 
 class Environment:
     __ROOT__ = os.path.dirname(__file__)
-    conf = dotenv_values("storage/.env")
-    MODEL = conf["MODEL"]
-    OPEN_WEATHER_API_KEY = conf["WEATHER_API_KEY"]
-    NATIVE_API_KEY = conf["NATIVE_API_KEY"]
-    DYNAMIC_BUILDING = conf["DYNAMIC_BUILDING"]
+    # conf = dotenv_values("storage/.env")
+    # MODEL = conf["MODEL"]
+    # OPEN_WEATHER_API_KEY = conf["WEATHER_API_KEY"]
+    # NATIVE_API_KEY = conf["NATIVE_API_KEY"]
+    # DYNAMIC_BUILDING = conf["DYNAMIC_BUILDING"]
+    MODEL = None
+    OPEN_WEATHER_API_KEY = None
+    NATIVE_API_KEY = None
+    DYNAMIC_BUILDING = None
 
 
 def load_environment() -> None:
