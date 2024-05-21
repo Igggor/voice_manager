@@ -8,4 +8,5 @@ Sreda/__pycache__/
 Sreda/storage/buffer
 Sreda/storage/.env
 Sreda/model
+Sreda/test.py
 
