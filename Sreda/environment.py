@@ -1,5 +1,6 @@
 from dotenv import load_dotenv, dotenv_values
 import os
+import sys
 
 
 class Environment:
@@ -64,9 +65,23 @@ def load_environment() -> None:
                                 "with expected attributes <MODEL>, <WEATHER_API_KEY>, <DYNAMIC_BUILDING>.")
 
 
+def build_PYTHONPATH() -> None:
+    """
+    Метод изменения ``PYTHONPATH`` для корректной работы при запуске из консоли.
+
+    :return:
+    """
+
+    path = os.path.dirname(__file__)
+    sub_path = os.path.dirname(path)
+
+    if sub_path not in sys.path:
+        sys.path.insert(0, sub_path)
+
+
 def check_model() -> None:
     path = os.path.join(os.path.dirname(__file__), f"model/{Environment.MODEL}.pt")
 
     if not os.path.exists(path):
-        raise ImportError(f"Cannot find whisper-model <{Environment.MODEL}> on path Sreda/model: "
+        raise ImportError(f"Cannot find whisper-model <{Environment.MODEL}> on path {path}: "
                           f"you should pre-install it. Please run the setup-script 'setup.py' and try again.")

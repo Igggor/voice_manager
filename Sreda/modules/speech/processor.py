@@ -246,9 +246,10 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         :return:
         """
 
+        path = os.path.join(Environment.__ROOT__, "storage/buffer")
         try:
             tts = gTTS(text=output_text, lang=lang, tld="com", timeout=10)
-            tts.save(f"storage/buffer/{index}.mp3")
+            tts.save(f"{path}/{index}.mp3")
         except OSError as error:
             print(f"Warning: something went wrong while saving file with index {index}: {error}")
         except (RuntimeError, ValueError, AssertionError, gtts.tts.gTTSError) as error:
@@ -256,8 +257,10 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
 
     @staticmethod
     def _play_text(index: int, tempo: float) -> None:
+        buffer = os.path.join(Environment.__ROOT__, "storage/buffer")
+
         try:
-            os.system(f"play storage/buffer/{index}.mp3 tempo {tempo}")
+            os.system(f"play {buffer}/{index}.mp3 tempo {tempo}")
         except OSError as error:
             print(f"Warning: something went wrong while playing file with index {index}: {error}")
         print(f"storage/buffer/{index}.mp3 tempo {tempo}")
@@ -324,8 +327,8 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         """
 
         buffer = os.path.join(Environment.__ROOT__, "storage/buffer")
-        if not os.path.exists(buffer):
-            os.system(f"mkdir {buffer}")
+        if not os.path.exists(path=buffer):
+            os.mkdir(buffer)
 
     @staticmethod
     def clear_buffer(full: bool = False) -> None:

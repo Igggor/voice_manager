@@ -1,3 +1,5 @@
+from Sreda.environment import Environment
+
 from Sreda.modules.translation.processor import Translator
 from Sreda.modules.parser import canonize_text
 from Sreda.modules.collecting.units import Trigger, TriggerJSON, Storage
@@ -5,6 +7,7 @@ from Sreda.modules.collecting.units import Trigger, TriggerJSON, Storage
 from Sreda.static.constants import DEFAULT_TRIGGERS, LANGUAGES
 
 import json
+import os
 from tqdm import tqdm
 from time import sleep
 
@@ -157,7 +160,8 @@ def load_all_triggers(required_keys: list[str] = None) -> dict[str, list[Trigger
     :raise LookupError: в случае, если не найдено построенных триггеров для какой-либо команды.
     """
 
-    with open("storage/triggers.json", "r") as file:
+    path = os.path.join(Environment.__ROOT__, "storage/triggers.json")
+    with open(path, "r") as file:
         data_json: dict[str, list[dict[str, str]]] = json.load(file)["main"]
 
     new_data_json: dict[str, list[Trigger]] = dict()
@@ -181,7 +185,9 @@ def load_all_words() -> dict[str, list[Trigger]]:
     :return: Готовый словарь вида ``{ key: [`` перевод слова ``key`` на поддерживаемые языки ``] }``.
     """
 
-    with open("storage/words.json", "r") as file:
+    path = os.path.join(Environment.__ROOT__, "storage/words.json")
+
+    with open(path, "r") as file:
         data_json: dict[str, list[dict[str, str]]] = json.load(file)["main"]
 
     new_data_json: dict[str, list[Trigger]] = dict()
@@ -224,7 +230,8 @@ def _dump_data(data_json, path: str = "storage/triggers.json") -> None:
     """
 
     new_data_json = {"main": data_json}
-    with open(path, "w") as file:
+    _path = os.path.join(Environment.__ROOT__, path)
+    with open(_path, "w") as file:
         json.dump(new_data_json, file, cls=TriggerJSON, ensure_ascii=False, indent=4, sort_keys=True)
 
 
