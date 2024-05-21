@@ -21,7 +21,6 @@ from Sreda.static.metaclasses import SingletonMetaclass
 from time import sleep
 import threading
 import sys
-import os
 import asyncio
 import random
 
@@ -60,8 +59,6 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
         Инициализируются все составные части приложения (классы).
         """
-
-        os.chdir(os.path.dirname(__file__))
 
         load_environment()
         load_storage()
