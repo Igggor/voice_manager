@@ -20,6 +20,8 @@ class APIProcessor(metaclass=SingletonMetaclass):
         self.url = "https://test.igreeda.keenetic.pro/API/Devices"
 
         self.KEY = Environment.NATIVE_API_KEY
+        # self.KEY = "gmZyWupjOON8b6O4G217B59Pd3ZRUFbB"
+        print(self.KEY)
         self.RETRY = 3
 
     def _get(self, **kwargs) -> requests.Response:
@@ -41,7 +43,7 @@ class APIProcessor(metaclass=SingletonMetaclass):
 
     def get_device_status(self):
         data = self._get(title="AnLamp")
-        return data[0]["settings"]["status"]
+        return data #[0]["settings"]["status"]
 
     def _post(self, new_status: int = 0) -> requests.Response:
         """

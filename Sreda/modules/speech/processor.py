@@ -257,7 +257,7 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
     @staticmethod
     def _play_text(index: int, tempo: float) -> None:
         try:
-            os.system(f"play Environment.ROOT storage/buffer/{index}.mp3 tempo {tempo}")
+            os.system(f"play storage/buffer/{index}.mp3 tempo {tempo}")
         except OSError as error:
             print(f"Warning: something went wrong while playing file with index {index}: {error}")
         print(f"storage/buffer/{index}.mp3 tempo {tempo}")
