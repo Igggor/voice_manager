@@ -1,19 +1,19 @@
 from Sreda.settings import GlobalContext
 from Sreda.environment import load_environment, check_model
 
-from Sreda.modules.time import TimeWorker
+from Sreda.modules.time.processor import TimeWorker
 from Sreda.modules.logs.processor import Logger
 from Sreda.modules.text.processor import TextProcessor
 from Sreda.modules.text.units import Response
 from Sreda.modules.speech.processor import SpeechTranslator
 from Sreda.modules.speech.units import PlayableText
 from Sreda.modules.scenarios.processor import ScenarioInteractor
-from Sreda.modules.format import check_format, check_recognition
-from Sreda.modules.functions import FunctionsCore
+from Sreda.modules.format.processor import check_format, check_recognition
+from Sreda.modules.functions.processor import FunctionsCore
 from Sreda.modules.translation.processor import Translator
 from Sreda.modules.calendar.processor import TODOInteractor
 from Sreda.modules.collecting.processor import load_storage
-from Sreda.modules.parser import remove_whitespaces
+from Sreda.modules.parser.processor import remove_whitespaces
 from Sreda.modules.api.processor import APIProcessor
 
 from Sreda.static.metaclasses import SingletonMetaclass

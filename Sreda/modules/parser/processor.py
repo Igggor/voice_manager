@@ -1,5 +1,5 @@
 from Sreda.modules.text.units import Command
-from Sreda.modules.format import is_language_fully_supported
+from Sreda.modules.format.processor import is_language_fully_supported
 
 from Sreda.static.local import get_month, get_language_key, get_word, replace_numbers
 

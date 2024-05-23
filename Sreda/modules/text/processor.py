@@ -1,11 +1,11 @@
 from Sreda.settings import GlobalContext
 
 from Sreda.modules.api.processor import APIProcessor
-from Sreda.modules.functions import FunctionsCore
-from Sreda.modules.time import TimeWorker
+from Sreda.modules.functions.processor import FunctionsCore
+from Sreda.modules.time.processor import TimeWorker
 from Sreda.modules.text.units import Command
 from Sreda.modules.scenarios.processor import ScenarioInteractor
-from Sreda.modules.parser import parse_info, canonize_text
+from Sreda.modules.parser.processor import parse_info, canonize_text
 from Sreda.modules.speech.processor import SpeechTranslator
 from Sreda.modules.translation.processor import Translator
 from Sreda.modules.collecting.processor import load_all_triggers, ready_all, ready_all_words

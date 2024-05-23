@@ -1,7 +1,7 @@
 from Sreda.environment import Environment
 
 from Sreda.modules.translation.processor import Translator
-from Sreda.modules.parser import canonize_text
+from Sreda.modules.parser.processor import canonize_text
 from Sreda.modules.collecting.units import Trigger, TriggerJSON, Storage
 
 from Sreda.static.constants import DEFAULT_TRIGGERS, LANGUAGES
