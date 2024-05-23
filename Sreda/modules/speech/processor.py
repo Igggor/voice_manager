@@ -214,7 +214,6 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
             или, в случае произвольной ошибки, ``None``.
         """
 
-        return input()
         if not self.LOCKER.available(thread_id=threading.get_native_id()):
             return None
 
