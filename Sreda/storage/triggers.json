@@ -10314,6 +10314,14 @@
             },
             {
                 "lang": "ru",
+                "text": "запусти устройства"
+            },
+            {
+                "lang": "ru",
+                "text": "запуск устройство"
+            },
+            {
+                "lang": "ru",
                 "text": "запуск устройства"
             },
             {
@@ -10322,51 +10330,27 @@
             },
             {
                 "lang": "ru",
+                "text": "включение устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "включи устройства"
+            },
+            {
+                "lang": "ru",
                 "text": "включение устройства"
+            },
+            {
+                "lang": "ru",
+                "text": "включи свет"
+            },
+            {
+                "lang": "ru",
+                "text": "включение света"
             },
             {
                 "lang": "ar",
                 "text": "إطلاق الجهاز"
-            },
-            {
-                "lang": "de",
-                "text": "das gerät einschalten"
-            },
-            {
-                "lang": "fi",
-                "text": "käynnistää laite"
-            },
-            {
-                "lang": "fr",
-                "text": "activer lappareil"
-            },
-            {
-                "lang": "ja",
-                "text": "デバイスをオンにします"
-            },
-            {
-                "lang": "ko",
-                "text": "장치를 켭니다"
-            },
-            {
-                "lang": "sv",
-                "text": "starta enheten"
-            },
-            {
-                "lang": "sv",
-                "text": "slå på enheten"
-            },
-            {
-                "lang": "th",
-                "text": "เปิดอุปกรณ์"
-            },
-            {
-                "lang": "zh-CN",
-                "text": "启动设备"
-            },
-            {
-                "lang": "zh-CN",
-                "text": "打开设备"
             },
             {
                 "lang": "ar",
@@ -10379,10 +10363,6 @@
             {
                 "lang": "bg",
                 "text": "стартирайте устройството"
-            },
-            {
-                "lang": "bg",
-                "text": "стартиране на устройството"
             },
             {
                 "lang": "bg",
@@ -10414,10 +10394,6 @@
             },
             {
                 "lang": "da",
-                "text": "lancering af enheden"
-            },
-            {
-                "lang": "da",
                 "text": "tænd for enheden"
             },
             {
@@ -10430,15 +10406,11 @@
             },
             {
                 "lang": "de",
-                "text": "starten des geräts"
+                "text": "das gerät einschalten"
             },
             {
                 "lang": "el",
                 "text": "εκκινήστε τη συσκευή"
-            },
-            {
-                "lang": "el",
-                "text": "εκκίνηση της συσκευής"
             },
             {
                 "lang": "el",
@@ -10454,10 +10426,6 @@
             },
             {
                 "lang": "en",
-                "text": "launching the device"
-            },
-            {
-                "lang": "en",
                 "text": "turn on the device"
             },
             {
@@ -10467,10 +10435,6 @@
             {
                 "lang": "es",
                 "text": "iniciar el dispositivo"
-            },
-            {
-                "lang": "es",
-                "text": "lanzamiento del dispositivo"
             },
             {
                 "lang": "es",
@@ -10486,10 +10450,6 @@
             },
             {
                 "lang": "et",
-                "text": "seadme käivitamine"
-            },
-            {
-                "lang": "et",
                 "text": "lülitage seade sisse"
             },
             {
@@ -10498,7 +10458,7 @@
             },
             {
                 "lang": "fi",
-                "text": "laitteen käynnistäminen"
+                "text": "käynnistää laite"
             },
             {
                 "lang": "fi",
@@ -10510,15 +10470,11 @@
             },
             {
                 "lang": "fr",
-                "text": "lancement de lappareil"
+                "text": "activer lappareil"
             },
             {
                 "lang": "hi",
                 "text": "डिवाइस लॉन्च करें"
-            },
-            {
-                "lang": "hi",
-                "text": "डिवाइस लॉन्च करना"
             },
             {
                 "lang": "hi",
@@ -10534,10 +10490,6 @@
             },
             {
                 "lang": "hu",
-                "text": "az eszköz elindítása"
-            },
-            {
-                "lang": "hu",
                 "text": "kapcsolja be az eszközt"
             },
             {
@@ -10547,10 +10499,6 @@
             {
                 "lang": "id",
                 "text": "luncurkan perangkat"
-            },
-            {
-                "lang": "id",
-                "text": "meluncurkan perangkat"
             },
             {
                 "lang": "id",
@@ -10566,10 +10514,6 @@
             },
             {
                 "lang": "it",
-                "text": "avvio del dispositivo"
-            },
-            {
-                "lang": "it",
                 "text": "accendi il dispositivo"
             },
             {
@@ -10582,7 +10526,7 @@
             },
             {
                 "lang": "ja",
-                "text": "デバイスの起動"
+                "text": "デバイスをオンにします"
             },
             {
                 "lang": "ko",
@@ -10590,15 +10534,11 @@
             },
             {
                 "lang": "ko",
-                "text": "장치를 시작합니다"
+                "text": "장치를 켭니다"
             },
             {
                 "lang": "lv",
                 "text": "palaidiet ierīci"
-            },
-            {
-                "lang": "lv",
-                "text": "ierīces palaišana"
             },
             {
                 "lang": "lv",
@@ -10614,10 +10554,6 @@
             },
             {
                 "lang": "nl",
-                "text": "het apparaat starten"
-            },
-            {
-                "lang": "nl",
                 "text": "schakel het apparaat in"
             },
             {
@@ -10627,10 +10563,6 @@
             {
                 "lang": "pl",
                 "text": "uruchom urządzenie"
-            },
-            {
-                "lang": "pl",
-                "text": "uruchamianie urządzenia"
             },
             {
                 "lang": "pl",
@@ -10646,10 +10578,6 @@
             },
             {
                 "lang": "pt",
-                "text": "iniciando o dispositivo"
-            },
-            {
-                "lang": "pt",
                 "text": "ligue o dispositivo"
             },
             {
@@ -10662,10 +10590,6 @@
             },
             {
                 "lang": "ro",
-                "text": "lansarea dispozitivului"
-            },
-            {
-                "lang": "ro",
                 "text": "porniți dispozitivul"
             },
             {
@@ -10673,28 +10597,8 @@
                 "text": "pornirea dispozitivului"
             },
             {
-                "lang": "ru",
-                "text": "запусти устройство"
-            },
-            {
-                "lang": "ru",
-                "text": "запуск устройства"
-            },
-            {
-                "lang": "ru",
-                "text": "включи устройство"
-            },
-            {
-                "lang": "ru",
-                "text": "включение устройства"
-            },
-            {
                 "lang": "sk",
                 "text": "spustite zariadenie"
-            },
-            {
-                "lang": "sk",
-                "text": "spustenie zariadenia"
             },
             {
                 "lang": "sk",
@@ -10721,16 +10625,20 @@
                 "text": "укључивање уређаја"
             },
             {
+                "lang": "sv",
+                "text": "starta enheten"
+            },
+            {
+                "lang": "sv",
+                "text": "slå på enheten"
+            },
+            {
                 "lang": "th",
-                "text": "การเปิดตัวอุปกรณ์"
+                "text": "เปิดอุปกรณ์"
             },
             {
                 "lang": "tr",
                 "text": "cihazı başlatın"
-            },
-            {
-                "lang": "tr",
-                "text": "cihazı başlatma"
             },
             {
                 "lang": "tr",
@@ -10746,15 +10654,487 @@
             },
             {
                 "lang": "uk",
-                "text": "запуск пристрою"
-            },
-            {
-                "lang": "uk",
                 "text": "увімкніть пристрій"
             },
             {
                 "lang": "uk",
                 "text": "увімкнення пристрою"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "启动设备"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "打开设备"
+            },
+            {
+                "lang": "ar",
+                "text": "تشغيل جهاز"
+            },
+            {
+                "lang": "ar",
+                "text": "تشغيل الأضواء"
+            },
+            {
+                "lang": "ar",
+                "text": "إدراج الضوء"
+            },
+            {
+                "lang": "bg",
+                "text": "устройство за стартиране"
+            },
+            {
+                "lang": "bg",
+                "text": "стартиране на устройството"
+            },
+            {
+                "lang": "bg",
+                "text": "включи светлините"
+            },
+            {
+                "lang": "bg",
+                "text": "включване на светлината"
+            },
+            {
+                "lang": "cs",
+                "text": "zapnout světla"
+            },
+            {
+                "lang": "cs",
+                "text": "zahrnutí světla"
+            },
+            {
+                "lang": "da",
+                "text": "startenhed"
+            },
+            {
+                "lang": "da",
+                "text": "lancering af enheden"
+            },
+            {
+                "lang": "da",
+                "text": "tænd lyset"
+            },
+            {
+                "lang": "da",
+                "text": "inkludering af lys"
+            },
+            {
+                "lang": "de",
+                "text": "startgerät"
+            },
+            {
+                "lang": "de",
+                "text": "starten des geräts"
+            },
+            {
+                "lang": "de",
+                "text": "mach das licht an"
+            },
+            {
+                "lang": "de",
+                "text": "licht des lichts"
+            },
+            {
+                "lang": "el",
+                "text": "συσκευή εκκίνησης"
+            },
+            {
+                "lang": "el",
+                "text": "εκκίνηση της συσκευής"
+            },
+            {
+                "lang": "el",
+                "text": "άναψε τα φώτα"
+            },
+            {
+                "lang": "el",
+                "text": "ενσωμάτωση φωτός"
+            },
+            {
+                "lang": "en",
+                "text": "launch device"
+            },
+            {
+                "lang": "en",
+                "text": "launching the device"
+            },
+            {
+                "lang": "en",
+                "text": "turn on the lights"
+            },
+            {
+                "lang": "en",
+                "text": "inclusion of light"
+            },
+            {
+                "lang": "es",
+                "text": "dispositivo de lanzamiento"
+            },
+            {
+                "lang": "es",
+                "text": "lanzamiento del dispositivo"
+            },
+            {
+                "lang": "es",
+                "text": "enciende las luces"
+            },
+            {
+                "lang": "es",
+                "text": "inclusión de la luz"
+            },
+            {
+                "lang": "et",
+                "text": "käivitusseade"
+            },
+            {
+                "lang": "et",
+                "text": "seadme käivitamine"
+            },
+            {
+                "lang": "et",
+                "text": "lülitage tuled sisse"
+            },
+            {
+                "lang": "et",
+                "text": "valguse kaasamine"
+            },
+            {
+                "lang": "fi",
+                "text": "käynnistyslaite"
+            },
+            {
+                "lang": "fi",
+                "text": "laitteen käynnistäminen"
+            },
+            {
+                "lang": "fi",
+                "text": "sytytä valot"
+            },
+            {
+                "lang": "fi",
+                "text": "valon sisällyttäminen"
+            },
+            {
+                "lang": "fr",
+                "text": "dispositif de lancement"
+            },
+            {
+                "lang": "fr",
+                "text": "lancement de lappareil"
+            },
+            {
+                "lang": "fr",
+                "text": "allume la lumière"
+            },
+            {
+                "lang": "fr",
+                "text": "inclusion de la lumière"
+            },
+            {
+                "lang": "hi",
+                "text": "प्रक्षेपण युक्ति"
+            },
+            {
+                "lang": "hi",
+                "text": "डिवाइस लॉन्च करना"
+            },
+            {
+                "lang": "hi",
+                "text": "बत्तियां जला दो"
+            },
+            {
+                "lang": "hi",
+                "text": "प्रकाश का समावेश"
+            },
+            {
+                "lang": "hu",
+                "text": "indítóeszköz"
+            },
+            {
+                "lang": "hu",
+                "text": "az eszköz elindítása"
+            },
+            {
+                "lang": "hu",
+                "text": "kapcsold fel a világítást"
+            },
+            {
+                "lang": "hu",
+                "text": "a fény bevonása"
+            },
+            {
+                "lang": "id",
+                "text": "meluncurkan perangkat"
+            },
+            {
+                "lang": "id",
+                "text": "nyalakan lampunya"
+            },
+            {
+                "lang": "id",
+                "text": "dimasukkannya cahaya"
+            },
+            {
+                "lang": "it",
+                "text": "dispositivo di lancio"
+            },
+            {
+                "lang": "it",
+                "text": "avvio del dispositivo"
+            },
+            {
+                "lang": "it",
+                "text": "accendere le luci"
+            },
+            {
+                "lang": "it",
+                "text": "inclusione della luce"
+            },
+            {
+                "lang": "ja",
+                "text": "起動装置"
+            },
+            {
+                "lang": "ja",
+                "text": "デバイスの起動"
+            },
+            {
+                "lang": "ja",
+                "text": "電気を付ける"
+            },
+            {
+                "lang": "ja",
+                "text": "光の包含"
+            },
+            {
+                "lang": "ko",
+                "text": "발사 장치"
+            },
+            {
+                "lang": "ko",
+                "text": "장치를 시작합니다"
+            },
+            {
+                "lang": "ko",
+                "text": "불을 켜다"
+            },
+            {
+                "lang": "ko",
+                "text": "빛의 포함"
+            },
+            {
+                "lang": "lv",
+                "text": "palaišanas ierīce"
+            },
+            {
+                "lang": "lv",
+                "text": "ierīces palaišana"
+            },
+            {
+                "lang": "lv",
+                "text": "ieslēdz gaismas"
+            },
+            {
+                "lang": "lv",
+                "text": "gaismas iekļaušana"
+            },
+            {
+                "lang": "nl",
+                "text": "startapparaat"
+            },
+            {
+                "lang": "nl",
+                "text": "het apparaat starten"
+            },
+            {
+                "lang": "nl",
+                "text": "de lichten aandoen"
+            },
+            {
+                "lang": "nl",
+                "text": "opname van licht"
+            },
+            {
+                "lang": "pl",
+                "text": "uruchomienie uruchom"
+            },
+            {
+                "lang": "pl",
+                "text": "uruchamianie urządzenia"
+            },
+            {
+                "lang": "pl",
+                "text": "włącz światła"
+            },
+            {
+                "lang": "pl",
+                "text": "włączenie światła"
+            },
+            {
+                "lang": "pt",
+                "text": "lançar o dispositivo"
+            },
+            {
+                "lang": "pt",
+                "text": "iniciando o dispositivo"
+            },
+            {
+                "lang": "pt",
+                "text": "acenda as luzes"
+            },
+            {
+                "lang": "pt",
+                "text": "inclusão de luz"
+            },
+            {
+                "lang": "ro",
+                "text": "dispozitiv de lansare"
+            },
+            {
+                "lang": "ro",
+                "text": "lansarea dispozitivului"
+            },
+            {
+                "lang": "ro",
+                "text": "porniți luminile"
+            },
+            {
+                "lang": "ro",
+                "text": "includerea luminii"
+            },
+            {
+                "lang": "ru",
+                "text": "запусти устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "запусти устройства"
+            },
+            {
+                "lang": "ru",
+                "text": "запуск устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "запуск устройства"
+            },
+            {
+                "lang": "ru",
+                "text": "включи устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "включение устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "включи устройства"
+            },
+            {
+                "lang": "ru",
+                "text": "включение устройства"
+            },
+            {
+                "lang": "ru",
+                "text": "включи свет"
+            },
+            {
+                "lang": "ru",
+                "text": "включение света"
+            },
+            {
+                "lang": "sk",
+                "text": "spúšťacie zariadenie"
+            },
+            {
+                "lang": "sk",
+                "text": "spustenie zariadenia"
+            },
+            {
+                "lang": "sk",
+                "text": "zapni svetlá"
+            },
+            {
+                "lang": "sk",
+                "text": "zahrnutie svetla"
+            },
+            {
+                "lang": "sr",
+                "text": "упалите светло"
+            },
+            {
+                "lang": "sr",
+                "text": "укључивање светлости"
+            },
+            {
+                "lang": "sv",
+                "text": "startanordning"
+            },
+            {
+                "lang": "sv",
+                "text": "slå på belysningen"
+            },
+            {
+                "lang": "sv",
+                "text": "ljus inkludering"
+            },
+            {
+                "lang": "th",
+                "text": "อุปกรณ์เปิดตัว"
+            },
+            {
+                "lang": "th",
+                "text": "การเปิดตัวอุปกรณ์"
+            },
+            {
+                "lang": "th",
+                "text": "เปิดไฟ"
+            },
+            {
+                "lang": "th",
+                "text": "การรวมแสง"
+            },
+            {
+                "lang": "tr",
+                "text": "fırlatma cihazı"
+            },
+            {
+                "lang": "tr",
+                "text": "cihazı başlatma"
+            },
+            {
+                "lang": "tr",
+                "text": "ışıkları aç"
+            },
+            {
+                "lang": "tr",
+                "text": "işığın dahil edilmesi"
+            },
+            {
+                "lang": "uk",
+                "text": "пристрій запуску"
+            },
+            {
+                "lang": "uk",
+                "text": "запуск пристрою"
+            },
+            {
+                "lang": "uk",
+                "text": "увімкни світло"
+            },
+            {
+                "lang": "uk",
+                "text": "включення світла"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "打开灯"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "包含光"
             }
         ],
         "set-volume": [
@@ -11470,7 +11850,15 @@
             },
             {
                 "lang": "ru",
+                "text": "останови устройства"
+            },
+            {
+                "lang": "ru",
                 "text": "выключи устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "выключи устройства"
             },
             {
                 "lang": "ru",
@@ -11478,143 +11866,47 @@
             },
             {
                 "lang": "ru",
+                "text": "отключи устройства"
+            },
+            {
+                "lang": "ru",
+                "text": "выключение устройство"
+            },
+            {
+                "lang": "ru",
                 "text": "выключение устройства"
+            },
+            {
+                "lang": "ru",
+                "text": "отключение устройство"
             },
             {
                 "lang": "ru",
                 "text": "отключение устройства"
             },
             {
-                "lang": "ar",
-                "text": "إيقاف تشغيل الجهاز"
+                "lang": "ru",
+                "text": "выключи свет"
             },
             {
-                "lang": "bg",
-                "text": "изключете устройството"
+                "lang": "ru",
+                "text": "выключение света"
             },
             {
-                "lang": "bg",
-                "text": "изключване на устройството"
+                "lang": "ru",
+                "text": "отключи свет"
             },
             {
-                "lang": "cs",
-                "text": "vypnutí zařízení"
+                "lang": "ru",
+                "text": "отключение света"
             },
             {
-                "lang": "da",
-                "text": "slukker for enheden"
+                "lang": "ru",
+                "text": "отключи лампу"
             },
             {
-                "lang": "de",
-                "text": "ausschalten des geräts"
-            },
-            {
-                "lang": "el",
-                "text": "απενεργοποίηση της συσκευής"
-            },
-            {
-                "lang": "en",
-                "text": "turning off the device"
-            },
-            {
-                "lang": "es",
-                "text": "apagar el dispositivo"
-            },
-            {
-                "lang": "et",
-                "text": "seadme väljalülitamine"
-            },
-            {
-                "lang": "fi",
-                "text": "laitteen sammuttaminen"
-            },
-            {
-                "lang": "fr",
-                "text": "éteindre lappareil"
-            },
-            {
-                "lang": "hi",
-                "text": "डिवाइस को बंद करना"
-            },
-            {
-                "lang": "hu",
-                "text": "az eszköz kikapcsolása"
-            },
-            {
-                "lang": "id",
-                "text": "mematikan perangkat"
-            },
-            {
-                "lang": "it",
-                "text": "spegnere il dispositivo"
-            },
-            {
-                "lang": "ja",
-                "text": "デバイスの電源を切る"
-            },
-            {
-                "lang": "ko",
-                "text": "장치를 끕니다"
-            },
-            {
-                "lang": "lv",
-                "text": "ierīces izslēgšana"
-            },
-            {
-                "lang": "nl",
-                "text": "het apparaat uitschakelen"
-            },
-            {
-                "lang": "pl",
-                "text": "wyłączenie urządzenia"
-            },
-            {
-                "lang": "pt",
-                "text": "desligando o dispositivo"
-            },
-            {
-                "lang": "ro",
-                "text": "opriți dispozitivul"
-            },
-            {
-                "lang": "ro",
-                "text": "oprirea dispozitivului"
-            },
-            {
-                "lang": "sk",
-                "text": "vypnutie zariadenia"
-            },
-            {
-                "lang": "sr",
-                "text": "искључите уређај"
-            },
-            {
-                "lang": "sr",
-                "text": "искључивање уређаја"
-            },
-            {
-                "lang": "sv",
-                "text": "stäng av enheten"
-            },
-            {
-                "lang": "th",
-                "text": "ปิดอุปกรณ์"
-            },
-            {
-                "lang": "tr",
-                "text": "cihazı kapat"
-            },
-            {
-                "lang": "uk",
-                "text": "вимкнення пристрою"
-            },
-            {
-                "lang": "zh-CN",
-                "text": "关闭设备"
-            },
-            {
-                "lang": "ar",
-                "text": "أوقف الجهاز"
+                "lang": "ru",
+                "text": "отключение лампы"
             },
             {
                 "lang": "ar",
@@ -11625,12 +11917,24 @@
                 "text": "افصل الجهاز"
             },
             {
-                "lang": "bg",
-                "text": "спрете устройството"
+                "lang": "ar",
+                "text": "إيقاف تشغيل الجهاز"
             },
             {
-                "lang": "cs",
-                "text": "zastavte zařízení"
+                "lang": "ar",
+                "text": "أطفئ الضوء"
+            },
+            {
+                "lang": "bg",
+                "text": "изключете устройството"
+            },
+            {
+                "lang": "bg",
+                "text": "изключване на устройството"
+            },
+            {
+                "lang": "bg",
+                "text": "изключване на светлината"
             },
             {
                 "lang": "cs",
@@ -11641,8 +11945,12 @@
                 "text": "odpojte zařízení"
             },
             {
-                "lang": "da",
-                "text": "stop enheden"
+                "lang": "cs",
+                "text": "vypnutí zařízení"
+            },
+            {
+                "lang": "cs",
+                "text": "vypnutí světla"
             },
             {
                 "lang": "da",
@@ -11653,8 +11961,12 @@
                 "text": "frakobl enheden"
             },
             {
-                "lang": "de",
-                "text": "stoppen sie das gerät"
+                "lang": "da",
+                "text": "slukker for enheden"
+            },
+            {
+                "lang": "da",
+                "text": "slukker lyset"
             },
             {
                 "lang": "de",
@@ -11665,8 +11977,12 @@
                 "text": "trennen sie das gerät"
             },
             {
-                "lang": "el",
-                "text": "σταματήστε τη συσκευή"
+                "lang": "de",
+                "text": "ausschalten des geräts"
+            },
+            {
+                "lang": "de",
+                "text": "das licht ausschalten"
             },
             {
                 "lang": "el",
@@ -11677,8 +11993,12 @@
                 "text": "αποσυνδέστε τη συσκευή"
             },
             {
-                "lang": "en",
-                "text": "stop the device"
+                "lang": "el",
+                "text": "απενεργοποίηση της συσκευής"
+            },
+            {
+                "lang": "el",
+                "text": "απενεργοποίηση του φωτός"
             },
             {
                 "lang": "en",
@@ -11689,16 +12009,24 @@
                 "text": "disconnect the device"
             },
             {
+                "lang": "en",
+                "text": "turning off the device"
+            },
+            {
+                "lang": "en",
+                "text": "turning off the light"
+            },
+            {
                 "lang": "es",
-                "text": "detener el dispositivo"
+                "text": "apagar el dispositivo"
             },
             {
                 "lang": "es",
                 "text": "desconectar el dispositivo"
             },
             {
-                "lang": "et",
-                "text": "peatage seade"
+                "lang": "es",
+                "text": "apagar la luz"
             },
             {
                 "lang": "et",
@@ -11709,8 +12037,12 @@
                 "text": "ühendage seade lahti"
             },
             {
-                "lang": "fi",
-                "text": "pysäytä laite"
+                "lang": "et",
+                "text": "seadme väljalülitamine"
+            },
+            {
+                "lang": "et",
+                "text": "valguse väljalülitamine"
             },
             {
                 "lang": "fi",
@@ -11721,16 +12053,24 @@
                 "text": "irrota laite"
             },
             {
+                "lang": "fi",
+                "text": "laitteen sammuttaminen"
+            },
+            {
+                "lang": "fi",
+                "text": "valon sammuttaminen"
+            },
+            {
                 "lang": "fr",
-                "text": "arrêter lappareil"
+                "text": "éteindre lappareil"
             },
             {
                 "lang": "fr",
                 "text": "débrancher lappareil"
             },
             {
-                "lang": "hi",
-                "text": "डिवाइस को रोकें"
+                "lang": "fr",
+                "text": "éteindre la lumière"
             },
             {
                 "lang": "hi",
@@ -11741,8 +12081,12 @@
                 "text": "डिवाइस को डिस्कनेक्ट करें"
             },
             {
-                "lang": "hu",
-                "text": "állítsa le az eszközt"
+                "lang": "hi",
+                "text": "डिवाइस को बंद करना"
+            },
+            {
+                "lang": "hi",
+                "text": "प्रकाश को बंद करना"
             },
             {
                 "lang": "hu",
@@ -11751,6 +12095,14 @@
             {
                 "lang": "hu",
                 "text": "válasszuk le az eszközt"
+            },
+            {
+                "lang": "hu",
+                "text": "az eszköz kikapcsolása"
+            },
+            {
+                "lang": "hu",
+                "text": "kikapcsolja a fényt"
             },
             {
                 "lang": "id",
@@ -11765,8 +12117,12 @@
                 "text": "putuskan sambungan perangkat"
             },
             {
-                "lang": "it",
-                "text": "fermare il dispositivo"
+                "lang": "id",
+                "text": "mematikan perangkat"
+            },
+            {
+                "lang": "id",
+                "text": "mematikan lampu"
             },
             {
                 "lang": "it",
@@ -11775,6 +12131,14 @@
             {
                 "lang": "it",
                 "text": "scollegare il dispositivo"
+            },
+            {
+                "lang": "it",
+                "text": "spegnere il dispositivo"
+            },
+            {
+                "lang": "it",
+                "text": "spegnere la luce"
             },
             {
                 "lang": "ja",
@@ -11789,16 +12153,28 @@
                 "text": "デバイスを外します"
             },
             {
+                "lang": "ja",
+                "text": "デバイスの電源を切る"
+            },
+            {
+                "lang": "ja",
+                "text": "ライトをオフにします"
+            },
+            {
                 "lang": "ko",
                 "text": "장치를 중지하십시오"
+            },
+            {
+                "lang": "ko",
+                "text": "장치를 끕니다"
             },
             {
                 "lang": "ko",
                 "text": "장치를 분리하십시오"
             },
             {
-                "lang": "lv",
-                "text": "pārtrauciet ierīci"
+                "lang": "ko",
+                "text": "빛을 끕니다"
             },
             {
                 "lang": "lv",
@@ -11809,8 +12185,12 @@
                 "text": "atvienojiet ierīci"
             },
             {
-                "lang": "nl",
-                "text": "stop het apparaat"
+                "lang": "lv",
+                "text": "ierīces izslēgšana"
+            },
+            {
+                "lang": "lv",
+                "text": "izslēdzot gaismu"
             },
             {
                 "lang": "nl",
@@ -11819,6 +12199,14 @@
             {
                 "lang": "nl",
                 "text": "koppel het apparaat los"
+            },
+            {
+                "lang": "nl",
+                "text": "het apparaat uitschakelen"
+            },
+            {
+                "lang": "nl",
+                "text": "het licht uitschakelen"
             },
             {
                 "lang": "pl",
@@ -11833,8 +12221,12 @@
                 "text": "odłącz urządzenie"
             },
             {
-                "lang": "pt",
-                "text": "pare o dispositivo"
+                "lang": "pl",
+                "text": "wyłączenie urządzenia"
+            },
+            {
+                "lang": "pl",
+                "text": "wyłączanie światła"
             },
             {
                 "lang": "pt",
@@ -11845,32 +12237,28 @@
                 "text": "desconecte o dispositivo"
             },
             {
+                "lang": "pt",
+                "text": "desligando o dispositivo"
+            },
+            {
+                "lang": "pt",
+                "text": "desligando a luz"
+            },
+            {
+                "lang": "ro",
+                "text": "opriți dispozitivul"
+            },
+            {
                 "lang": "ro",
                 "text": "deconectați dispozitivul"
             },
             {
-                "lang": "ru",
-                "text": "останови устройство"
+                "lang": "ro",
+                "text": "oprirea dispozitivului"
             },
             {
-                "lang": "ru",
-                "text": "выключи устройство"
-            },
-            {
-                "lang": "ru",
-                "text": "отключи устройство"
-            },
-            {
-                "lang": "ru",
-                "text": "выключение устройства"
-            },
-            {
-                "lang": "ru",
-                "text": "отключение устройства"
-            },
-            {
-                "lang": "sk",
-                "text": "zastavte zariadenie"
+                "lang": "ro",
+                "text": "oprirea luminii"
             },
             {
                 "lang": "sk",
@@ -11881,16 +12269,36 @@
                 "text": "odpojte zariadenie"
             },
             {
+                "lang": "sk",
+                "text": "vypnutie zariadenia"
+            },
+            {
+                "lang": "sk",
+                "text": "vypnutie svetla"
+            },
+            {
                 "lang": "sr",
-                "text": "зауставити уређај"
+                "text": "искључите уређај"
+            },
+            {
+                "lang": "sr",
+                "text": "искључивање уређаја"
+            },
+            {
+                "lang": "sr",
+                "text": "искључивање светлости"
             },
             {
                 "lang": "sv",
-                "text": "stoppa enheten"
+                "text": "stäng av enheten"
             },
             {
                 "lang": "sv",
                 "text": "koppla bort enheten"
+            },
+            {
+                "lang": "sv",
+                "text": "stänga av ljuset"
             },
             {
                 "lang": "th",
@@ -11898,15 +12306,27 @@
             },
             {
                 "lang": "th",
+                "text": "ปิดอุปกรณ์"
+            },
+            {
+                "lang": "th",
                 "text": "ตัดการเชื่อมต่ออุปกรณ์"
             },
             {
+                "lang": "th",
+                "text": "ปิดไฟ"
+            },
+            {
                 "lang": "tr",
-                "text": "cihazı durdurun"
+                "text": "cihazı kapat"
             },
             {
                 "lang": "tr",
                 "text": "cihazın bağlantısını kesin"
+            },
+            {
+                "lang": "tr",
+                "text": "işığı kapatma"
             },
             {
                 "lang": "uk",
@@ -11921,12 +12341,704 @@
                 "text": "відєднайте пристрій"
             },
             {
+                "lang": "uk",
+                "text": "вимкнення пристрою"
+            },
+            {
+                "lang": "uk",
+                "text": "вимкнення світла"
+            },
+            {
                 "lang": "zh-CN",
                 "text": "停止设备"
             },
             {
                 "lang": "zh-CN",
+                "text": "关闭设备"
+            },
+            {
+                "lang": "zh-CN",
                 "text": "断开设备的连接"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "关闭灯"
+            },
+            {
+                "lang": "ar",
+                "text": "أوقف الجهاز"
+            },
+            {
+                "lang": "ar",
+                "text": "توقف الجهاز"
+            },
+            {
+                "lang": "ar",
+                "text": "اطفئ الضوء"
+            },
+            {
+                "lang": "ar",
+                "text": "افصل الضوء"
+            },
+            {
+                "lang": "ar",
+                "text": "افصل المصباح"
+            },
+            {
+                "lang": "ar",
+                "text": "إيقاف تشغيل المصباح"
+            },
+            {
+                "lang": "bg",
+                "text": "спрете устройството"
+            },
+            {
+                "lang": "bg",
+                "text": "спиране на устройството"
+            },
+            {
+                "lang": "bg",
+                "text": "изгаси осветлението"
+            },
+            {
+                "lang": "bg",
+                "text": "изключете светлината"
+            },
+            {
+                "lang": "bg",
+                "text": "изключете лампата"
+            },
+            {
+                "lang": "bg",
+                "text": "изключване на лампата"
+            },
+            {
+                "lang": "cs",
+                "text": "zastavte zařízení"
+            },
+            {
+                "lang": "cs",
+                "text": "zastavit zařízení"
+            },
+            {
+                "lang": "cs",
+                "text": "vypnout světla"
+            },
+            {
+                "lang": "cs",
+                "text": "odpojte světlo"
+            },
+            {
+                "lang": "cs",
+                "text": "odpojte lampu"
+            },
+            {
+                "lang": "cs",
+                "text": "vypnutí lampy"
+            },
+            {
+                "lang": "da",
+                "text": "stop enheden"
+            },
+            {
+                "lang": "da",
+                "text": "stop enhed"
+            },
+            {
+                "lang": "da",
+                "text": "slukke lyset"
+            },
+            {
+                "lang": "da",
+                "text": "frakobl lyset"
+            },
+            {
+                "lang": "da",
+                "text": "frakobl lampen"
+            },
+            {
+                "lang": "da",
+                "text": "slukker lampen"
+            },
+            {
+                "lang": "de",
+                "text": "stoppen sie das gerät"
+            },
+            {
+                "lang": "de",
+                "text": "gerät stoppen"
+            },
+            {
+                "lang": "de",
+                "text": "mach das licht aus"
+            },
+            {
+                "lang": "de",
+                "text": "das licht trennen"
+            },
+            {
+                "lang": "de",
+                "text": "trennen sie die lampe"
+            },
+            {
+                "lang": "de",
+                "text": "ausschalten der lampe"
+            },
+            {
+                "lang": "el",
+                "text": "σταματήστε τη συσκευή"
+            },
+            {
+                "lang": "el",
+                "text": "συσκευή διακοπής"
+            },
+            {
+                "lang": "el",
+                "text": "κλείσε το φως"
+            },
+            {
+                "lang": "el",
+                "text": "αποσυνδέστε το φως"
+            },
+            {
+                "lang": "el",
+                "text": "αποσυνδέστε τη λάμπα"
+            },
+            {
+                "lang": "el",
+                "text": "απενεργοποιώντας τη λάμπα"
+            },
+            {
+                "lang": "en",
+                "text": "stop the device"
+            },
+            {
+                "lang": "en",
+                "text": "stop device"
+            },
+            {
+                "lang": "en",
+                "text": "turn off the light"
+            },
+            {
+                "lang": "en",
+                "text": "disconnect the light"
+            },
+            {
+                "lang": "en",
+                "text": "disconnect the lamp"
+            },
+            {
+                "lang": "en",
+                "text": "turning off the lamp"
+            },
+            {
+                "lang": "es",
+                "text": "detener el dispositivo"
+            },
+            {
+                "lang": "es",
+                "text": "dispositivo de parada"
+            },
+            {
+                "lang": "es",
+                "text": "desconectar la luz"
+            },
+            {
+                "lang": "es",
+                "text": "desconectar la lámpara"
+            },
+            {
+                "lang": "es",
+                "text": "apagando la lámpara"
+            },
+            {
+                "lang": "et",
+                "text": "peatage seade"
+            },
+            {
+                "lang": "et",
+                "text": "peatumisseade"
+            },
+            {
+                "lang": "et",
+                "text": "pane tuli kustu"
+            },
+            {
+                "lang": "et",
+                "text": "ühendage valgust lahti"
+            },
+            {
+                "lang": "et",
+                "text": "ühendage lamb lahti"
+            },
+            {
+                "lang": "et",
+                "text": "lambi väljalülitamine"
+            },
+            {
+                "lang": "fi",
+                "text": "pysäytä laite"
+            },
+            {
+                "lang": "fi",
+                "text": "pysäytyslaite"
+            },
+            {
+                "lang": "fi",
+                "text": "sammuttaa valon"
+            },
+            {
+                "lang": "fi",
+                "text": "irrota valo"
+            },
+            {
+                "lang": "fi",
+                "text": "irrota lamppu"
+            },
+            {
+                "lang": "fi",
+                "text": "lampun sammuttaminen"
+            },
+            {
+                "lang": "fr",
+                "text": "arrêter lappareil"
+            },
+            {
+                "lang": "fr",
+                "text": "dispositif darrêt"
+            },
+            {
+                "lang": "fr",
+                "text": "débrancher la lumière"
+            },
+            {
+                "lang": "fr",
+                "text": "débrancher la lampe"
+            },
+            {
+                "lang": "fr",
+                "text": "éteindre la lampe"
+            },
+            {
+                "lang": "hi",
+                "text": "डिवाइस को रोकें"
+            },
+            {
+                "lang": "hi",
+                "text": "बंद युक्ति"
+            },
+            {
+                "lang": "hi",
+                "text": "बत्ती बंद करें"
+            },
+            {
+                "lang": "hi",
+                "text": "प्रकाश को डिस्कनेक्ट करें"
+            },
+            {
+                "lang": "hi",
+                "text": "दीपक को डिस्कनेक्ट करें"
+            },
+            {
+                "lang": "hi",
+                "text": "दीपक बंद करना"
+            },
+            {
+                "lang": "hu",
+                "text": "állítsa le az eszközt"
+            },
+            {
+                "lang": "hu",
+                "text": "stop eszköz"
+            },
+            {
+                "lang": "hu",
+                "text": "kapcsolja le a villanyt"
+            },
+            {
+                "lang": "hu",
+                "text": "válasszuk le a fényt"
+            },
+            {
+                "lang": "hu",
+                "text": "válasszuk le a lámpát"
+            },
+            {
+                "lang": "hu",
+                "text": "kikapcsolva a lámpát"
+            },
+            {
+                "lang": "id",
+                "text": "lepaskan lampu"
+            },
+            {
+                "lang": "id",
+                "text": "putuskan sambungan lampu"
+            },
+            {
+                "lang": "it",
+                "text": "fermare il dispositivo"
+            },
+            {
+                "lang": "it",
+                "text": "stop dispositivo"
+            },
+            {
+                "lang": "it",
+                "text": "spegni la luce"
+            },
+            {
+                "lang": "it",
+                "text": "scollegare la luce"
+            },
+            {
+                "lang": "it",
+                "text": "scollegare la lampada"
+            },
+            {
+                "lang": "it",
+                "text": "spegnere la lampada"
+            },
+            {
+                "lang": "ja",
+                "text": "明かりを消す"
+            },
+            {
+                "lang": "ja",
+                "text": "光を外します"
+            },
+            {
+                "lang": "ja",
+                "text": "ランプを外します"
+            },
+            {
+                "lang": "ja",
+                "text": "ランプをオフにします"
+            },
+            {
+                "lang": "ko",
+                "text": "빛을 해제"
+            },
+            {
+                "lang": "ko",
+                "text": "빛을 분리하십시오"
+            },
+            {
+                "lang": "ko",
+                "text": "램프를 분리하십시오"
+            },
+            {
+                "lang": "ko",
+                "text": "램프를 끕니다"
+            },
+            {
+                "lang": "lv",
+                "text": "pārtrauciet ierīci"
+            },
+            {
+                "lang": "lv",
+                "text": "apturēšanas ierīce"
+            },
+            {
+                "lang": "lv",
+                "text": "izslēgt gaismu"
+            },
+            {
+                "lang": "lv",
+                "text": "atvienojiet gaismu"
+            },
+            {
+                "lang": "lv",
+                "text": "atvienojiet lampu"
+            },
+            {
+                "lang": "lv",
+                "text": "izslēdzot lampu"
+            },
+            {
+                "lang": "nl",
+                "text": "stop het apparaat"
+            },
+            {
+                "lang": "nl",
+                "text": "stop apparaat"
+            },
+            {
+                "lang": "nl",
+                "text": "doe het licht uit"
+            },
+            {
+                "lang": "nl",
+                "text": "koppel het licht los"
+            },
+            {
+                "lang": "nl",
+                "text": "koppel de lamp los"
+            },
+            {
+                "lang": "nl",
+                "text": "het uitschakelen van de lamp"
+            },
+            {
+                "lang": "pl",
+                "text": "wyłącz światła"
+            },
+            {
+                "lang": "pl",
+                "text": "odłącz światło"
+            },
+            {
+                "lang": "pl",
+                "text": "odłącz lampę"
+            },
+            {
+                "lang": "pl",
+                "text": "wyłączanie lampy"
+            },
+            {
+                "lang": "pt",
+                "text": "pare o dispositivo"
+            },
+            {
+                "lang": "pt",
+                "text": "stop dispositivo"
+            },
+            {
+                "lang": "pt",
+                "text": "apague a luz"
+            },
+            {
+                "lang": "pt",
+                "text": "desconecte a luz"
+            },
+            {
+                "lang": "pt",
+                "text": "desconecte a lâmpada"
+            },
+            {
+                "lang": "pt",
+                "text": "desligando a lâmpada"
+            },
+            {
+                "lang": "ro",
+                "text": "dispozitiv de oprire"
+            },
+            {
+                "lang": "ro",
+                "text": "stinge lumina"
+            },
+            {
+                "lang": "ro",
+                "text": "deconectați lumina"
+            },
+            {
+                "lang": "ro",
+                "text": "deconectați lampa"
+            },
+            {
+                "lang": "ro",
+                "text": "opriți lampa"
+            },
+            {
+                "lang": "ru",
+                "text": "останови устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "останови устройства"
+            },
+            {
+                "lang": "ru",
+                "text": "выключи устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "выключи устройства"
+            },
+            {
+                "lang": "ru",
+                "text": "отключи устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "отключи устройства"
+            },
+            {
+                "lang": "ru",
+                "text": "выключение устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "выключение устройства"
+            },
+            {
+                "lang": "ru",
+                "text": "отключение устройство"
+            },
+            {
+                "lang": "ru",
+                "text": "отключение устройства"
+            },
+            {
+                "lang": "ru",
+                "text": "выключи свет"
+            },
+            {
+                "lang": "ru",
+                "text": "выключение света"
+            },
+            {
+                "lang": "ru",
+                "text": "отключи свет"
+            },
+            {
+                "lang": "ru",
+                "text": "отключение света"
+            },
+            {
+                "lang": "ru",
+                "text": "отключи лампу"
+            },
+            {
+                "lang": "ru",
+                "text": "отключение лампы"
+            },
+            {
+                "lang": "sk",
+                "text": "zastavte zariadenie"
+            },
+            {
+                "lang": "sk",
+                "text": "zastavovacia sieť"
+            },
+            {
+                "lang": "sk",
+                "text": "vypnúť svetlá"
+            },
+            {
+                "lang": "sk",
+                "text": "odpojte svetlo"
+            },
+            {
+                "lang": "sk",
+                "text": "odpojte žiarovku"
+            },
+            {
+                "lang": "sk",
+                "text": "vypnutie žiarovky"
+            },
+            {
+                "lang": "sr",
+                "text": "зауставити уређај"
+            },
+            {
+                "lang": "sr",
+                "text": "престанак уређај"
+            },
+            {
+                "lang": "sr",
+                "text": "угаси светло"
+            },
+            {
+                "lang": "sr",
+                "text": "искључите светло"
+            },
+            {
+                "lang": "sr",
+                "text": "искључите лампу"
+            },
+            {
+                "lang": "sr",
+                "text": "искључивање лампе"
+            },
+            {
+                "lang": "sv",
+                "text": "stoppa enheten"
+            },
+            {
+                "lang": "sv",
+                "text": "stoppenhet"
+            },
+            {
+                "lang": "sv",
+                "text": "släck ljuset"
+            },
+            {
+                "lang": "sv",
+                "text": "koppla bort ljuset"
+            },
+            {
+                "lang": "sv",
+                "text": "koppla bort lampan"
+            },
+            {
+                "lang": "sv",
+                "text": "stäng av lampan"
+            },
+            {
+                "lang": "th",
+                "text": "ตัดการเชื่อมต่อแสง"
+            },
+            {
+                "lang": "th",
+                "text": "ถอดโคมไฟ"
+            },
+            {
+                "lang": "th",
+                "text": "ปิดหลอดไฟ"
+            },
+            {
+                "lang": "tr",
+                "text": "cihazı durdurun"
+            },
+            {
+                "lang": "tr",
+                "text": "cihazı durdur"
+            },
+            {
+                "lang": "tr",
+                "text": "ışığı kapat"
+            },
+            {
+                "lang": "tr",
+                "text": "işığın bağlantısını kesin"
+            },
+            {
+                "lang": "tr",
+                "text": "lambayı ayırın"
+            },
+            {
+                "lang": "tr",
+                "text": "lambayı kapatmak"
+            },
+            {
+                "lang": "uk",
+                "text": "вимкни світло"
+            },
+            {
+                "lang": "uk",
+                "text": "відєднайте світло"
+            },
+            {
+                "lang": "uk",
+                "text": "відєднайте лампу"
+            },
+            {
+                "lang": "uk",
+                "text": "вимкнення лампи"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "关灯"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "断开光线"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "断开灯的连接"
             }
         ],
         "stop-stopwatch": [

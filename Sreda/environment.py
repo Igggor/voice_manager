@@ -1,18 +1,17 @@
-from dotenv import load_dotenv, dotenv_values
+from dotenv import load_dotenv
 import os
 import sys
 
 
 class Environment:
     __ROOT__ = os.path.dirname(__file__)
-    # conf = dotenv_values("storage/.env")
-    # MODEL = conf["MODEL"]
-    # OPEN_WEATHER_API_KEY = conf["WEATHER_API_KEY"]
-    # NATIVE_API_KEY = conf["NATIVE_API_KEY"]
-    # DYNAMIC_BUILDING = conf["DYNAMIC_BUILDING"]
+
     MODEL = None
+
     OPEN_WEATHER_API_KEY = None
     NATIVE_API_KEY = None
+    SELF_CODE = None
+
     DYNAMIC_BUILDING = None
 
 
@@ -51,6 +50,12 @@ def load_environment() -> None:
                                    "please set-up `.env` file correctly.")
         else:
             Environment.NATIVE_API_KEY = os.environ.get("NATIVE_API_KEY")
+
+        if "SELF_CODE" not in os.environ.keys():
+            raise EnvironmentError("Cannot load <SELF_CODE> from environment: "
+                                   "please set-up `.env` file correctly.")
+        else:
+            Environment.SELF_CODE = os.environ.get("SELF_CODE")
 
         if "DYNAMIC_BUILDING" not in os.environ.keys():
             raise EnvironmentError("Cannot load <DYNAMIC_BUILDING> from environment: "

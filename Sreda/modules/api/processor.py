@@ -1,6 +1,10 @@
 from Sreda.environment import Environment
+
 from Sreda.modules.logs.units import Log
+from Sreda.modules.text.units import Response
+
 from Sreda.static.metaclasses import SingletonMetaclass
+
 import requests
 
 
@@ -14,94 +18,161 @@ class APIProcessor(metaclass=SingletonMetaclass):
         return cls.__instance
 
     def __init__(self):
-        self.url = "https://test.igreeda.keenetic.pro/API/Devices"
+        self.url = "https://test.igreeda.keenetic.pro/API"
 
         self.KEY = Environment.NATIVE_API_KEY
-        # self.KEY = "gmZyWupjOON8b6O4G217B59Pd3ZRUFbB"
+        self.HTTP_TIMEOUT = 5
         self.RETRY = 3
 
-    def _get(self, **kwargs) -> requests.Response:
+    def _get(self, table: str, **kwargs) -> requests.Response | None:
         """
         Метод GET-запроса.
 
-        :return: Результат запроса или ``None`` при неудаче.
+        :param table: ``str``: рабочая таблица.
+
+        :return: Результат запроса / ``None``.
         """
 
         params = {"key": self.KEY}
         params.update(kwargs)
 
-        response = requests.get(
-            url=self.url,
-            params=params
-        )
+        _url = f"{self.url}/{table}"
 
-        return response.json()
+        try:
+            response = requests.get(url=_url, params=params, timeout=self.HTTP_TIMEOUT)
+            return response
+        except requests.exceptions.RequestException:
+            return None
 
-    def get_device_status(self):
-        data = self._get(title="AnLamp")
-        return data #[0]["settings"]["status"]
-
-    def _post(self, new_status: int = 0) -> requests.Response:
+    def _post(self, table: str, **kwargs) -> requests.Response | None:
         """
         Метод POST-запроса.
 
-        :return: Результат запроса или ``None``.
-        """
-        getparams = {
-            "key": self.KEY,
-        }
-        body = {
-            "params": {
-                "user_id": 1,
-                "title": "AnLamp",
-                "status": new_status,
-                "type": "light",
-                "settings": {
-                    "status": new_status
-                }
-            },  # параметры сортировки
-        }
-        response = requests.post(url=self.url, json=body, params=getparams)
-        data = response.json()
-        return data
+        :param table: ``str``: рабочая таблица.
 
-    def _put(self, new_status: int = 0) -> requests.Response:
+        :return: Результат запроса.
+        """
+
+        getparams = {"key": self.KEY}
+
+        body = {"params": kwargs}
+
+        _url = f"{self.url}/{table}"
+
+        try:
+            response = requests.post(url=_url, json=body, params=getparams, timeout=self.HTTP_TIMEOUT)
+            return response
+        except requests.exceptions.RequestException:
+            return None
+
+    def _put(self, table: str, **kwargs) -> requests.Response | None:
         """
         Метод PUT-запроса.
 
-        :return: Результат запроса или ``None``.
+        :param table: ``str``: рабочая таблица.
+
+        :return: Результат запроса.
         """
 
         params = {"key": self.KEY}
 
-        body = {
-            "params": {"title": "AnLamp"},  # параметры сортировки
-            "changes": {'settings': {'status': new_status}}  # вносимые изменения
-        }
-        response = requests.put(url=self.url, json=body, params=params)
-        data = response.json()
-        return data
+        body = {"params": kwargs["params"], "changes": kwargs["changes"]}
 
-    def set_light_on(self, **_):
-        self._put(new_status=1)
+        _url = f"{self.url}/{table}"
 
-    def set_light_off(self, **_):
-        self._put(new_status=0)
+        try:
+            response = requests.put(url=_url, json=body, params=params, timeout=self.HTTP_TIMEOUT)
+            return response
+        except requests.exceptions.RequestException:
+            return None
+
+    def light_on(self, **_) -> Response:
+        """
+        Метод PUT-запроса - изменения статуса устройства на ``ON``.
+
+        :return:
+        """
+
+        OK = False
+        CODES = list()
+
+        retry = self.RETRY
+
+        while retry > 0:
+            retry -= 1
+
+            response = self._put(
+                table="Devices", params={"id": 1}, changes={"status": 1}
+            )
+
+            if response is None:
+                CODES.append(408)
+                break
+
+            if response.ok:
+                OK = 1
+                break
+
+            CODES.append(response.status_code if response is not None else 408)
+
+        if not OK:
+            return Response(
+                text=f"Не удалось выключить заданное устройство. Уточните команду и повторите попытку. \n"
+                     f"Код ошибки: {CODES[-1]}",
+                error=True
+            )
+        else:
+            return Response(
+                text="Устройство успешно включено."
+            )
+
+    def light_off(self, **_) -> Response:
+        """
+        Метод PUT-запроса - изменения статуса устройства на ``OFF``.
+
+        :return:
+        """
+
+        OK = False
+        CODES = list()
+
+        retry = self.RETRY
+
+        while retry > 0:
+            retry -= 1
+
+            response = self._put(
+                table="Devices", params={"id": 1}, changes={"status": 0}
+            )
+
+            if response is None:
+                CODES.append(408)
+                break
+
+            if response.ok:
+                OK = 1
+                break
+
+            CODES.append(response.status_code)
+
+        if not OK:
+            return Response(
+                text=f"Не удалось выключить заданное устройство. Уточните команду и повторите попытку. \n"
+                     f"Код ошибки: {CODES[-1]}",
+                error=True
+            )
+        else:
+            return Response(
+                text="Устройство успешно включено."
+            )
 
     # TODO : implement here
     def load_settings(self):
-        pass
-
-        # response = self._get(table="Devices", id=)
-
-        # if not response.ok:
-        #     return None
-        #
-        # return response.json()
+        raise NotImplementedError
 
     def _post_log_command(self, log: Log) -> None:
         """
-        Служебный метод для POST-запроса команды из лога.
+        Служебный метод `POST``-запроса - сохранение команды из лога.
 
         :param log: ``Log``: записываемый лог.
 
@@ -113,28 +184,33 @@ class APIProcessor(metaclass=SingletonMetaclass):
 
         retry = self.RETRY
 
-        while not OK and retry > 0:
+        while retry > 0:
+            retry -= 1
+
             response = self._post(
-                raspberry_id="id", text=log.command.name, type="COMMAND", error=False
+                table="Logs", raspberry_id=Environment.SELF_CODE, text=log.command.name, type="COMMAND", error=False
             )
+
+            if response is None:
+                CODES.append(408)
+                break
 
             if response.ok:
                 OK = 1
                 break
 
             CODES.append(response.status_code)
-            retry -= 1
 
         if not OK:
             print(f"Warning: something went wrong while posting a command (log). \n"
-                  f"Retries: {self.RETRY}. \n"
+                  f"Retries: {self.RETRY - retry}. \n"
                   f"Status codes: {CODES}.")
         else:
             print("OK: command (log) was posted successfully.")
 
     def _post_log_response(self, log: Log) -> None:
         """
-        Служебный метод для POST-запроса ответа из лога.
+        Служебный метод `POST``-запроса - сохранение ответа из лога.
 
         :param log: ``Log``: записываемый лог.
 
@@ -146,28 +222,34 @@ class APIProcessor(metaclass=SingletonMetaclass):
 
         retry = self.RETRY
 
-        while not OK and retry > 0:
+        while retry > 0:
+            retry -= 1
+
             response = self._post(
-                raspberry_id="id", text=log.response.get_speech(), type="RESPONSE", error=log.response.error
+                table="Logs", raspberry_id=Environment.SELF_CODE, text=log.response.get_speech(), type="RESPONSE",
+                error=log.response.error
             )
+
+            if response is None:
+                CODES.append(408)
+                break
 
             if response.ok:
                 OK = 1
                 break
 
             CODES.append(response.status_code)
-            retry -= 1
 
         if not OK:
             print(f"Warning: something went wrong while posting a response (log). \n"
-                  f"Retries: {self.RETRY}. \n"
+                  f"Retries: {self.RETRY - retry}. \n"
                   f"Status codes: {CODES}.")
         else:
             print("OK: response (log) was posted successfully.")
 
     def post_log(self, log: Log) -> None:
         """
-        Метод для POST-запроса лога.
+        Метод ``POST``-запроса - сохранения лога.
 
         :param log: ``Log``: записываемый лог.
 

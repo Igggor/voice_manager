@@ -220,7 +220,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
     def _periodic_time(self, function, sleeping_time: float) -> None:
         """
-        Статический вспомогательный метод, реализующий работу периодической асинхронной функции
+        Вспомогательный метод, реализующий работу периодической асинхронной функции
         проверки готовности уведомлений.
 
         :param function: исполняемая периодическая функция;
@@ -318,7 +318,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
                 response = query.function()
 
                 self.logger.write(query, response)
-                # self.api_core.post_log(log=self.logger.logs[-1])
+                self.api_core.post_log(log=self.logger.logs[-1])
 
                 self._add_to_output(output_text=output_text, response=response)
                 if response.info:
@@ -334,7 +334,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
             for i in range(len(selected_actions)):
                 query = selected_actions[i]
-                if query.key == "full-off":
+                if query.key == "full-off" or query.key == "bad-connection":
                     FULL_OFF_SIGNAL = True
 
                 print("[Log: executing]: ", query.additive)
@@ -351,7 +351,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
                         response.called_by = query
 
                 self.logger.write(query, response)
-                # self.api_core.post_log(log=self.logger.logs[-1])
+                self.api_core.post_log(log=self.logger.logs[-1])
 
                 self._add_to_output(output_text=output_text, response=response)
                 if response.info:
@@ -425,18 +425,12 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
         time_thread = threading.Thread(
             target=self._periodic_time,
-            args=(self.time_core.check_notifications, self.global_context.notifications_accuracy),
+            args=(self.time_core.check_notifications, self.global_context.notifications_accuracy * 0.75),
             daemon=True,
             name="Background-TIME"
         )
 
-        # api_check_thread = threading.Thread(
-        #     target=self._periodic_check_api_connection,
-        #     args=...
-        # )
-
         time_thread.start()
-        # api_check_thread.start()
 
         while True:
             self._listen_command()

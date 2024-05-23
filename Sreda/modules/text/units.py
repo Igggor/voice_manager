@@ -76,7 +76,7 @@ class Response:
         :return: Сама фраза в строковом формате.
         """
 
-        return self.text + (self.info if self.info is not None else "")
+        return self.text + " " + (self.info if self.info is not None else "")
 
     def get_language(self, _undefined: str) -> str:
         """

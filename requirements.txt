@@ -1,7 +1,0 @@
-requests~=2.32.0
-gTTS~=2.5.1
-sounddevice~=0.4.6
-tqdm~=4.66.4
-httpcore~=0.9.1
-googletrans~=4.0.0rc1
-python-dotenv~=1.0.1

@@ -214,6 +214,7 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
             или, в случае произвольной ошибки, ``None``.
         """
 
+        return input()
         if not self.LOCKER.available(thread_id=threading.get_native_id()):
             return None
 
@@ -263,7 +264,6 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
             os.system(f"play {buffer}/{index}.mp3 tempo {tempo}")
         except OSError as error:
             print(f"Warning: something went wrong while playing file with index {index}: {error}")
-        print(f"storage/buffer/{index}.mp3 tempo {tempo}")
 
     def speak(self, output: PlayableText) -> None:
         """

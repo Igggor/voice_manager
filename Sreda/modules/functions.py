@@ -87,10 +87,12 @@ class FunctionsCore(metaclass=SingletonMetaclass):
         """
 
         try:
-            data = requests.get(
+            r = requests.get(
                 url="https://www.cbr-xml-daily.ru/daily_json.js",
-                timeout=1
-            ).json()
+                timeout=5
+            )
+
+            data = r.json()
 
             usd_formal = round(data['Valute']['USD']['Value'], 2)
             euro_formal = round(data['Valute']['EUR']['Value'], 2)
@@ -131,7 +133,7 @@ class FunctionsCore(metaclass=SingletonMetaclass):
         try:
             r = requests.get(
                 url=f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={open_weather_token}&units=metric",
-                timeout=1
+                timeout=5
             )
 
             data = r.json()

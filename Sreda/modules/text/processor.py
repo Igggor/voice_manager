@@ -67,7 +67,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
             "on":
                 Command(
                     name="Включение голосового помощника",
-                    description="Во включенном состоянии глосовой помощник прослушивает команды и исполняет их.",
+                    description="Во включенном состоянии глосовой помощник прослушивает команды и исполняет их",
                     key="on", function=set_ON, type="system"
                 ),
             "update-settings":
@@ -83,7 +83,7 @@ class TextProcessor(metaclass=SingletonMetaclass):
                 ),
             "thanks":
                 Command(
-                    name="Рада стараться.",
+                    name="Рада стараться",
                     key="thanks", function=thanks, type="question"
                 ),
             "full-off":
@@ -221,11 +221,13 @@ class TextProcessor(metaclass=SingletonMetaclass):
 
             "run-device":
                 Command(
-                    name="Запуск умного устройства", key="run-device", function=api_actions.set_light_on(), type="devices"
+                    name="Запуск умного устройства", key="run-device", function=api_actions.light_on,
+                    type="devices"
                 ),
             "stop-device":
                 Command(
-                    name="Выключение умного устройства", key="stop-device", function=api_actions.set_light_off(), type="devices"
+                    name="Выключение умного устройства", key="stop-device", function=api_actions.light_off,
+                    type="devices"
                 )
         }
 
