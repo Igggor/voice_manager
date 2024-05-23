@@ -1,4 +1,4 @@
-from Sreda.modules.text.units import Command, Response
+from Sreda.modules.text.units import Command
 from Sreda.modules.format import is_language_fully_supported
 
 from Sreda.static.local import get_month, get_language_key, get_word, replace_numbers
@@ -29,6 +29,7 @@ def remove_whitespaces(text: str) -> str | None:
         cleared += char
         previous_char = char
 
+    cleared = cleared.replace('\u200b', '')
     return cleared
 
 
@@ -46,7 +47,6 @@ def canonize_text(text: str) -> str:
     text = text.lower()
     text = remove_whitespaces(text=text)
     text = text.translate(punctuation_sieve)
-    text = text.replace('\u200b', '')
 
     return text
 
@@ -231,7 +231,7 @@ def _parse_notification_creation(command: Command, lang: str) -> None:
     time = list()
     text = list()
 
-    key = -1
+    key = 2 if command.key == "add-timer" else -1
     operational = [
         {
             "keys": [get_word(text="текст", lang=lang)],

@@ -58,7 +58,6 @@ class Response:
             * ``info``: доп. информация (в основном, для ошибок) [по умолчанию = ``None``];
             * ``error``: завершилась ли функция с ошибкой [по умолчанию = ``False``];
             * ``called_by``: родительская функция [по умолчанию = ``None``];
-            * ``do_next``: функции (без аргументов), выполняемые автоматически сразу после ответа;
             * ``extend_lang``: код используемого языка, помимо русского [по умолчанию = ``None``].
 
         :return:
@@ -67,7 +66,6 @@ class Response:
         self.text = kwargs["text"]
         self.info = None if "info" not in kwargs.keys() else kwargs["info"]
         self.error = False if "error" not in kwargs.keys() else kwargs["error"]
-        self.do_next = None if "do_next" not in kwargs.keys() else kwargs["do_next"]
         self.called_by = None if "called_by" not in kwargs.keys() else kwargs["called_by"]
         self.extend_lang = None if "extend_lang" not in kwargs.keys() else kwargs["extend_lang"]
 
