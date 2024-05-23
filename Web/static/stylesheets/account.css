@@ -1,0 +1,50 @@
+.accounts-container {
+    display: grid;
+    grid-template-columns: 170px auto 200px;
+    grid-gap: 10px;
+    margin: 30px;
+}
+
+.user-avatar {
+    width: 170px;
+    height: 170px;
+}
+
+.user-container {
+    position: relative;
+    background-color: #D9D9D9;
+    border-radius: 20px;
+    padding: 15px;
+    /*width: 100%;*/
+    height: 140px;
+    .user-names {
+        font-size: 30px;
+        margin: 5px 0;
+    }
+    .user-email {
+        font-size: 22px;
+        color: #4C4C4C;
+        margin: 5px 0;
+    }
+}
+
+.accounts-btns {
+    display: grid;
+    grid-gap: 10px;
+    button {
+        font-size: 21px;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        border-radius: 20px;
+        min-height: 50px;
+    }
+    .exit-btn {
+        background-color: #ff3939;
+        color: white;
+    }
+    .edit-btn {
+        background-color: #D9D9D9;
+        color: #2A2A2A;
+    }
+}

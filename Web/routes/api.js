@@ -3,6 +3,31 @@ let router = express.Router()
 const {where} = require("sequelize")
 const seq = require('../dbmodels')
 
+router.get('/smartdevices/:id', async (req, res, next) => {
+  let data = {}
+  try {
+    data = (await seq.Devices.findAll({
+      where: { id: req.params.id }
+    }))[0].settings
+  }
+  catch (e) {
+    data = {error: e}
+  }
+  res.json(data)
+})
+router.put('/smartdevices/:id', async (req, res, next) => {
+  console.log(req.body)
+  let r = req.body
+  if (r.action === 'changeStatus') {
+    console.log(req.params.id, r.status)
+    await seq.Devices.update({
+      settings: {status: +r.status}
+    }, {
+      where: {id: req.params.id}
+    })
+  }
+})
+
 router.get('/:table', async (req, res, next) => {
   console.log(req.query)
   if (process.env.API_KEY === undefined || req.query.key !== process.env.API_KEY) {

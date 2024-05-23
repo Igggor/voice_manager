@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const { Sequelize, DataTypes} = require('sequelize')
 // module.exports = new Sequelize({
 const sequelize = new Sequelize({
@@ -97,7 +98,7 @@ const Devices = sequelize.define(
         },
         user_id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            defaultValue: 0,
         },
         logo: {
             type: DataTypes.STRING,
@@ -114,6 +115,10 @@ const Devices = sequelize.define(
         type: {
             type: DataTypes.STRING,
             allowNull: false,
+        },
+        hash_key: {
+            type: DataTypes.STRING,
+            defaultValue: crypto.randomBytes(32).toString('base64'),
         },
         settings: {
             type: DataTypes.JSON,

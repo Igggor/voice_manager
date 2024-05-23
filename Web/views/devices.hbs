@@ -1,0 +1,26 @@
+<div class="devices-container">
+    <h2>Мои устройства</h2>
+    {{#each deviceList}}
+        <div class="device">
+            <img src="{{this.logo}}" alt="">
+            <div class="devices-title-container">
+                <h3>{{this.title}}</h3>
+                <p>{{this.room}}</p>
+            </div>
+            <div class="device-fast-config">
+                <button class="status-toggle" id="device{{this.id}}">
+                    <img src="/static/images/power.png" alt="">
+                </button>
+            </div>
+        </div>
+    {{/each}}
+    <button id="addDevice"><i class="bi bi-plus-lg"></i></button>
+</div>
+<form onsubmit="return false" class="new-device-form" id="newDeviceForm" style="display: none">
+    <div class="hash-field-container">
+        <label for="hashKey">Ключ устройства</label>
+        <input name="hashKey" id="hashKey" type="text">
+    </div>
+    <input id="newDeviceSubmitBtn" type="submit" value="Добавить">
+</form>
+<script src="/static/javascripts/smartDevices.js"></script>
