@@ -41,13 +41,12 @@ def setup() -> None:
     print("Environment has loaded successfully.\n")
 
     keys = input("If any triggers need to be rebuilt, please input their keys here... ")
-    keys_words = input("If any words need to be rebuilt, please input them here... ")
 
     print()
 
     if not ready_all(keys=DEFAULT_TRIGGERS.keys()) or not \
             ready_all_words(words=AUXILIARY_WORDS + MONTH_KEYS + MONTHS + [lang["ru"] for lang in LANGUAGES.values()]) \
-            or not ready_all(keys=["__alias__"]) or keys.lower() != "" or keys_words.lower() != "":
+            or not ready_all(keys=["__alias__"]) or keys.lower() != "":
         print("Building triggers and words started. Please wait, it may take some time.\n")
 
         translator = Translator()
@@ -63,18 +62,11 @@ def setup() -> None:
                 dynamic=Environment.DYNAMIC_BUILDING
             )
 
-        if keys_words.lower() == "all":
-            build_all_words(
-                translator=translator,
-                force_keys=AUXILIARY_WORDS + MONTH_KEYS + MONTHS + [lang["ru"] for lang in LANGUAGES.values()], keys=[],
-                dynamic=Environment.DYNAMIC_BUILDING
-            )
-        else:
-            build_all_words(
-                translator=translator, force_keys=keys_words.split(),
-                keys=AUXILIARY_WORDS + MONTH_KEYS + MONTHS + [lang["ru"] for lang in LANGUAGES.values()],
-                dynamic=Environment.DYNAMIC_BUILDING
-            )
+        build_all_words(
+            translator=translator, force_keys=list(),
+            keys=AUXILIARY_WORDS + MONTH_KEYS + MONTHS + [lang["ru"] for lang in LANGUAGES.values()],
+            dynamic=Environment.DYNAMIC_BUILDING
+        )
 
         if not ready_all(keys=["__alias__"]):
             build_alias(translator, alias=global_context.NAME)

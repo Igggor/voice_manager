@@ -102,7 +102,7 @@ class APIProcessor(metaclass=SingletonMetaclass):
             retry -= 1
 
             response = self._put(
-                table="Devices", params={"id": 1}, changes={"status": 1}
+                table="Devices", params={"title": "AnLamp"}, changes={"settings": {"status": 1}}
             )
 
             if response is None:
@@ -142,7 +142,7 @@ class APIProcessor(metaclass=SingletonMetaclass):
             retry -= 1
 
             response = self._put(
-                table="Devices", params={"id": 1}, changes={"status": 0}
+                table="Devices", params={"title": "AnLamp"}, changes={"settings": {"status": 0}}
             )
 
             if response is None:
@@ -163,7 +163,7 @@ class APIProcessor(metaclass=SingletonMetaclass):
             )
         else:
             return Response(
-                text="Устройство успешно включено."
+                text="Устройство успешно выключено."
             )
 
     # TODO : implement here

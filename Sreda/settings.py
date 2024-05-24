@@ -23,7 +23,7 @@ class GlobalContext(metaclass=SingletonMetaclass):
         self.CITY = "Пушкино"
 
         self.recognizer_threshold = 0.5
-        self.microphone_duration = 0.5
+        self.microphone_duration = 1
         self.microphone_timeout = 2
         self.phrase_timeout = 8
 

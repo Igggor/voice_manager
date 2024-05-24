@@ -174,6 +174,8 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         self.MICROPHONE = speech_recognition.Microphone()
         self.RECOGNIZER = speech_recognition.Recognizer()
 
+        # self.RECOGNIZER.energy_threshold = 3000
+
         self.microphone_duration = None
         self.phrase_limit = None
 

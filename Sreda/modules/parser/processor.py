@@ -42,7 +42,7 @@ def canonize_text(text: str) -> str:
     :return: Очищенная строка.
     """
 
-    punctuation_sieve = str.maketrans("", "", punctuation)
+    punctuation_sieve = text.maketrans("", "", punctuation)
 
     text = text.lower()
     text = remove_whitespaces(text=text)
