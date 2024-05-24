@@ -357,7 +357,7 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         :return: Целочисленное значение от 0 до 100 - громкость звука на данный момент.
         """
 
-        volume = self.MIXER.getvolume(units=alsaaudio.VOLUME_UNITS_PERCENTAGE)[0]
+        volume = self.MIXER.getvolume()[0]
 
         return Response(
             text=f"Текущий уровень громкости: {volume}%."
@@ -375,7 +375,7 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
 
         volume = int(kwargs["main"])
 
-        if volume == self.MIXER.getvolume(units=alsaaudio.VOLUME_UNITS_PERCENTAGE)[0]:
+        if volume == self.MIXER.getvolume()[0]:
             return Response(
                 text=f"Уровень громкости уже равен {volume}%, поэтому изменение не было выполнено."
             )
@@ -400,5 +400,5 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
             # Trying to fix...
             self.MIXER = alsaaudio.Mixer(alsaaudio.mixers()[0])
         finally:
-            if self.MIXER.getvolume(units=alsaaudio.VOLUME_UNITS_PERCENTAGE)[0] > 100:
+            if self.MIXER.getvolume()[0] > 100:
                 self.MIXER.setvolume(100)
