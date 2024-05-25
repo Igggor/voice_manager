@@ -1,7 +1,6 @@
 #define MY_PERIOD 10    // период в мс
 #define LED_PIN 14      // номер пина светодиода
 
-boolean LEDflag = false;
 uint32_t myTimer; // переменная времени
 String str;
 
@@ -9,8 +8,8 @@ void setup() {
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
 
-  Serial.begin(115200);
-  Serial1.begin(9600);
+  Serial.begin(115200); // для вывода информации в serial порт
+  Serial1.begin(9600);  // для считывания информации с serial порта
 }
 
 void loop() {
