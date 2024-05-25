@@ -5,7 +5,6 @@ from Sreda.modules.speech.units import PlayableText
 from Sreda.modules.text.units import Response
 
 from Sreda.static.metaclasses import SingletonMetaclass
-from Sreda.static.local import get_language_fullname_by_code
 
 from gtts import gTTS
 import gtts.tts
@@ -13,6 +12,7 @@ import threading
 import os
 import speech_recognition
 import alsaaudio
+import deepgram
 
 # Do not delete
 import sounddevice
@@ -208,33 +208,94 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
 
         self.make_mixer_diagnostics()
 
-    def listen_command(self) -> str | None:
+    def listen(self) -> str | None:
         """
-        Метод распознавания текста из речи.
+        Прослушивает команду и получает её текстовое представление.
 
-        :return: Возвращает соответствующее строковое значение,
-            или, в случае произвольной ошибки, ``None``.
+        :return: Распознанный текст.
+        """
+
+        _signal = self._listen_command()
+        if not _signal:
+            return None
+
+        try:
+            deepgram_client = deepgram.DeepgramClient(Environment.RECOGNITION_API_KEY)
+
+            payload = self._import_from_file()
+
+            options = deepgram.PrerecordedOptions(
+                model=Environment.MODEL,
+                smart_format=True,
+                language=self.language_listen
+            )
+
+            response: deepgram.PrerecordedResponse \
+                = deepgram_client.listen.prerecorded.v("1").transcribe_file(payload, options)
+
+            channels = response.results.channels
+            if len(channels[0].alternatives) or channels[0].alternatives[0].confidence < 0.8:
+                print(f"Warning: something went wrong while recognizing speech: low confidence of recognizing. "
+                      f"Transcription may be incorrect.")
+
+            transcript = channels[0].alternatives[0].transcript
+            return transcript
+        except Exception as error:
+            print(f"Warning: something went wrong while recognizing speech: {error}")
+
+    def _listen_command(self) -> bool:
+        """
+        Метод прослушивания речи.
+
+        Прослушивает речь и записывает её в звуковой файл.
+
+        :return: Возвращает ``True``, если прослушивание удалось, в противном случае - ``False``.
         """
 
         if not self.LOCKER.available(thread_id=threading.get_native_id()):
-            return None
+            return False
 
         try:
             with self.MICROPHONE as source:
                 self.RECOGNIZER.adjust_for_ambient_noise(source=source, duration=self.microphone_duration)
                 audio = self.RECOGNIZER.listen(source=source, timeout=self.listening_timeout,
                                                phrase_time_limit=self.phrase_limit)
-                print("[Log: listen command]: recognizing started.")
-                query = self.RECOGNIZER.recognize_whisper(
-                    audio_data=audio, model=Environment.MODEL,
-                    language=get_language_fullname_by_code(key=self.language_listen, lang="en")
-                )
+                print("[Log: listen command]: listening finished.")
 
-            print("[Log: listen command]:", query)
-            return query
+            self._export_to_file(audio)
+            return True
         except (speech_recognition.UnknownValueError, speech_recognition.WaitTimeoutError) as error:
-            print(f"Warning: something went wrong while recognizing voice: {error}")
-            return None
+            print(f"Warning: something went wrong while listening voice: {error}")
+            return False
+
+    @staticmethod
+    def _export_to_file(audio: speech_recognition.AudioData = None, ) -> None:
+        path = os.path.join(Environment.__ROOT__, "storage/buffer/input.wav")
+
+        try:
+            with open(path, "wb") as file:
+                file.write(audio.get_wav_data())
+        except Exception as error:
+            print(f"Warning: something went wrong while exporting speech to file: {error}")
+
+    @staticmethod
+    def _import_from_file() -> deepgram.FileSource:
+        path = os.path.join(Environment.__ROOT__, "storage/buffer/input.wav")
+
+        try:
+            with open(path, "rb") as file:
+                buffer = file.read()
+
+                payload: deepgram.FileSource = {
+                    "buffer": buffer
+                }
+
+            return payload
+        except FileNotFoundError:
+            print("Warning: something went wrong while importing speech from file: buffer-file doesn't exist. "
+                  "Highly likely speech was not exported to buffer due to unknown reasons.")
+        except Exception as error:
+            print(f"Warning: something went wrong while importing speech from file: {error}")
 
     @staticmethod
     def _prepare_text(output_text: str, lang: str, index: int) -> None:
@@ -251,7 +312,7 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         path = os.path.join(Environment.__ROOT__, "storage/buffer")
         try:
             tts = gTTS(text=output_text, lang=lang, tld="com", timeout=10)
-            tts.save(f"{path}/{index}.mp3")
+            tts.save(f"{path}/output_{index}.mp3")
         except OSError as error:
             print(f"Warning: something went wrong while saving file with index {index}: {error}")
         except (RuntimeError, ValueError, AssertionError, gtts.tts.gTTSError) as error:
@@ -262,7 +323,7 @@ class SpeechTranslator(metaclass=SingletonMetaclass):
         buffer = os.path.join(Environment.__ROOT__, "storage/buffer")
 
         try:
-            os.system(f"play {buffer}/{index}.mp3 tempo {tempo}")
+            os.system(f"play {buffer}/output_{index}.mp3 tempo {tempo}")
         except OSError as error:
             print(f"Warning: something went wrong while playing file with index {index}: {error}")
 

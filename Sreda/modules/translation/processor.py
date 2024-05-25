@@ -5,7 +5,6 @@ from Sreda.modules.text.units import Response
 from Sreda.static.metaclasses import SingletonMetaclass
 
 from googletrans import Translator as GoogleTranslator
-from googletrans.client import Timeout
 from time import sleep
 import httpcore
 
@@ -21,7 +20,7 @@ class Translator(metaclass=SingletonMetaclass):
 
     def __init__(self):
         self.translation_timeout = None
-        self.TRANSLATOR = GoogleTranslator(timeout=Timeout(30.0))
+        self.TRANSLATOR = GoogleTranslator(timeout=30.0)
 
         self.translation_request_error = Response(
             text=("Извините, при запросе перевода текста произошла непредвиденная ошибка. \n"
@@ -40,7 +39,7 @@ class Translator(metaclass=SingletonMetaclass):
 
         if global_context.translation_timeout != self.translation_timeout:
             self.translation_timeout = global_context.translation_timeout
-            self.TRANSLATOR = GoogleTranslator(timeout=Timeout(self.translation_timeout))
+            self.TRANSLATOR = GoogleTranslator(timeout=self.translation_timeout)
 
     def translate_text_static(self, **kwargs) -> str | None:
         """

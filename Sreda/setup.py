@@ -12,7 +12,6 @@ try:
 
     from Sreda.static.constants import DEFAULT_TRIGGERS, AUXILIARY_WORDS, LANGUAGES, MONTH_KEYS, MONTHS
 
-    import whisper
     import os
 
 except ImportError as error:
@@ -25,7 +24,6 @@ except ImportError as error:
 
     from static.constants import DEFAULT_TRIGGERS, AUXILIARY_WORDS, LANGUAGES, MONTH_KEYS, MONTHS
 
-    import whisper
     import os
 
     print(f"Warning: something went wrong while importing modules: {error}. "
@@ -77,13 +75,6 @@ def setup() -> None:
 
     if not ready_all(keys=DEFAULT_TRIGGERS.keys()):
         raise ImportError("Unexpected error while building triggers.")
-
-    print("Loading model...")
-
-    path = os.path.join(Environment.__ROOT__, "model")
-    whisper.load_model(name=Environment.MODEL, download_root=path)
-
-    print("Model has loaded successfully.\n")
 
 
 if __name__ == "__main__":

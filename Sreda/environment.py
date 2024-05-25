@@ -10,6 +10,8 @@ class Environment:
 
     OPEN_WEATHER_API_KEY = None
     NATIVE_API_KEY = None
+    RECOGNITION_API_KEY = None
+
     SELF_CODE = None
 
     DYNAMIC_BUILDING = None
@@ -28,16 +30,16 @@ def load_environment() -> None:
         load_dotenv(dotenv_path)
 
         if "MODEL" not in os.environ.keys():
-            raise EnvironmentError("Cannot load <MODEL> from environment: please set-up `.env` file correctly.")
+            raise EnvironmentError("Cannot load <MODEL> from environment: "
+                                   "please set-up `.env` file correctly.")
         else:
-            _AVAILABLE_MODELS = ["tiny", "base", "small"]
-            MODEL = os.environ.get("MODEL")
+            _AVAILABLE_MODELS = ["nova-2", "base", "whisper-tiny", "whisper-base", "whisper-small", "whisper-medium"]
+            MODEL = os.environ.get("MODEL").lower()
 
-            if MODEL.lower() in _AVAILABLE_MODELS:
-                Environment.MODEL = MODEL.lower()
+            if MODEL not in _AVAILABLE_MODELS:
+                raise EnvironmentError(f"No such model: <{MODEL.lower()}. Available models: {_AVAILABLE_MODELS}")
             else:
-                raise EnvironmentError(f"Cannot load <MODEL> from environment: incorrect value. "
-                                       f"Available values: {_AVAILABLE_MODELS}.")
+                Environment.MODEL = MODEL
 
         if "WEATHER_API_KEY" not in os.environ.keys():
             raise EnvironmentError("Cannot load <WEATHER_API_KEY> from environment: "
@@ -50,6 +52,12 @@ def load_environment() -> None:
                                    "please set-up `.env` file correctly.")
         else:
             Environment.NATIVE_API_KEY = os.environ.get("NATIVE_API_KEY")
+
+        if "RECOGNITION_API_KEY" not in os.environ.keys():
+            raise EnvironmentError("Cannot load <RECOGNITION_API_KEY> from environment: "
+                                   "please set-up `.env` file correctly.")
+        else:
+            Environment.RECOGNITION_API_KEY = os.environ.get("RECOGNITION_API_KEY")
 
         if "SELF_CODE" not in os.environ.keys():
             raise EnvironmentError("Cannot load <SELF_CODE> from environment: "
@@ -86,11 +94,3 @@ def build_PYTHONPATH() -> None:
 
     if sub_path not in sys.path:
         sys.path.insert(0, sub_path)
-
-
-def check_model() -> None:
-    path = os.path.join(os.path.dirname(__file__), f"model/{Environment.MODEL}.pt")
-
-    if not os.path.exists(path):
-        raise ImportError(f"Cannot find whisper-model <{Environment.MODEL}> on path {path}: "
-                          f"you should pre-install it. Please run the setup-script 'setup.py' and try again.")

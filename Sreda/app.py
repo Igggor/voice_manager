@@ -1,5 +1,5 @@
 from Sreda.settings import GlobalContext
-from Sreda.environment import load_environment, check_model
+from Sreda.environment import load_environment
 
 from Sreda.modules.time.processor import TimeWorker
 from Sreda.modules.logs.processor import Logger
@@ -62,7 +62,6 @@ class VoiceHelper(metaclass=SingletonMetaclass):
 
         load_environment()
         load_storage()
-        check_model()
 
         self.global_context = GlobalContext()
 
@@ -402,7 +401,7 @@ class VoiceHelper(metaclass=SingletonMetaclass):
         :return:
         """
 
-        recognized_query = self.speech_translator.listen_command()
+        recognized_query = self.speech_translator.listen()
 
         # Ядро приложения работает на русском языке, поэтому все команды должны быть переведены на него.
 
