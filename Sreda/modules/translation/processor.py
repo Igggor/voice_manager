@@ -4,7 +4,7 @@ from Sreda.modules.text.units import Response
 
 from Sreda.static.metaclasses import SingletonMetaclass
 
-from googletrans import Translator as GoogleTranslator
+from deep_translator import GoogleTranslator
 from time import sleep
 import httpcore
 
@@ -20,7 +20,6 @@ class Translator(metaclass=SingletonMetaclass):
 
     def __init__(self):
         self.translation_timeout = None
-        self.TRANSLATOR = GoogleTranslator(timeout=30.0)
 
         self.translation_request_error = Response(
             text=("Извините, при запросе перевода текста произошла непредвиденная ошибка. \n"
@@ -39,9 +38,9 @@ class Translator(metaclass=SingletonMetaclass):
 
         if global_context.translation_timeout != self.translation_timeout:
             self.translation_timeout = global_context.translation_timeout
-            self.TRANSLATOR = GoogleTranslator(timeout=self.translation_timeout)
 
-    def translate_text_static(self, **kwargs) -> str | None:
+    @staticmethod
+    def translate_text_static(**kwargs) -> str | None:
         """
         Осуществляет перевод текста.
 
@@ -68,7 +67,7 @@ class Translator(metaclass=SingletonMetaclass):
             if high_frequency:
                 sleep(0.5)
 
-            return self.TRANSLATOR.translate(text=text, src=source_language, dest=destination).text
+            return GoogleTranslator(source=source_language, target=destination).translate(text)
         except (ValueError, TypeError, AttributeError) as error:
             print(f"Warning: something went wrong while translating text: {error}. "
                   f"Highly likely that it's an API-limits problem. Try to reconnect Internet or change network.")
