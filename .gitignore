@@ -4,6 +4,7 @@
 /Web/node_modules
 /Web/db.sqlite
 /Web/.env
+/Web/static/userdata
 Sreda/__pycache__/
 Sreda/storage/buffer
 Sreda/storage/.env

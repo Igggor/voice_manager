@@ -1,23 +1,28 @@
 .help-form {
-    margin: 30px;
+    background-color: #D9D9D9;
+    min-height: 100px;
+    margin: 60px 15% 10px;
+    border-radius: 25px;
+    padding: 5px 15px;
 }
 
 .help-field-container {
-    margin: 15px 0;
+    margin: 10px 0;
     label {
         display: block;
         margin-bottom: 5px;
-        font-size: 20px;
+        font-size: 22px;
+        font-weight: bold;
     }
     input, textarea {
         display: block;
-        width: 400px;
-        width: 50%;
+        /*width: 400px;*/
+        width: calc(100% - 20px);
         min-height: 150px;
         min-width: 200px;
         border-radius: 20px;
         border: none;
-        background-color: #D9D9D9;
+        background-color: white;
         padding: 10px;
         font-size: 18px;
         resize: none;
@@ -28,11 +33,26 @@
 }
 
 .help-submit-btn {
-    margin-top: 10px;
+    margin: 10px 0;
     background-color: #1093E0;
     border: none;
-    border-radius: 17px;
+    border-radius: 20px;
     width: 260px;
     height: 50px;
     font-size: 18px;
+}
+
+.questions-container {
+    min-height: 100px;
+    margin: 30px 15% 10px;
+    border-radius: 25px;
+    padding: 5px 15px;
+    border: 1px solid #D9D9D9;
+}
+
+.question {
+    background-color: #D9D9D9;
+    margin: 15px 10px;
+    padding: 10px;
+    border-radius: 23px;
 }

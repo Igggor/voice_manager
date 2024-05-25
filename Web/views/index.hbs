@@ -1,21 +1,23 @@
 <div class="main-page">
     <div class="interactive-cards-container">
-        <div class="actions interactive-cards">
-            <h2>Действия</h2>
-            <div class="devise-list">
-                <div class="device">
-                    <img src="/static/images/devices_logo/logo.png" alt="">
-                    <p>AnLamp</p>
-                </div>
-            </div>
-        </div>
+<!--        <div class="actions interactive-cards">-->
+<!--            <h2>Действия</h2>-->
+<!--            <div class="devise-list">-->
+<!--                <div class="device">-->
+<!--                    <img src="/static/images/devices_logo/logo.png" alt="">-->
+<!--                    <p>AnLamp</p>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
         <div class="active-device interactive-cards">
             <h2>Активные устройства</h2>
             <div class="devise-list">
-                <div class="device">
-                    <img src="/static/images/devices_logo/logo.png" alt="">
-                    <p>AnLamp</p>
-                </div>
+                {{#each deviceList}}
+                    <div class="device status-toggle" id="device{{this.id}}">
+                        <img src="{{this.logo}}" alt="">
+                        <p>{{this.title}}</p>
+                    </div>
+                {{/each}}
             </div>
         </div>
     </div>
@@ -29,6 +31,7 @@
     </div>
 <!--    <img class="ai-animation" src="/static/images/animation/assistant-ezgif.com-cut.gif" alt="">-->
 </div>
+<script src="/static/javascripts/smartDevices.js"></script>
 <script>
     let logContainer = document.querySelector('.log-list-container')
     logContainer.scrollTo(0, logContainer.scrollHeight)

@@ -74,11 +74,11 @@ const Questions = sequelize.define(
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        question: {
+        theme: {
             type: DataTypes.TEXT('tiny'),
             allowNull: false,
         },
-        description: {
+        question: {
             type: DataTypes.TEXT,
         },
     },

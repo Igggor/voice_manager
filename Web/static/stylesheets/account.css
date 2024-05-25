@@ -8,6 +8,7 @@
 .user-avatar {
     width: 170px;
     height: 170px;
+    border-radius: 20px;
 }
 
 .user-container {
@@ -26,13 +27,18 @@
         color: #4C4C4C;
         margin: 5px 0;
     }
+    .user-role {
+        font-size: 22px;
+        color: #4C4C4C;
+        margin: 5px 0;
+    }
 }
 
 .accounts-btns {
     display: grid;
     grid-gap: 10px;
     button {
-        font-size: 21px;
+        font-size: 24px;
         border: none;
         cursor: pointer;
         width: 100%;
