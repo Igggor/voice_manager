@@ -440,5 +440,22 @@ def parse_info(command: Command, lang: str) -> Command:
 
         _parse_TODO_find(command=command, lang=lang)
 
+    if command.key == "weather-now":
+        short = [
+            get_word(text="кратко", lang=lang), get_word(text="коротко", lang=lang), get_word(text="сжато", lang=lang)
+        ]
+
+        short_flag = False
+        for word in short:
+            if word in command.additive["main"]:
+                command.additive["main"] = command.additive["main"].replace(word, "")
+                short_flag = True
+
+        command.additive["short"] = short_flag
+
     command.additive["main"] = remove_whitespaces(command.additive["main"])
+
+    if command.additive["main"] == "":
+        command.additive["main"] = None
+
     return command

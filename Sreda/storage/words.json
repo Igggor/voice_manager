@@ -3150,6 +3150,258 @@
                 "text": "韩国人"
             }
         ],
+        "коротко": [
+            {
+                "lang": "ru",
+                "text": "коротко"
+            },
+            {
+                "lang": "ar",
+                "text": "قصير"
+            },
+            {
+                "lang": "bg",
+                "text": "къс"
+            },
+            {
+                "lang": "cs",
+                "text": "krátký"
+            },
+            {
+                "lang": "da",
+                "text": "kort"
+            },
+            {
+                "lang": "de",
+                "text": "kurz"
+            },
+            {
+                "lang": "el",
+                "text": "μικρός"
+            },
+            {
+                "lang": "en",
+                "text": "short"
+            },
+            {
+                "lang": "es",
+                "text": "corto"
+            },
+            {
+                "lang": "et",
+                "text": "lühike"
+            },
+            {
+                "lang": "fi",
+                "text": "lyhyt"
+            },
+            {
+                "lang": "fr",
+                "text": "court"
+            },
+            {
+                "lang": "hi",
+                "text": "छोटा"
+            },
+            {
+                "lang": "hu",
+                "text": "rövid"
+            },
+            {
+                "lang": "id",
+                "text": "pendek"
+            },
+            {
+                "lang": "it",
+                "text": "corto"
+            },
+            {
+                "lang": "ja",
+                "text": "短い"
+            },
+            {
+                "lang": "ko",
+                "text": "짧은"
+            },
+            {
+                "lang": "lv",
+                "text": "īss"
+            },
+            {
+                "lang": "nl",
+                "text": "kort"
+            },
+            {
+                "lang": "pl",
+                "text": "krótki"
+            },
+            {
+                "lang": "pt",
+                "text": "curto"
+            },
+            {
+                "lang": "ro",
+                "text": "mic de statura"
+            },
+            {
+                "lang": "ru",
+                "text": "коротко"
+            },
+            {
+                "lang": "sk",
+                "text": "krátky"
+            },
+            {
+                "lang": "sr",
+                "text": "кратак"
+            },
+            {
+                "lang": "sv",
+                "text": "kort"
+            },
+            {
+                "lang": "th",
+                "text": "สั้น"
+            },
+            {
+                "lang": "tr",
+                "text": "kısa"
+            },
+            {
+                "lang": "uk",
+                "text": "коротко"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "短的"
+            }
+        ],
+        "кратко": [
+            {
+                "lang": "ru",
+                "text": "кратко"
+            },
+            {
+                "lang": "ar",
+                "text": "باختصار"
+            },
+            {
+                "lang": "bg",
+                "text": "накратко"
+            },
+            {
+                "lang": "cs",
+                "text": "krátce"
+            },
+            {
+                "lang": "da",
+                "text": "kort"
+            },
+            {
+                "lang": "de",
+                "text": "knapp"
+            },
+            {
+                "lang": "el",
+                "text": "εν ολίγοις"
+            },
+            {
+                "lang": "en",
+                "text": "briefly"
+            },
+            {
+                "lang": "es",
+                "text": "brevemente"
+            },
+            {
+                "lang": "et",
+                "text": "lühidalt"
+            },
+            {
+                "lang": "fi",
+                "text": "lyhyesti"
+            },
+            {
+                "lang": "fr",
+                "text": "brièvement"
+            },
+            {
+                "lang": "hi",
+                "text": "संक्षिप्त"
+            },
+            {
+                "lang": "hu",
+                "text": "röviden"
+            },
+            {
+                "lang": "id",
+                "text": "secara singkat"
+            },
+            {
+                "lang": "it",
+                "text": "brevemente"
+            },
+            {
+                "lang": "ja",
+                "text": "簡単に"
+            },
+            {
+                "lang": "ko",
+                "text": "간단히"
+            },
+            {
+                "lang": "lv",
+                "text": "īsi"
+            },
+            {
+                "lang": "nl",
+                "text": "kort"
+            },
+            {
+                "lang": "pl",
+                "text": "krótko"
+            },
+            {
+                "lang": "pt",
+                "text": "brevemente"
+            },
+            {
+                "lang": "ro",
+                "text": "scurt"
+            },
+            {
+                "lang": "ru",
+                "text": "кратко"
+            },
+            {
+                "lang": "sk",
+                "text": "krátko"
+            },
+            {
+                "lang": "sr",
+                "text": "укратко"
+            },
+            {
+                "lang": "sv",
+                "text": "i korthet"
+            },
+            {
+                "lang": "th",
+                "text": "สั้น ๆ"
+            },
+            {
+                "lang": "tr",
+                "text": "kısaca"
+            },
+            {
+                "lang": "uk",
+                "text": "коротко"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "简要地"
+            }
+        ],
         "латвийский": [
             {
                 "lang": "ru",
@@ -6550,6 +6802,132 @@
             {
                 "lang": "zh-CN",
                 "text": "塞尔维亚"
+            }
+        ],
+        "сжато": [
+            {
+                "lang": "ru",
+                "text": "сжато"
+            },
+            {
+                "lang": "ar",
+                "text": "تكثف"
+            },
+            {
+                "lang": "bg",
+                "text": "кондензиран"
+            },
+            {
+                "lang": "cs",
+                "text": "kondenzované"
+            },
+            {
+                "lang": "da",
+                "text": "kondenseret"
+            },
+            {
+                "lang": "de",
+                "text": "kondensiert"
+            },
+            {
+                "lang": "el",
+                "text": "συμπυκνωμένο"
+            },
+            {
+                "lang": "en",
+                "text": "condensed"
+            },
+            {
+                "lang": "es",
+                "text": "condensado"
+            },
+            {
+                "lang": "et",
+                "text": "kondenseerunud"
+            },
+            {
+                "lang": "fi",
+                "text": "tiivistynyt"
+            },
+            {
+                "lang": "fr",
+                "text": "condensé"
+            },
+            {
+                "lang": "hi",
+                "text": "संघनित"
+            },
+            {
+                "lang": "hu",
+                "text": "sűrítve"
+            },
+            {
+                "lang": "id",
+                "text": "kental"
+            },
+            {
+                "lang": "it",
+                "text": "condensato"
+            },
+            {
+                "lang": "ja",
+                "text": "凝縮された"
+            },
+            {
+                "lang": "ko",
+                "text": "응축된"
+            },
+            {
+                "lang": "lv",
+                "text": "kondensēts"
+            },
+            {
+                "lang": "nl",
+                "text": "gecondenseerd"
+            },
+            {
+                "lang": "pl",
+                "text": "skondensowany"
+            },
+            {
+                "lang": "pt",
+                "text": "condensado"
+            },
+            {
+                "lang": "ro",
+                "text": "condensat"
+            },
+            {
+                "lang": "ru",
+                "text": "сжато"
+            },
+            {
+                "lang": "sk",
+                "text": "kondenzované"
+            },
+            {
+                "lang": "sr",
+                "text": "згуснути"
+            },
+            {
+                "lang": "sv",
+                "text": "komprimerad"
+            },
+            {
+                "lang": "th",
+                "text": "ย่อ"
+            },
+            {
+                "lang": "tr",
+                "text": "yoğunlaştırılmış"
+            },
+            {
+                "lang": "uk",
+                "text": "стиснуто"
+            },
+            {
+                "lang": "zh-CN",
+                "text": "浓缩的"
             }
         ],
         "словацкий": [

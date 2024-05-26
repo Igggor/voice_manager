@@ -77,7 +77,7 @@ class FunctionsCore(metaclass=SingletonMetaclass):
         self.weather_celsius = global_context.weather_celsius
         self.weather_mmHg = global_context.weather_mmHg
 
-    def get_currency_course(self, **kwargs) -> Response:
+    def get_currency_course(self, **_) -> Response:
         """
         Функция для получения актуального курса валют, а именно доллара и евро.
 
@@ -129,6 +129,7 @@ class FunctionsCore(metaclass=SingletonMetaclass):
         open_weather_token = Environment.OPEN_WEATHER_API_KEY
 
         city = self.city if kwargs["main"] is None else kwargs["main"]
+        short = False if "short" not in kwargs.keys() else kwargs.keys()
 
         try:
             r = requests.get(
@@ -177,14 +178,15 @@ class FunctionsCore(metaclass=SingletonMetaclass):
                 result += (f"Ощущается как {'+' if temp2 > 0 else ''}{ temp2 }"
                            f"{'°' if self.weather_celsius else temp2_pf} \n")
 
-                result += f"Влажность: { humidity }% \n"
+                if not short:
+                    result += f"Влажность: { humidity }% \n"
 
-                prs = int(pressure * 3 / 4) if self.weather_mmHg else pressure
-                prs_phrase = f"милли{ declension(prs, 'метр') } ртутного столба" if self.weather_mmHg \
-                    else f"гекто{ declension(prs, 'паскаль')}"
+                    prs = int(pressure * 3 / 4) if self.weather_mmHg else pressure
+                    prs_phrase = f"милли{ declension(prs, 'метр') } ртутного столба" if self.weather_mmHg \
+                        else f"гекто{ declension(prs, 'паскаль')}"
 
-                result += f"Давление: { prs } { prs_phrase } \n"
-                result += f"Ветер: { wind } { declension(wind, 'метр') } в секунду."
+                    result += f"Давление: { prs } { prs_phrase } \n"
+                    result += f"Ветер: { wind } { declension(wind, 'метр') } в секунду."
 
                 return result
 
